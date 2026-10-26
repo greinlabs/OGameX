@@ -5,9 +5,9 @@ services:
     image: mariadb:11.3.2-jammy
     restart: unless-stopped
     tty: true
-    volumes:
-     - ogame-dbdata:/var/lib/mysql
-     - ./mysql/my.cnf:/etc/mysql/my.cnf
+    # volumes:
+    #  - ogame-dbdata:/var/lib/mysql
+    #  - ./mysql/my.cnf:/etc/mysql/my.cnf
     # MariaDB port is not exposed to the host machine in production.
     environment:
       MYSQL_DATABASE: laravel
