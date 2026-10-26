@@ -24,6 +24,7 @@ services:
   ogamex-app:
     volumes:
       - ./:/var/www
+      - ogamex-vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     build:
       context: .
@@ -56,6 +57,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/var/www
+      - ogamex-vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     environment:
       CONTAINER_ROLE: scheduler
@@ -73,6 +75,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/var/www
+      - ogamex-vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     environment:
       CONTAINER_ROLE: queue
@@ -108,6 +111,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/var/www
+      - ogamex-vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     environment:
       CONTAINER_ROLE: reverb
@@ -140,4 +144,6 @@ networks:
 # Volumes
 volumes:
   ogame-dbdata:
+    driver: local
+  ogamex-vendor:
     driver: local

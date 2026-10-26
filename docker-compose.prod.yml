@@ -11,7 +11,7 @@ services:
     # MariaDB port is not exposed to the host machine in production.
     environment:
       MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_ROOT_PASSWORD: vlasksvas5000
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     networks:
@@ -23,6 +23,7 @@ services:
   ogamex-app:
     volumes:
       - ./:/var/www:cached
+      - ogamex-vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     build:
       context: .
@@ -72,6 +73,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/var/www:cached
+      - ogamex-vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     environment:
       CONTAINER_ROLE: scheduler
@@ -89,6 +91,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/var/www:cached
+      - ogamex-vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     environment:
       CONTAINER_ROLE: queue
@@ -106,6 +109,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/var/www:cached
+      - ogamex-vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     environment:
       CONTAINER_ROLE: reverb
@@ -140,4 +144,6 @@ networks:
 # Volumes
 volumes:
   ogame-dbdata:
+    driver: local
+  ogamex-vendor:
     driver: local
