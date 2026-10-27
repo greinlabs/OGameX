@@ -32,6 +32,8 @@ RUN docker-php-ext-install ffi pdo_mysql mbstring zip exif pcntl && \
     docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
     docker-php-ext-install gd
 
+COPY php/local.ini /usr/local/etc/php/conf.d/local.ini
+
 # Enable and configure opcache only if OPCACHE_ENABLE is set to "1"
 ARG OPCACHE_ENABLE=0
 RUN if [ $OPCACHE_ENABLE = "1" ]; then \
@@ -68,6 +70,7 @@ RUN dos2unix /usr/local/bin/entrypoint && \
 ENV PATH="/root/.cargo/bin:${PATH}"
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
     echo 'source $HOME/.cargo/env' >> ~/.bashrc
+RUN chmod +x ./rust/compile.sh && ./rust/compile.sh
 
 # Run entrypoint
 CMD ["/usr/local/bin/entrypoint"]

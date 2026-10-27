@@ -21,101 +21,61 @@ inicialização atual do projeto.
 3. Informe `docker-compose.prod.yml` como arquivo Compose.
 4. Mantenha os serviços `ogamex-db`, `ogamex-app`, `ogamex-webserver`,
    `ogamex-scheduler`, `ogamex-queue-worker` e `ogamex-reverb`.
-5. Não publique o serviço `ogamex-phpmyadmin` na internet. Se não for necessário,
-   remova-o ou desative-o no Compose.
 
-O Compose já cria uma rede interna e um volume nomeado para os dados do MariaDB.
-Não remova nem troque o volume `ogame-dbdata` ao atualizar o jogo: isso apagaria
-o banco persistido. Ele também cria `ogamex-vendor`, compartilhado pelos
-containers PHP para guardar as dependências do Composer fora do bind mount do
-código. Esse volume não contém dados do jogo e pode ser reconstruído se
-necessário.
+O código da aplicação e os arquivos públicos do Nginx são copiados para as
+imagens durante o build; os containers de produção não dependem de bind mounts
+do checkout do Coolify. O Compose cria os volumes nomeados `ogame-dbdata`, para
+os dados do MariaDB, e `ogamex-vendor`, compartilhado pelos containers PHP para
+as dependências do Composer. Não remova nem troque `ogame-dbdata` ao atualizar.
 
-## Ajustes necessários no Compose para o proxy do Coolify
+## Proxy do Coolify
 
-O arquivo atual publica portas diretamente no servidor:
-
-- `ogamex-webserver`: portas 80 e 443.
-- `ogamex-reverb`: porta 8090.
-- `ogamex-phpmyadmin`: porta 8080.
-
-Esses mapeamentos podem competir com o proxy do Coolify e expor serviços sem
-passar pelas regras de domínio e TLS do proxy. Antes de publicar:
-
-1. Remova as entradas `ports` do `ogamex-webserver` e do `ogamex-reverb`.
-2. Remova `ogamex-phpmyadmin` do Compose ou, no mínimo, seu mapeamento `ports`.
-3. Configure os domínios no Coolify apontando para as portas **internas**:
+O Compose não publica portas no host. Configure os domínios no Coolify para
+encaminhar às portas **internas**:
    - Site: serviço `ogamex-webserver`, porta `80`.
    - WebSocket: serviço `ogamex-reverb`, porta `8090`.
-4. Ative HTTPS nos domínios pelo proxy do Coolify. O Nginx do projeto também
-   escuta na porta 443, mas usa um certificado próprio/self-signed; não direcione
-   o proxy do Coolify para essa porta.
-
-O proxy do Coolify deve ser o único componente publicando 80/443 no host. Não
-configure domínio público para MariaDB (`ogamex-db`) nem para PHP-FPM
-(`ogamex-app`).
+Ative HTTPS nos domínios pelo proxy do Coolify. O Nginx do projeto atende
+somente HTTP interno; não configure domínio público para MariaDB (`ogamex-db`)
+nem para PHP-FPM (`ogamex-app`).
 
 ## Variáveis de ambiente
 
-Configure os valores abaixo para a aplicação e disponibilize as variáveis
-Laravel aos serviços `ogamex-app`, `ogamex-scheduler`, `ogamex-queue-worker` e
-`ogamex-reverb`. No Compose atual, as variáveis de ambiente de aplicação não
-estão todas declaradas em `environment`; confirme que o método escolhido no
-Coolify realmente as injeta nos containers, ou forneça o arquivo `.env` no
-caminho que os containers montam como `/var/www/.env`.
+Cadastre no Coolify, como variáveis do Compose:
 
 | Variável | Valor / orientação |
 | --- | --- |
-| `APP_NAME` | `OGameX` |
-| `APP_ENV` | `production` |
 | `APP_KEY` | Chave Laravel forte e persistente. Gere uma vez e mantenha-a entre implantações. |
-| `APP_DEBUG` | `false` |
 | `APP_URL` | URL HTTPS pública do jogo, por exemplo `https://game.exemplo.com` |
-| `DB_CONNECTION` | `mysql` |
-| `DB_HOST` | `ogamex-db` (nome do serviço Compose) |
-| `DB_PORT` | `3306` |
-| `DB_DATABASE` | `laravel`, igual a `MYSQL_DATABASE` no serviço MariaDB |
-| `DB_USERNAME` | `root`, de acordo com o Compose atual; prefira um usuário de aplicação com privilégios restritos se preparar o banco para isso |
-| `DB_PASSWORD` | A mesma senha configurada para MariaDB. Não use a senha padrão `toor`. |
-| `SESSION_DRIVER` | `database` |
-| `CACHE_DRIVER` | `file` |
-| `QUEUE_CONNECTION` | `database` |
-| `BROADCAST_CONNECTION` | `reverb` para habilitar os recursos em tempo real; use `log` se não configurar o Reverb |
+| `DB_ROOT_PASSWORD` | Senha forte do MariaDB. A aplicação usa a mesma senha para conectar como `root`. |
+| `BROADCAST_CONNECTION` | `reverb` para recursos em tempo real; use `log` se não configurar o Reverb. O padrão é `log`. |
 
-Gere `APP_KEY` uma única vez com `php artisan key:generate --show` e armazene o
-resultado como segredo persistente no Coolify e no `.env` efetivamente lido pelos
-containers. Não gere uma chave nova a cada deploy. Use `BROADCAST_CONNECTION` e
-`QUEUE_CONNECTION`: `BROADCAST_DRIVER` e `QUEUE_DRIVER` do
-`.env.example-prod` são nomes antigos e não substituem as variáveis esperadas
-pela configuração Laravel atual.
+`APP_KEY`, `APP_URL` e `DB_ROOT_PASSWORD` são obrigatórias para iniciar o
+Compose. `REVERB_APP_KEY` e `REVERB_APP_SECRET` também são obrigatórias porque
+o serviço Reverb está incluído no Compose; use `BROADCAST_CONNECTION=reverb`
+para ativar o broadcast via WebSocket.
+
+As variáveis Laravel são passadas aos serviços PHP pelo Compose. `APP_ENV`,
+`APP_DEBUG`, banco de dados, cache, sessão e fila já têm valores de produção
+definidos pelo Compose. O entrypoint usa `APP_ENV` e `APP_KEY` do ambiente
+injetado pelo Coolify, sem gerar uma chave nova quando `APP_KEY` está definido.
 
 ### Senha do MariaDB
 
-No Compose atual, `MYSQL_ROOT_PASSWORD` está definido como `toor`. Troque esse
-valor por uma senha forte antes da primeira inicialização e configure o mesmo
-valor em `DB_PASSWORD`. Nunca publique o MariaDB numa porta do host.
+`DB_ROOT_PASSWORD` é obrigatório e usado tanto na inicialização do MariaDB
+quanto na conexão da aplicação. Nunca publique o MariaDB numa porta do host.
 
-O MariaDB só aplica `MYSQL_DATABASE` e `MYSQL_ROOT_PASSWORD` quando inicializa
+O MariaDB só aplica `MARIADB_DATABASE` e `MARIADB_ROOT_PASSWORD` quando inicializa
 um diretório de dados vazio. Se o volume `ogame-dbdata` já tiver sido criado,
 alterar essas variáveis não troca a senha existente; faça a rotação da senha no
-banco e atualize `DB_PASSWORD` de forma coordenada.
+banco e atualize `DB_ROOT_PASSWORD` de forma coordenada.
 
 ### Observação sobre `.env` e inicialização
 
-O `.env` está ignorado pelo Git. O `docker/entrypoint.sh` copia
-`.env.example` para `/var/www/.env` quando o arquivo não existe, verifica
-`APP_ENV` e `APP_KEY` lendo esse arquivo, e executa migrações no início do
-serviço `ogamex-app`. Em produção, também usa esse arquivo para decidir se
-executa `composer install --no-dev` e o cache de configuração.
-
-Use `.env.example-prod` como base para criar o `.env` de produção; o entrypoint
-não lê `.env.example-prod` diretamente. Apenas cadastrar variáveis no painel do
-Coolify pode não ser suficiente para o fluxo de produção: o Compose monta o
-código em `/var/www`, e o script consulta o arquivo `.env` nesse diretório.
-Garanta que o `.env` correto esteja disponível no caminho montado antes da
-inicialização, com as permissões apropriadas e sem adicioná-lo ao Git. Não deixe
-o arquivo ser sobrescrito por `.env.example` com `APP_ENV=local` ou
-`APP_DEBUG=true`.
+O entrypoint ainda cria `.env` a partir de `.env.example` se necessário, mas as
+variáveis de ambiente configuradas no Coolify prevalecem durante a execução.
+O serviço `ogamex-app` executa as migrações no início e usa
+`composer install --no-dev` em produção. A biblioteca Rust é compilada na
+imagem PHP, que é compartilhada pelos serviços PHP via o mesmo Dockerfile.
 
 ## WebSocket e chat em tempo real
 
@@ -149,24 +109,26 @@ roteado para o serviço Reverb, desde que o proxy encaminhe WebSocket à porta 8
   cada minuto.
 - Mantenha `ogamex-queue-worker` ativo para processar tarefas da fila configurada
   em `QUEUE_CONNECTION`.
-- Mantenha `ogamex-reverb` ativo somente se `BROADCAST_CONNECTION=reverb`.
+- O container Reverb é iniciado pelo Compose; configure seu domínio e use
+  `BROADCAST_CONNECTION=reverb` para habilitar o broadcast via WebSocket.
 
-Os serviços de aplicação, fila, scheduler e Reverb são construídos a partir do
-mesmo Dockerfile. Planeje espaço e tempo de build para eles, especialmente no
-primeiro deploy.
+Os serviços PHP, fila, scheduler e Reverb são construídos a partir do mesmo
+Dockerfile; o Nginx usa `Dockerfile.nginx`. Planeje espaço e tempo de build,
+especialmente no primeiro deploy.
 
 ## Persistência, segurança e atualizações
 
 - Preserve o volume `ogame-dbdata` e faça backups regulares do MariaDB antes de
   atualizações.
-- O Compose monta o repositório em `/var/www`; não trate o filesystem efêmero
-  do container como backup. Verifique como o Coolify mantém os arquivos entre
-  implantações, em particular o `.env` gerado e os dados em `storage`.
+- Se estiver migrando de uma versão anterior do Compose, faça backup do banco
+  antes do primeiro deploy desta versão. O volume de dados, antes comentado,
+  agora é ativado; um volume novo começa vazio e não recupera dados que só
+  existiam no filesystem de um container anterior.
+- As imagens contêm o código da versão publicada; dados em `storage` não são
+  persistidos entre recriações dos containers. Configure backups externos se
+  precisar preservar uploads ou outros arquivos gravados pela aplicação.
 - Use `APP_DEBUG=false`, uma `APP_KEY` permanente e segredos fortes. Não publique
   credenciais em logs, no Git ou em documentação.
-- O serviço PhpMyAdmin do Compose de produção publica a porta 8080 por padrão.
-  Mantenha-o desativado ou restrinja o acesso a uma rede privada; não o exponha
-  publicamente sem autenticação e controles de acesso.
 - O `ogamex-app` executa `php artisan migrate --force` ao iniciar. Faça backup
   antes de atualizar e confira os logs se a migração ou a primeira inicialização
   falhar.
@@ -176,8 +138,8 @@ primeiro deploy.
 1. Confirme no Coolify que os serviços de banco, aplicação, Nginx, scheduler e
    fila estão ativos; confira também o Reverb se habilitado.
 2. Abra o domínio HTTPS do jogo e confirme que a página carrega sem erro 502.
-3. Verifique os logs de `ogamex-app` para `composer install`, compilação Rust,
-   migrações e inicialização do PHP-FPM.
+3. Verifique os logs de `ogamex-app` para `composer install`, migrações e
+   inicialização do PHP-FPM. A compilação Rust ocorre durante o build da imagem.
 4. Se habilitou Reverb, confirme no navegador que a conexão WebSocket usa
    `wss://<host-configurado>:443` e que o proxy direciona ao serviço na porta
    interna 8090.

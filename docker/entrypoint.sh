@@ -14,7 +14,8 @@ fi
 
 # Extract environment information
 is_production=false
-if grep -q "^APP_ENV=production" .env; then
+app_env=${APP_ENV:-$(grep -E "^APP_ENV=" .env | cut -d '=' -f2 | tr -d '[:space:]' | tr -d '\r')}
+if [ "$app_env" = "production" ]; then
     is_production=true
 fi
 
@@ -41,17 +42,21 @@ elif [ "$role" = "app" ]; then
     fi
 
     # Generate APP_KEY if not set or empty in the .env file
-    app_key=$(grep -E "^APP_KEY=" .env | cut -d '=' -f2 | tr -d '[:space:]' | tr -d '\r')
+    app_key=${APP_KEY:-$(grep -E "^APP_KEY=" .env | cut -d '=' -f2 | tr -d '[:space:]' | tr -d '\r')}
     if [ -z "$app_key" ]; then
         echo "APP_KEY is empty or not set. Generating a new key..."
         php artisan key:generate --force
-    else
-        echo "APP_KEY is set to: $app_key"
     fi
 
-    # Compile rust modules
-    chmod +x ./rust/compile.sh
-    ./rust/compile.sh
+    if [ "$is_production" = true ]; then
+        if [ ! -f /var/www/storage/rust-libs/libbattle_engine_ffi.so ]; then
+            echo "Error: the Rust battle engine library is missing from the image." >&2
+            exit 1
+        fi
+    else
+        chmod +x ./rust/compile.sh
+        ./rust/compile.sh
+    fi
 
     # Ensure storage directory has correct ownership for www-data
     chown -R www-data:www-data /var/www/storage
