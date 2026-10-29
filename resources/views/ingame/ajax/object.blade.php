@@ -271,11 +271,6 @@
                         </span>
                     </button>
                 </div>
-                <!--
-                <a class="build-it_premium" href="javascript:void(0);" data-title="" data-url="#TODO_page=premium&amp;openDetail=2" data-question="You need a Commander to be able to use the building queue. Would you like to learn more about the advantages of a Commander?">
-                    <span class="tooltip tpd-hideOnClickOutside" title="">Hire Commander</span>
-                </a>
-                -->
             </div>
 
         </div>
@@ -369,12 +364,6 @@
         initOverlays();
     });
 
-    $(".build-it_disabled:not(.isWorking)")
-        .click(function () {
-            errorBoxDecision(@json(__('t_ingame.ajax_object.error')), @json(__('t_ingame.ajax_object.commander_queue_info')), @json(__('t_ingame.shared.yes')), @json(__('t_ingame.shared.no')), function () {
-                window.location.href = '{{ route('premium.index', ['openDetail' => 2]) }}'
-            });
-        });
 
     var loca = loca || {};
     loca = $.extend({},

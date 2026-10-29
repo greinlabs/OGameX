@@ -318,7 +318,6 @@
                     <script type="text/javascript">
                         var scheduleBuildListEntryUrl = '#TODOpage=componentOnly&component=buildlistactions&action=scheduleEntry&asJson=1';
                         var LOCA_ERROR_INQUIRY_NOT_WORKED_TRYAGAIN = 'Your last action could not be processed. Please try again.';
-                        redirectPremiumLink = '#TODOpage=premium&showDarkMatter=1'
                     </script>
                 </div>
             </div>-->
@@ -363,7 +362,6 @@
                 <script type="text/javascript">
                     var scheduleBuildListEntryUrl = '#TODOpage=componentOnly&component=buildlistactions&action=scheduleEntry&asJson=1';
                     var LOCA_ERROR_INQUIRY_NOT_WORKED_TRYAGAIN = 'Your last action could not be processed. Please try again.';
-                    redirectPremiumLink = '#TODOpage=premium&showDarkMatter=1'
                 </script>
             </div>
 

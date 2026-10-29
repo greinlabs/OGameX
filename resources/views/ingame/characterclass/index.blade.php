@@ -37,9 +37,9 @@
                                                     <span>Buy for<br>{{ number_format($changeCost, 0, ',', '.') }} DM</span>
                                                 </a>
                                             @else
-                                                <a class="build-it_disabled nodarkmatter" href="/premium">
+                                                <span class="build-it_disabled nodarkmatter">
                                                     <span>Buy for<br>{{ number_format($changeCost, 0, ',', '.') }} DM</span>
-                                                </a>
+                                                </span>
                                             @endif
                                         @endif
                                     </div>
@@ -101,15 +101,6 @@
                                 location.reload();
                             }, 1000);
                         } else if (data.lackingDM) {
-                            errorBoxDecision(
-                                'Not enough Dark Matter',
-                                'Not enough Dark Matter available! Do you want to buy some now?',
-                                'Buy Dark Matter',
-                                'Cancel',
-                                function() {
-                                    window.location.href = '/premium';
-                                }
-                            );
                         } else {
                             fadeBox(data.message, true);
                         }
