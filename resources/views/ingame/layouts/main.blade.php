@@ -193,7 +193,6 @@
                 <div class="resource_tile metal">
                     <div id="metal_box" class="metal tooltipHTML resource ipiHintable tpd-hideOnClickOutside"
                          title="{{ __('t_ingame.layout.res_metal') }}|<table class=&quot;resourceTooltip&quot;><tr><th>{{ __('t_ingame.layout.res_available') }}:</th><td><span class=&quot;&quot;>{!! $resources['metal']['amount_formatted'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_storage_capacity') }}</th><td><span class=&quot;&quot;>{!! $resources['metal']['storage_formatted'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_current_production') }}:</th><td><span class=&quot;undermark&quot;>+{!! $resources['metal']['production_hour'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_den_capacity') }}:</th><td><span class=&quot;middlemark&quot;>0</span></td></tr></table>"
-                         data-shop-url="#TODO_shop#category=d8d49c315fa620d9c7f1f19963970dea59a0e3be&amp;item=859d82d316b83848f7365d21949b3e1e63c7841f&amp;page=shop&amp;panel1-1="
                          data-ipi-hint="ipiResourcemetal">
                         <div class="resourceIcon metal"></div>
                         <span class="value">
@@ -206,7 +205,6 @@
                 <div class="resource_tile crystal">
                     <div id="crystal_box" class="crystal tooltipHTML resource ipiHintable tpd-hideOnClickOutside"
                          title="{{ __('t_ingame.layout.res_crystal') }}|<table class=&quot;resourceTooltip&quot;><tr><th>{{ __('t_ingame.layout.res_available') }}:</th><td><span class=&quot;&quot;>{!! $resources['crystal']['amount_formatted'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_storage_capacity') }}</th><td><span class=&quot;&quot;>{!! $resources['crystal']['storage_formatted'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_current_production') }}:</th><td><span class=&quot;undermark&quot;>+{!! $resources['crystal']['production_hour'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_den_capacity') }}:</th><td><span class=&quot;middlemark&quot;>0</span></td></tr></table>"
-                         data-shop-url="#TODO_shop#category=d8d49c315fa620d9c7f1f19963970dea59a0e3be&amp;item=859d82d316b83848f7365d21949b3e1e63c7841f&amp;page=shop&amp;panel1-1="
                          data-ipi-hint="ipiResourcecrystal">
                         <div class="resourceIcon crystal"></div>
                         <span class="value">
@@ -219,7 +217,6 @@
                 <div class="resource_tile deuterium">
                     <div id="deuterium_box" class="deuterium tooltipHTML resource ipiHintable tpd-hideOnClickOutside"
                          title="{{ __('t_ingame.layout.res_deuterium') }}|<table class=&quot;resourceTooltip&quot;><tr><th>{{ __('t_ingame.layout.res_available') }}:</th><td><span class=&quot;&quot;>{!! $resources['deuterium']['amount_formatted'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_storage_capacity') }}</th><td><span class=&quot;&quot;>{!! $resources['deuterium']['storage_formatted'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_current_production') }}:</th><td><span class=&quot;undermark&quot;>+{!! $resources['deuterium']['production_hour'] !!}</span></td></tr><tr><th>{{ __('t_ingame.layout.res_den_capacity') }}:</th><td><span class=&quot;middlemark&quot;>0</span></td></tr></table>"
-                         data-shop-url="#TODO_shop#category=d8d49c315fa620d9c7f1f19963970dea59a0e3be&amp;item=859d82d316b83848f7365d21949b3e1e63c7841f&amp;page=shop&amp;panel1-1="
                          data-ipi-hint="ipiResourcedeuterium">
                         <div class="resourceIcon deuterium"></div>
                         <span class="value">
@@ -265,10 +262,10 @@
                     <div id="darkmatter_box" class="darkmatter tooltipHTML resource ipiHintable tpd-hideOnClickOutside"
                          title="{{ __('t_ingame.layout.res_dark_matter') }}|<table class=&quot;resourceTooltip&quot;><tr><th>{{ __('t_ingame.layout.res_available') }}:</th><td><span class=&quot;&quot;>{!! $resources['darkmatter']['amount_formatted'] !!}</span></td></tr></table>"
                          data-tooltip-button="{{ __('t_ingame.layout.res_purchase_dm') }}" data-ipi-hint="ipiResourcedarkmatter">
-                        <a href="#TODO_page=payment" class="overlay">
+                        <span class="overlay">
                             <img src="/img/icons/401d1a91ff40dc7c8acfa4377d3d65.gif">
                             <div class="resourceIcon darkmatter"></div>
-                        </a>
+                        </span>
                         <span class="value">
                         <span id="resources_darkmatter" data-raw="{!! $resources['darkmatter']['amount'] !!}" class="overlay">{!! $resources['darkmatter']['amount_formatted'] !!}</span>
                     </span>
@@ -302,28 +299,6 @@
                    title="{{ $classTitle }}|@if($classBonuses){{ implode('<br>', $classBonuses) }}@else {{ __('t_ingame.layout.class_click_select') }}@endif"
                    data-ipi-hint="ipiCharacterclassSettings">
                     <div class="sprite characterclass medium {{ $classIcon }}"></div>
-                </a>
-            </div>
-            <div id="officers" class="  fright">
-                <a href="#TODO_=premium&amp;openDetail=2" class="tooltipHTML   commander js_hideTipOnMobile "
-                   title="{!! __('t_ingame.premium.hire_commander_tooltip') !!}">
-                    <img src="/img/layout/pixel.gif" width="30" height="30">
-                </a>
-                <a href="#TODO_page=premium&amp;openDetail=3" class="tooltipHTML    admiral js_hideTipOnMobile "
-                   title="{!! __('t_ingame.premium.hire_admiral_tooltip') !!}">
-                    <img src="/img/layout/pixel.gif" width="30" height="30">
-                </a>
-                <a href="#TODO_page=premium&amp;openDetail=4" class="tooltipHTML    engineer js_hideTipOnMobile "
-                   title="{!! __('t_ingame.premium.hire_engineer_tooltip') !!}">
-                    <img src="/img/layout/pixel.gif" width="30" height="30">
-                </a>
-                <a href="#TODO_page=premium&amp;openDetail=5" class="tooltipHTML    geologist js_hideTipOnMobile "
-                   title="{!! __('t_ingame.premium.hire_geologist_tooltip') !!}">
-                    <img src="/img/layout/pixel.gif" width="30" height="30">
-                </a>
-                <a href="#TODO_page=premium&amp;openDetail=6" class="tooltipHTML    technocrat js_hideTipOnMobile "
-                   title="{!! __('t_ingame.premium.hire_technocrat_tooltip') !!}">
-                    <img src="/img/layout/pixel.gif" width="30" height="30">
                 </a>
             </div>
         </div>
@@ -677,36 +652,6 @@
                         </a>
                     </li>
 
-                    <li>
-                        <span class="menu_icon">
-                            <div class="menuImage premium {{(Request::is('premium') ? 'highlighted' : '') }}"></div>
-                        </span>
-                        <a class="menubutton premiumHighligt officers {{(Request::is('premium') ? 'selected' : '') }}"
-                           href="{{ route('premium.index') }}"
-                           accesskey=""
-                           target="_self"
-                        >
-                            <span class="textlabel">{{ __('t_ingame.layout.menu_officers') }}</span>
-                        </a>
-                    </li>
-                    <li>
-                        <span class="menu_icon">
-                            <a href="{{ route('shop.index') }}#page=inventory"
-                               class="tooltipRight js_hideTipOnMobile "
-                               target="_self"
-                               title="{{ __('t_ingame.layout.menu_inventory_title') }}">
-                                <div class="menuImage shop {{(Request::is('shop') ? 'highlighted' : '') }}">
-                                </div>
-                            </a>
-                        </span>
-                        <a class="menubutton premiumHighligt {{(Request::is('shop') ? 'selected' : '') }}"
-                           href="{{ route('shop.index') }}"
-                           accesskey=""
-                           target="_self"
-                        >
-                            <span class="textlabel">{{ __('t_ingame.layout.menu_shop') }}</span>
-                        </a>
-                    </li>
                 </ul>
 
                 @if ($attackBlockActive)
@@ -788,9 +733,6 @@
                 var vacation = 0;
                 var timerHandler = new TimerHandler();
 
-                function redirectPremium() {
-                    location.href = "{{ route('premium.index', ['showDarkMatter' => 1]) }}#TODO_premium&showDarkMatter=1";
-                }
 
                 var playerId = "{{ $currentPlayer->getId() }}";
                 var playerName = "{{ $currentPlayer->getUsername(false) }}";
@@ -1391,7 +1333,6 @@ However, the Space Dock's engineers think that some of the remains can be salvag
                             "production": {!! $resources['metal']['production_second'] !!},
                             "tooltip": "{{ __('t_ingame.layout.res_metal') }}|<table class=\"resourceTooltip\"><tr><th>{{ __('t_ingame.layout.res_available') }}:<\/th><td><span class=\"\">{!! $resources['metal']['amount_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_storage_capacity') }}<\/th><td><span class=\"\">{!! $resources['metal']['storage_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_current_production') }}:<\/th><td><span class=\"@if ($resources['metal']['production_hour'] <= 0) overmark @else undermark @endif\">@if ($resources['metal']['production_hour'] > 0)+@endif{!! $resources['metal']['production_hour_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_den_capacity') }}:<\/th><td><span class=\"overermark\">0<\/span><\/td><\/tr><\/table>",
                             "classesListItem": "",
-                            "shopUrl": "#TODO_category=d8d49c315fa620d9c7f1f19963970dea59a0e3be&item=859d82d316b83848f7365d21949b3e1e63c7841f&page=shop&panel1-1="
                         },
                         "crystal": {
                             "amount": {!! $resources['crystal']['amount'] !!},
@@ -1400,7 +1341,6 @@ However, the Space Dock's engineers think that some of the remains can be salvag
                             "production": {!! $resources['crystal']['production_second'] !!},
                             "tooltip": "{{ __('t_ingame.layout.res_crystal') }}|<table class=\"resourceTooltip\"><tr><th>{{ __('t_ingame.layout.res_available') }}:<\/th><td><span class=\"\">{!! $resources['crystal']['amount_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_storage_capacity') }}<\/th><td><span class=\"\">{!! $resources['crystal']['storage_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_current_production') }}:<\/th><td><span class=\"@if ($resources['crystal']['production_hour'] <= 0) overmark @else undermark @endif\">@if ($resources['crystal']['production_hour'] > 0)+@endif{!! $resources['crystal']['production_hour_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_den_capacity') }}:<\/th><td><span class=\"overermark\">0<\/span><\/td><\/tr><\/table>",
                             "classesListItem": "",
-                            "shopUrl": "#TODO_page=shop#category=d8d49c315fa620d9c7f1f19963970dea59a0e3be&item=bb2f6843226ef598f0b567b92c51b283de90aa48&page=shop&panel1-1="
                         },
                         "deuterium": {
                             "amount": {!! $resources['deuterium']['amount'] !!},
@@ -1409,7 +1349,6 @@ However, the Space Dock's engineers think that some of the remains can be salvag
                             "production": {!! $resources['deuterium']['production_second'] !!},
                             "tooltip": "{{ __('t_ingame.layout.res_deuterium') }}|<table class=\"resourceTooltip\"><tr><th>{{ __('t_ingame.layout.res_available') }}:<\/th><td><span class=\"\">{!! $resources['deuterium']['amount_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_storage_capacity') }}<\/th><td><span class=\"\">{!! $resources['deuterium']['storage_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_current_production') }}:<\/th><td><span class=\"@if ($resources['deuterium']['production_hour'] <= 0) overmark @else undermark @endif\">@if ($resources['deuterium']['production_hour'] > 0)+@endif{!! $resources['deuterium']['production_hour_formatted'] !!}<\/span><\/td><\/tr><tr><th>{{ __('t_ingame.layout.res_den_capacity') }}:<\/th><td><span class=\"overermark\">0<\/span><\/td><\/tr><\/table>",
                             "classesListItem": "",
-                            "shopUrl": "#TODO_shop#category=d8d49c315fa620d9c7f1f19963970dea59a0e3be&item=cb72ed207dd871832a850ee29f1c1f83aa3f4f36&page=shop&panel1-1="
                         },
                         "energy": {
                             "amount": {!! $resources['energy']['amount'] !!},
@@ -1420,8 +1359,7 @@ However, the Space Dock's engineers think that some of the remains can be salvag
                             "amount": {!! $resources['darkmatter']['amount'] !!},
                             "tooltip": "{{ __('t_ingame.layout.res_dark_matter') }}|<table class=\"resourceTooltip\"><tr><th>{{ __('t_ingame.layout.res_available') }}:<\/th><td><span class=\"\">{!! $resources['darkmatter']['amount_formatted'] !!}<\/span><\/td><\/tr><\/table>",
                             "classesListItem": "",
-                            "classes": "overlay",
-                            "link": "#TODO_page=payment",
+                            "classes": "",
                             "img": "/img/icons/401d1a91ff40dc7c8acfa4377d3d65.gif"
                         }
                     },
@@ -1853,15 +1791,6 @@ However, the Space Dock's engineers think that some of the remains can be salvag
                             @endforeach
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div id="bannerSkyscrapercomponent" class="">
-            <div id="banner_skyscraper" class="desktop" name="banner_skyscraper">
-                <div style="position: relative;">
-                    <a class="tooltipLeft " title="" href="#TODO=shop">
-                        <img src="/img/banners/de0dadddb0285ba78b026ce18fc898.jpg" alt="">
-                    </a>
                 </div>
             </div>
         </div>
