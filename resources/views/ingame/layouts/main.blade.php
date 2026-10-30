@@ -124,6 +124,78 @@
                 clearInterval(s);
             }
         }, 1);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var menuButton = document.getElementById('mobileMenuButton');
+            var menuClose = document.getElementById('mobileMenuClose');
+            var menuDrawer = document.getElementById('mobileMenuDrawer');
+            var menuBackdrop = document.getElementById('mobileMenuBackdrop');
+            var bottomMenuButton = document.querySelector('[data-mobile-menu-open]');
+            var previousFocus = null;
+            var previousOverflow = '';
+
+            if (!menuButton || !menuClose || !menuDrawer || !menuBackdrop) {
+                return;
+            }
+
+            function openMenu() {
+                previousFocus = document.activeElement;
+                previousOverflow = document.body.style.overflow;
+                menuDrawer.classList.add('open');
+                menuBackdrop.classList.add('open');
+                menuDrawer.setAttribute('aria-hidden', 'false');
+                menuBackdrop.setAttribute('aria-hidden', 'false');
+                menuButton.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+                menuClose.focus();
+            }
+
+            function closeMenu(options) {
+                menuDrawer.classList.remove('open');
+                menuBackdrop.classList.remove('open');
+                menuDrawer.setAttribute('aria-hidden', 'true');
+                menuBackdrop.setAttribute('aria-hidden', 'true');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = previousOverflow;
+
+                if (!options || options.restoreFocus !== false) {
+                    if (previousFocus && typeof previousFocus.focus === 'function') {
+                        previousFocus.focus();
+                    }
+                }
+            }
+
+            menuButton.addEventListener('click', openMenu);
+            if (bottomMenuButton) {
+                bottomMenuButton.addEventListener('click', openMenu);
+            }
+            menuClose.addEventListener('click', function () {
+                closeMenu();
+            });
+            menuBackdrop.addEventListener('click', function () {
+                closeMenu();
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && menuDrawer.classList.contains('open')) {
+                    closeMenu();
+                }
+            });
+
+            menuDrawer.querySelectorAll('a, button, form button').forEach(function (element) {
+                element.addEventListener('click', function () {
+                    if (!element.closest('form')) {
+                        closeMenu({restoreFocus: false});
+                    }
+                });
+            });
+
+            window.addEventListener('resize', function () {
+                if (!window.matchMedia('(max-width: 767px)').matches && menuDrawer.classList.contains('open')) {
+                    closeMenu({restoreFocus: false});
+                }
+            });
+        });
     </script>
 
     <!-- Removed all custom close button CSS to restore normal jQuery UI behavior -->
@@ -141,6 +213,68 @@
     @include ('ingame.layouts.admin-menu', ['currentPlayer' => $currentPlayer, 'isImpersonating' => $isImpersonating ?? false, 'impersonateLeaveUrl' => $impersonateLeaveUrl ?? null])
 @endif
 <div id="siteHeader"></div>
+<div id="mobileShell" class="mobileShell" aria-label="{{ __('t_ingame.layout.navigation') }}">
+    <button type="button" id="mobileMenuButton" class="mobileMenuButton" aria-controls="mobileMenuDrawer" aria-expanded="false">
+        <span></span><span></span><span></span>
+        <span class="mobileMenuLabel">{{ __('t_ingame.layout.menu') }}</span>
+    </button>
+    <a class="mobileShellOverview" href="{{ route('overview.index') }}">
+        {{ $currentPlanet->getPlanetName() }}
+    </a>
+    <a class="mobileShellMessages" href="{{ route('messages.index') }}" aria-label="{{ __('t_ingame.layout.messages') }}">
+        @if ($unreadMessagesCount > 0)
+            <span class="mobileUnreadCount">{{ $unreadMessagesCount }}</span>
+        @endif
+    </a>
+</div>
+<nav id="mobilePlanetBar" class="mobilePlanetBar" aria-label="{{ __('t_ingame.layout.planets') }}">
+    @foreach ($planets->allPlanets() as $planet)
+        @php
+            $mobilePlanetParams = request()->query();
+            $mobilePlanetParams['cp'] = $planet->getPlanetId();
+            $mobilePlanetUrl = request()->url() . '?' . http_build_query($mobilePlanetParams);
+        @endphp
+        <a href="{{ $mobilePlanetUrl }}" class="{{ $planet->getPlanetId() === $currentPlanet->getPlanetId() ? 'active' : '' }}">
+            <span class="mobilePlanetName">{{ $planet->getPlanetName() }}</span>
+            <span>[{{ $planet->getPlanetCoordinates()->asString() }}]</span>
+        </a>
+    @endforeach
+</nav>
+<div id="mobileMenuBackdrop" class="mobileMenuBackdrop" aria-hidden="true"></div>
+<aside id="mobileMenuDrawer" class="mobileMenuDrawer" aria-hidden="true" aria-label="{{ __('t_ingame.layout.menu') }}">
+    <div class="mobileDrawerHeader">
+        <strong>{!! $currentPlayer->getUsername() !!}</strong>
+        <button type="button" id="mobileMenuClose" class="mobileMenuClose" aria-label="{{ __('t_ingame.layout.close') }}">×</button>
+    </div>
+    <nav class="mobileDrawerLinks">
+        <a href="{{ route('overview.index') }}">{{ __('t_ingame.layout.menu_overview') }}</a>
+        <a href="{{ route('resources.index') }}">{{ __('t_ingame.layout.menu_resources') }}</a>
+        <a href="{{ route('facilities.index') }}">{{ __('t_ingame.layout.menu_facilities') }}</a>
+        <a href="{{ route('research.index') }}">{{ __('t_ingame.layout.menu_research') }}</a>
+        <a href="{{ route('shipyard.index') }}">{{ __('t_ingame.layout.menu_shipyard') }}</a>
+        <a href="{{ route('defense.index') }}">{{ __('t_ingame.layout.menu_defense') }}</a>
+        <a href="{{ route('fleet.index') }}">{{ __('t_ingame.layout.menu_fleet') }}</a>
+        <a href="{{ route('galaxy.index') }}">{{ __('t_ingame.layout.menu_galaxy') }}</a>
+        <a href="{{ route('alliance.index') }}">{{ __('t_ingame.layout.menu_alliance') }}</a>
+        <a href="{{ route('messages.index') }}">{{ __('t_ingame.layout.messages') }}</a>
+        <a href="{{ route('highscore.index') }}">{{ __('t_ingame.layout.highscore') }}</a>
+        <a href="{{ route('options.index') }}">{{ __('t_ingame.layout.options') }}</a>
+        @if ($currentPlayer->isAdmin())
+            <a href="{{ route('admin.serversettings.index') }}">{{ __('t_ingame.layout.admin') }}</a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST">
+            {{ csrf_field() }}
+            <button type="submit">{{ __('t_ingame.layout.log_out') }}</button>
+        </form>
+    </nav>
+</aside>
+<nav class="mobileBottomNav" aria-label="{{ __('t_ingame.layout.menu') }}">
+    <a href="{{ route('overview.index') }}" class="{{ Request::is('overview') ? 'active' : '' }}">{{ __('t_ingame.layout.menu_overview') }}</a>
+    <a href="{{ route('fleet.index') }}" class="{{ Request::is('fleet*') ? 'active' : '' }}">{{ __('t_ingame.layout.menu_fleet') }}</a>
+    <a href="{{ route('galaxy.index') }}" class="{{ Request::is('galaxy') ? 'active' : '' }}">{{ __('t_ingame.layout.menu_galaxy') }}</a>
+    <a href="{{ route('messages.index') }}" class="{{ Request::is('messages*') ? 'active' : '' }}">{{ __('t_ingame.layout.messages') }}</a>
+    <button type="button" data-mobile-menu-open>{{ __('t_ingame.layout.menu') }}</button>
+</nav>
 <div id="pageContent">
     <div id="top">
         <div id="pageReloader" onclick="javascript: redirectOverview();"></div>

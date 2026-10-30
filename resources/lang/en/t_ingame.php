@@ -1194,6 +1194,11 @@ return [
         'res_dark_matter'           => 'Dark Matter',
 
         // Menu sidebar — item labels
+        'navigation'                => 'Navigation',
+        'menu'                      => 'Menu',
+        'messages'                  => 'Messages',
+        'admin'                     => 'Administration',
+        'close'                     => 'Close',
         'menu_overview'             => 'Overview',
         'menu_resources'            => 'Resources',
         'menu_facilities'           => 'Facilities',
