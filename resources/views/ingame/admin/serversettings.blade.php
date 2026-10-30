@@ -447,6 +447,56 @@
                             </div>
                         </div>
 
+                        <p class="box_highlight textCenter no_buddies">{{ __('t_ingame.admin.section_bots') }}</p>
+
+                        <div class="group bborder" style="display: block;">
+                            <div class="fieldwrapper">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_spawn_enabled') }}</label>
+                                <div class="thefield">
+                                    <square-checkbox class="square-checkbox">
+                                        <input type="checkbox" id="square-checkBotSpawnEnabled" name="bot_spawn_enabled" value="1" {{ $bot_spawn_enabled ? 'checked' : '' }}>
+                                        <label for="square-checkBotSpawnEnabled"></label>
+                                    </square-checkbox>
+                                </div>
+                            </div>
+                            <div class="fieldwrapper">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_spawn_interval') }}</label>
+                                <div class="thefield">
+                                    <input type="number" min="60" class="textInput w130 textCenter textBeefy" name="bot_spawn_interval" value="{{ $bot_spawn_interval }}">
+                                </div>
+                            </div>
+                            <div class="fieldwrapper">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_max_count') }}</label>
+                                <div class="thefield">
+                                    <input type="number" min="0" class="textInput w130 textCenter textBeefy" name="bot_max_count" value="{{ $bot_max_count }}">
+                                </div>
+                            </div>
+                            <div class="fieldwrapper">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_inactive_days') }}</label>
+                                <div class="thefield">
+                                    <input type="number" min="1" class="textInput w130 textCenter textBeefy" name="bot_inactive_days" value="{{ $bot_inactive_days }}">
+                                </div>
+                            </div>
+                            <div class="fieldwrapper">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_attack_chance') }}</label>
+                                <div class="thefield">
+                                    <input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_attack_chance" value="{{ $bot_attack_chance }}">
+                                </div>
+                            </div>
+                            <div class="fieldwrapper">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_level_min') }}</label>
+                                <div class="thefield">
+                                    <input type="number" min="0" class="textInput w130 textCenter textBeefy" name="bot_level_min" value="{{ $bot_level_min }}">
+                                </div>
+                            </div>
+                            <div class="fieldwrapper" style="margin-bottom: 50px;">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_level_max') }}</label>
+                                <div class="thefield">
+                                    <input type="number" min="1" class="textInput w130 textCenter textBeefy" name="bot_level_max" value="{{ $bot_level_max }}">
+                                </div>
+                            </div>
+                        </div>
+
                         <p class="box_highlight textCenter no_buddies">{{ __('t_ingame.admin.section_galaxy') }}</p>
 
                         <div class="group bborder" style="display: block;">
@@ -489,6 +539,10 @@
                         </div>
                     </div>
                 </div>
+            </form>
+            <form method="POST" action="{{ route('admin.serversettings.run-bot-action') }}" style="margin-top: 10px; text-align: center;">
+                @csrf
+                <input type="submit" class="btn_blue" value="{{ __('t_ingame.admin.bot_run_action') }}">
             </form>
         </div>
         <script language="javascript">

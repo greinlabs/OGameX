@@ -254,6 +254,7 @@ Route::middleware(['auth', 'globalgame', 'locale', 'admin'])->group(function () 
     // Server settings
     Route::get('/admin/server-settings', [AdminServerSettingsController::class, 'index'])->name('admin.serversettings.index');
     Route::post('/admin/server-settings', [AdminServerSettingsController::class, 'update'])->name('admin.serversettings.update');
+    Route::post('/admin/server-settings/run-bot-action', [AdminServerSettingsController::class, 'runBotAction'])->name('admin.serversettings.run-bot-action');
 
     // Rules
     Route::get('/admin/rules', [AdminRulesController::class, 'index'])->name('admin.rules.index');
