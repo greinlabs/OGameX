@@ -521,7 +521,8 @@ ogame.messages = {
                 },
                 success: function (d) {
                     if (d.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -538,7 +539,9 @@ ogame.messages = {
                 data: {messageId: a, action: 103, ajax: 1},
                 success: function (c) {
                     if (c[a] == true) {
-                        location.reload()
+                        $(".detail_msg[data-msg-id=" + a + "]").closest(".ui-dialog").remove();
+                        $("li.msg[data-msg-id=" + a + "]").remove();
+                        $(".overlayDiv[data-msg-id=" + a + "]").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -581,7 +584,8 @@ ogame.messages = {
                 },
                 success: function (d) {
                     if (d.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -620,7 +624,8 @@ ogame.messages = {
                 },
                 success: function (c) {
                     if (c.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
