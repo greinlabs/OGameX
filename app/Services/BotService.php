@@ -3,6 +3,8 @@
 namespace OGame\Services;
 
 use Exception;
+use Throwable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use OGame\Factories\PlanetServiceFactory;
@@ -48,8 +50,9 @@ class BotService
                 $this->spawnBot();
                 $result['spawned']++;
                 $this->settingsService->set('bot_last_spawn_at', time());
-            } catch (Exception $e) {
-                $result['errors'][] = $e->getMessage();
+            } catch (Throwable $e) {
+                Log::error('Scheduled bot spawn failed', ['exception' => $e]);
+                $result['errors'][] = 'Bot spawn failed.';
             }
         }
 
@@ -60,8 +63,9 @@ class BotService
                     if ($this->makeBotAttack($bot) !== null) {
                         $result['attacks']++;
                     }
-                } catch (Exception $e) {
-                    $result['errors'][] = $e->getMessage();
+                } catch (Throwable $e) {
+                    Log::error('Scheduled bot attack failed', ['bot_id' => $bot->id, 'exception' => $e]);
+                    $result['errors'][] = 'Bot attack failed.';
                 }
             }
         }
@@ -154,7 +158,11 @@ class BotService
             ->limit(100)
             ->get() as $candidate) {
             $targetUser = User::find($candidate->user_id);
-            if ($targetUser !== null && !(bool)$targetUser->vacation_mode && $targetUser->username !== 'Legor') {
+            if (
+                $targetUser !== null
+                && !(bool)$targetUser->vacation_mode
+                && !$targetUser->hasRole('0admin0')
+            ) {
                 $target = $candidate;
                 break;
             }
@@ -198,6 +206,9 @@ class BotService
 
     public function cleanupInactiveBots(): int
     {
+        // Bots are intentionally retained in this non-destructive cleanup so game
+        // references and historical fleet data remain intact. Inactive bots are
+        // detached from planets and put into vacation mode for later retention cleanup.
         $days = max(1, (int)$this->settingsService->get('bot_inactive_days', 90));
         $bots = User::where('is_bot', true)
             ->where(function ($query) use ($days) {

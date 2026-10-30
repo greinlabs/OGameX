@@ -10,7 +10,7 @@ class BotActivity extends GameMessage
     {
         $this->key = 'bot_activity';
         $this->params = ['bot_name', 'coordinates', 'action'];
-        $this->tab = 'economy';
-        $this->subtab = 'economy';
+        $this->tab = 'communication';
+        $this->subtab = 'information';
     }
 }
