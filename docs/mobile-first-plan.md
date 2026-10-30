@@ -4,6 +4,7 @@
 
 - Fase 1 concluida.
 - Fase 2 concluida.
+- Fase 3 concluida.
 - Viewport foi adicionado aos layouts in-game e out-game.
 - Foi criada uma camada CSS mobile separada e progressiva.
 - A classe `is-mobile` detecta telas abaixo de 768 px sem alterar o layout desktop.
@@ -378,12 +379,12 @@ Critério de conclusao: navegacao principal, recursos, planetas, mensagens e log
 
 ### Fase 3: Telas de alto uso
 
-1. Overview.
-2. Galaxy.
-3. Fleet.
-4. Messages.
-5. Buildings.
-6. Research.
+1. Overview adaptado com dados do planeta, opcoes e filas fluidas.
+2. Galaxy com controles compactos e tabela com scroll horizontal controlado.
+3. Fleet e templates com formularios, selecao de naves e tabelas fluidas.
+4. Messages com abas horizontais e conteudo tabular rolavel.
+5. Buildings, research, shipyard e defense com grades responsivas de tecnologias.
+6. Preserve desktop rules outside mobile media queries.
 
 Critério de conclusao: todas as acoes principais podem ser executadas sem zoom.
 
