@@ -3,12 +3,15 @@
 namespace OGame\Http\Controllers\Admin;
 
 use Cache;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use OGame\Enums\HighscoreTypeEnum;
 use OGame\Http\Controllers\OGameController;
 use OGame\Services\PlayerService;
 use OGame\Services\SettingsService;
+use OGame\Services\BotService;
 
 class ServerSettingsController extends OGameController
 {
@@ -73,6 +76,13 @@ class ServerSettingsController extends OGameController
             'expedition_weight_items' => $settingsService->expeditionWeightItems(),
             'hamill_probability' => $settingsService->hamillManoeuvreChance(),
             'highscore_admin_visible' => $settingsService->highscoreAdminVisible(),
+            'bot_spawn_enabled' => (bool)(int)$settingsService->get('bot_spawn_enabled', 0),
+            'bot_spawn_interval' => (int)$settingsService->get('bot_spawn_interval', 86400),
+            'bot_max_count' => (int)$settingsService->get('bot_max_count', 20),
+            'bot_inactive_days' => (int)$settingsService->get('bot_inactive_days', 90),
+            'bot_attack_chance' => (int)$settingsService->get('bot_attack_chance', 75),
+            'bot_level_min' => (int)$settingsService->get('bot_level_min', 3),
+            'bot_level_max' => (int)$settingsService->get('bot_level_max', 25),
         ]);
     }
 
@@ -84,6 +94,15 @@ class ServerSettingsController extends OGameController
      */
     public function update(SettingsService $settingsService): RedirectResponse
     {
+        $this->validate(request(), [
+            'bot_spawn_interval' => ['required', 'integer', 'min:60', 'max:31536000'],
+            'bot_max_count' => ['required', 'integer', 'min:0', 'max:1000'],
+            'bot_inactive_days' => ['required', 'integer', 'min:1', 'max:3650'],
+            'bot_attack_chance' => ['required', 'integer', 'min:0', 'max:100'],
+            'bot_level_min' => ['required', 'integer', 'min:0', 'max:100'],
+            'bot_level_max' => ['required', 'integer', 'min:1', 'max:100', 'gte:bot_level_min'],
+        ]);
+
         $settingsService->set('fleet_speed_war', request('fleet_speed_war'));
         $settingsService->set('fleet_speed_holding', request('fleet_speed_holding'));
         $settingsService->set('fleet_speed_peaceful', request('fleet_speed_peaceful'));
@@ -143,11 +162,46 @@ class ServerSettingsController extends OGameController
         $settingsService->set('hamill_manoeuvre_chance', max(1, (int)request('hamill_probability', 1000)));
 
         $settingsService->set('highscore_admin_visible', request('highscore_admin_visible', 0));
+        $settingsService->set('bot_spawn_enabled', request('bot_spawn_enabled', 0));
+        $settingsService->set('bot_spawn_interval', max(60, (int)request('bot_spawn_interval', 86400)));
+        $settingsService->set('bot_max_count', max(0, (int)request('bot_max_count', 20)));
+        $settingsService->set('bot_inactive_days', max(1, (int)request('bot_inactive_days', 90)));
+        $settingsService->set('bot_attack_chance', min(100, max(0, (int)request('bot_attack_chance', 75))));
+        $settingsService->set('bot_level_min', max(0, (int)request('bot_level_min', 3)));
+        $settingsService->set('bot_level_max', max(1, (int)request('bot_level_max', 25)));
 
         // Clear highscore cache when admin visibility setting changes
         $this->clearHighscoreCache();
 
         return redirect()->route('admin.serversettings.index')->with('success', __('Changes saved!'));
+    }
+
+    public function runBotAction(BotService $botService): RedirectResponse
+    {
+        try {
+            $result = $botService->runScheduledCycle();
+            if ($result['errors'] !== []) {
+                Log::error('Bot action completed with errors', ['errors' => $result['errors']]);
+                return redirect()->route('admin.serversettings.index')->with(
+                    'error',
+                    __('t_ingame.admin.bot_action_error')
+                );
+            }
+
+            return redirect()->route('admin.serversettings.index')->with(
+                'success',
+                __('t_ingame.admin.bot_action_success', [
+                    'spawned' => $result['spawned'],
+                    'attacks' => $result['attacks'],
+                ])
+            );
+        } catch (Throwable $exception) {
+            Log::error('Bot action failed', ['exception' => $exception]);
+            return redirect()->route('admin.serversettings.index')->with(
+                'error',
+                __('t_ingame.admin.bot_action_error')
+            );
+        }
     }
 
     /**

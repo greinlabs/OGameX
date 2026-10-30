@@ -1,0 +1,139 @@
+name: ${COMPOSE_PROJECT_NAME:-ogamex-pre-production}
+
+x-laravel-environment: &laravel-environment
+  APP_NAME: ${APP_NAME:-OGameX Pre-Production}
+  APP_ENV: ${APP_ENV:-production}
+  APP_KEY: ${APP_KEY:?Configure APP_KEY in Coolify}
+  APP_DEBUG: ${APP_DEBUG:-false}
+  APP_URL: ${APP_URL:?Configure the pre-production APP_URL in Coolify}
+  DB_CONNECTION: mysql
+  DB_HOST: ogamex-db
+  DB_PORT: "3306"
+  DB_DATABASE: laravel
+  DB_USERNAME: root
+  DB_PASSWORD: ${DB_ROOT_PASSWORD:?Configure DB_ROOT_PASSWORD in Coolify}
+  CACHE_STORE: database
+  SESSION_DRIVER: database
+  QUEUE_CONNECTION: database
+  BROADCAST_CONNECTION: ${BROADCAST_CONNECTION:-log}
+  REVERB_APP_ID: ${REVERB_APP_ID:-ogamex-pre-production}
+  REVERB_APP_KEY: ${REVERB_APP_KEY:?Configure REVERB_APP_KEY in Coolify}
+  REVERB_APP_SECRET: ${REVERB_APP_SECRET:?Configure REVERB_APP_SECRET in Coolify}
+  REVERB_HOST: ${REVERB_HOST:-localhost}
+  REVERB_PORT: ${REVERB_PORT:-443}
+  REVERB_SCHEME: ${REVERB_SCHEME:-https}
+  REVERB_SERVER_HOST: 0.0.0.0
+  REVERB_SERVER_PORT: 8090
+
+services:
+  ogamex-db:
+    image: mariadb:11.3.2-jammy
+    restart: unless-stopped
+    volumes:
+      - ogame-dbdata:/var/lib/mysql
+    environment:
+      MARIADB_DATABASE: laravel
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Configure DB_ROOT_PASSWORD in Coolify}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      app-network:
+        aliases:
+          - ogame-db
+
+  ogamex-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        OPCACHE_ENABLE: "1"
+    restart: unless-stopped
+    volumes:
+      - ogamex-vendor:/var/www/vendor
+    environment:
+      <<: *laravel-environment
+      CONTAINER_ROLE: app
+    working_dir: /var/www
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000 || [ $? -eq 56 ]"]
+      interval: 10s
+      timeout: 6s
+      retries: 60
+    networks:
+      - app-network
+    depends_on:
+      ogamex-db:
+        condition: service_healthy
+
+  ogamex-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      ogamex-app:
+        condition: service_healthy
+
+  ogamex-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ogamex-vendor:/var/www/vendor
+    environment:
+      <<: *laravel-environment
+      CONTAINER_ROLE: scheduler
+    networks:
+      - app-network
+    depends_on:
+      ogamex-app:
+        condition: service_healthy
+
+  ogamex-queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ogamex-vendor:/var/www/vendor
+    environment:
+      <<: *laravel-environment
+      CONTAINER_ROLE: queue
+    networks:
+      - app-network
+    depends_on:
+      ogamex-app:
+        condition: service_healthy
+
+  ogamex-reverb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ogamex-vendor:/var/www/vendor
+    environment:
+      <<: *laravel-environment
+      CONTAINER_ROLE: reverb
+    networks:
+      - app-network
+    depends_on:
+      ogamex-app:
+        condition: service_healthy
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  ogame-dbdata:
+    driver: local
+  ogamex-vendor:
+    driver: local

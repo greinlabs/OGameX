@@ -345,6 +345,36 @@ class ObjectService
     }
 
     /**
+     * Get unmet requirements and their current/required levels for tooltip hints.
+     *
+     * @return array<int, array{title: string, current: int, required: int}>
+     */
+    public static function getMissingRequirements(string $machine_name, PlanetService $planet): array
+    {
+        $object = self::getObjectByMachineName($machine_name);
+        $missing = [];
+
+        foreach (self::filterCompletedRequirements($object->requirements, $planet) as $requirement) {
+            $requirementObject = self::getObjectByMachineName($requirement->object_machine_name);
+
+            if ($requirementObject->type === GameObjectType::Research) {
+                $player = $planet->getPlayer();
+                $current = $player === null ? 0 : $player->getResearchLevel($requirement->object_machine_name);
+            } else {
+                $current = $planet->getObjectLevel($requirement->object_machine_name);
+            }
+
+            $missing[] = [
+                'title' => $requirementObject->title,
+                'current' => $current,
+                'required' => $requirement->level,
+            ];
+        }
+
+        return $missing;
+    }
+
+    /**
      * Check if character class requirements are met for class-specific ships.
      *
      * @param string $machine_name

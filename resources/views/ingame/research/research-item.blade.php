@@ -15,7 +15,7 @@
         title="{{ $building->object->title }}<br/>{{ __('t_ingame.buildings.under_construction') }}"
     @elseif (!$building->requirements_met)
         data-status="off"
-        title="{{ $building->object->title }}<br/>{{ __('t_ingame.buildings.requirements_not_met') }}"
+        title="{{ $building->object->title }}<br/>{{ __('t_ingame.buildings.requirements_not_met') }}@foreach ($building->missing_requirements as $missing)<br/><small>{{ __('t_ingame.buildings.missing_requirement_hint', ['name' => $missing['title'], 'current' => $missing['current'], 'required' => $missing['required']]) }}</small>@endforeach"
     @elseif ($building->research_lab_upgrading)
         data-status="disabled"
         title="{{ $building->object->title }}<br/>{{ __('t_ingame.buildings.research_lab_expanding') }}"

@@ -93,6 +93,9 @@ abstract class AbstractUnitsController extends OGameController
                 $view_model->count = $count;
                 $view_model->amount = $amount;
                 $view_model->requirements_met = $requirements_met;
+                $view_model->missing_requirements = $requirements_met
+                    ? []
+                    : ObjectService::getMissingRequirements($object->machine_name, $planet);
                 $view_model->character_class_met = $character_class_met;
                 $view_model->enough_resources = $enough_resources;
                 $view_model->max_build_amount = $max_build_amount;

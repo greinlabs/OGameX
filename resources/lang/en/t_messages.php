@@ -413,6 +413,15 @@ Application message:
     ],
 
     // Planet relocation messages
+    'bot_activity' => [
+        'from' => 'Bot Control',
+        'subject' => 'Bot activity: :bot_name',
+        'body' => ':action
+
+Bot: :bot_name
+Coordinates: :coordinates',
+    ],
+
     'planet_relocation_success' => [
         'from' => 'Manage colonies',
         'subject' => ':planet_name`s relocation has been successful',
