@@ -5,6 +5,7 @@
 - Fase 1 concluida.
 - Fase 2 concluida.
 - Fase 3 concluida.
+- Fase 4 concluida.
 - Viewport foi adicionado aos layouts in-game e out-game.
 - Foi criada uma camada CSS mobile separada e progressiva.
 - A classe `is-mobile` detecta telas abaixo de 768 px sem alterar o layout desktop.
@@ -390,13 +391,13 @@ Critério de conclusao: todas as acoes principais podem ser executadas sem zoom.
 
 ### Fase 4: Telas secundarias
 
-1. Alliance.
-2. Highscore.
-3. Search.
-4. Options.
-5. Chat.
-6. Admin.
-7. Merchant, jumpgate e premium/merchant modules restantes.
+1. Alliance com abas, listas e formularios adaptados.
+2. Highscore com filtros e tabela com scroll horizontal controlado.
+3. Search como dialogo fluido com resultados tabulares.
+4. Options com abas horizontais e campos alinhados ao toque.
+5. Chat com largura fluida, historico visivel e editor responsivo.
+6. Admin com barra compacta e formularios em largura de tela.
+7. Merchant, jumpgate, overlays e modulos secundarios com controles fluidos.
 
 Critério de conclusao: todas as funcionalidades existentes continuam disponiveis em mobile e desktop.
 
