@@ -8,6 +8,7 @@ use OGame\GameMessages\AcsDefendArrivalHost;
 use OGame\GameMessages\AcsDefendArrivalSender;
 use OGame\GameMessages\AllianceApplicationReceived;
 use OGame\GameMessages\AllianceBroadcast;
+use OGame\GameMessages\BotActivity;
 use OGame\GameMessages\BattleReport;
 use OGame\GameMessages\BuddyRemoved;
 use OGame\GameMessages\BuddyRequestAccepted;
@@ -104,6 +105,9 @@ class GameMessageFactory
         // Alliance messages
         'alliance_broadcast' => AllianceBroadcast::class,
         'alliance_application_received' => AllianceApplicationReceived::class,
+
+        // Bot administration notifications
+        'bot_activity' => BotActivity::class,
 
         // Fleet union messages
         'fleet_union_invite' => FleetUnionInvite::class,
