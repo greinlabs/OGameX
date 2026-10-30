@@ -321,6 +321,8 @@ class User extends Authenticatable
             'character_class_free_used' => 'boolean',
             'character_class_changed_at' => 'datetime',
             'alliance_left_at' => 'datetime',
+            'is_bot' => 'boolean',
+            'bot_last_action_at' => 'datetime',
         ];
     }
 }

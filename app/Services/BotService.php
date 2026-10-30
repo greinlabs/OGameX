@@ -4,6 +4,8 @@ namespace OGame\Services;
 
 use Exception;
 use Throwable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -37,37 +39,46 @@ class BotService
     public function runScheduledCycle(): array
     {
         $result = ['spawned' => 0, 'attacks' => 0, 'errors' => []];
-
-        $this->cleanupInactiveBots();
-
-        $lastSpawn = (int)$this->settingsService->get('bot_last_spawn_at', 0);
-        $interval = (int)$this->settingsService->get('bot_spawn_interval', 86400);
-        if (
-            (bool)(int)$this->settingsService->get('bot_spawn_enabled', 0)
-            && (time() - $lastSpawn) >= max(60, $interval)
-        ) {
-            try {
-                $this->spawnBot();
-                $result['spawned']++;
-                $this->settingsService->set('bot_last_spawn_at', time());
-            } catch (Throwable $e) {
-                Log::error('Scheduled bot spawn failed', ['exception' => $e]);
-                $result['errors'][] = 'Bot spawn failed.';
-            }
+        $cycleLock = Cache::lock('ogamex-bot-cycle', 300);
+        if (!$cycleLock->get()) {
+            $result['errors'][] = 'Bot cycle is already running.';
+            return $result;
         }
 
-        foreach (User::where('is_bot', true)->get() as $bot) {
-            $chance = min(100, max(0, (int)$this->settingsService->get('bot_attack_chance', 75)));
-            if (random_int(1, 100) <= $chance) {
+        try {
+            $this->cleanupInactiveBots();
+
+            $lastSpawn = (int)$this->settingsService->get('bot_last_spawn_at', 0);
+            $interval = (int)$this->settingsService->get('bot_spawn_interval', 86400);
+            if (
+                (bool)(int)$this->settingsService->get('bot_spawn_enabled', 0)
+                && (time() - $lastSpawn) >= max(60, $interval)
+            ) {
                 try {
-                    if ($this->makeBotAttack($bot) !== null) {
-                        $result['attacks']++;
-                    }
+                    $this->spawnBot();
+                    $result['spawned']++;
+                    $this->settingsService->set('bot_last_spawn_at', time());
                 } catch (Throwable $e) {
-                    Log::error('Scheduled bot attack failed', ['bot_id' => $bot->id, 'exception' => $e]);
-                    $result['errors'][] = 'Bot attack failed.';
+                    Log::error('Scheduled bot spawn failed', ['exception' => $e]);
+                    $result['errors'][] = 'Bot spawn failed.';
                 }
             }
+
+            foreach (User::where('is_bot', true)->where('vacation_mode', false)->get() as $bot) {
+                $chance = min(100, max(0, (int)$this->settingsService->get('bot_attack_chance', 75)));
+                if (random_int(1, 100) <= $chance) {
+                    try {
+                        if ($this->makeBotAttack($bot) !== null) {
+                            $result['attacks']++;
+                        }
+                    } catch (Throwable $e) {
+                        Log::error('Scheduled bot attack failed', ['bot_id' => $bot->id, 'exception' => $e]);
+                        $result['errors'][] = 'Bot attack failed.';
+                    }
+                }
+            }
+        } finally {
+            $cycleLock->release();
         }
 
         return $result;
@@ -75,62 +86,84 @@ class BotService
 
     public function spawnBot(): User
     {
-        $maxBots = max(0, (int)$this->settingsService->get('bot_max_count', 20));
-        if ($maxBots === 0 || User::where('is_bot', true)->count() >= $maxBots) {
-            throw new Exception('Bot limit reached.');
+        $spawnLock = Cache::lock('ogamex-bot-spawn', 60);
+        if (!$spawnLock->get()) {
+            throw new Exception('Bot spawn is already running.');
         }
 
-        $name = $this->generateName();
-        $bot = User::create([
-            'username' => $name,
-            'email' => strtolower(Str::random(20)) . '@bot.local',
-            'password' => Hash::make(Str::random(40)),
-            'lang' => 'en',
-        ]);
-        $bot->is_bot = true;
-        $bot->first_login = false;
-        $bot->bot_last_action_at = now();
-        $bot->time = (string)now()->timestamp;
-        $bot->register_ip = '127.0.0.1';
-        $bot->save();
+        try {
+            $maxBots = max(0, (int)$this->settingsService->get('bot_max_count', 20));
+            if ($maxBots === 0 || User::where('is_bot', true)->count() >= $maxBots) {
+                throw new Exception('Bot limit reached.');
+            }
 
-        $this->initialUserDataService->createFor($bot);
+            $bot = DB::transaction(function (): User {
+                $name = $this->generateName();
+                $bot = User::create([
+                    'username' => $name,
+                    'email' => strtolower(Str::random(20)) . '@bot.local',
+                    'password' => Hash::make(Str::random(40)),
+                    'lang' => 'en',
+                ]);
+                $bot->is_bot = true;
+                $bot->first_login = false;
+                $bot->bot_last_action_at = now();
+                $bot->time = (string)now()->timestamp;
+                $bot->register_ip = '127.0.0.1';
+                $bot->save();
 
-        $minLevel = max(0, (int)$this->settingsService->get('bot_level_min', 3));
-        $maxLevel = max($minLevel, (int)$this->settingsService->get('bot_level_max', 25));
-        $level = random_int($minLevel, $maxLevel);
+                $this->initialUserDataService->createFor($bot);
 
-        $planet = Planet::where('user_id', $bot->id)->first();
+                $minLevel = max(0, (int)$this->settingsService->get('bot_level_min', 3));
+                $maxLevel = max($minLevel, (int)$this->settingsService->get('bot_level_max', 25));
+                $level = random_int($minLevel, $maxLevel);
+
+                $planet = Planet::where('user_id', $bot->id)->first();
+                if ($planet === null) {
+                    throw new Exception('Bot planet could not be created.');
+                }
+
+                $planet->name = 'Bot Colony';
+                $planet->metal = random_int(5000, 500000);
+                $planet->crystal = random_int(3000, 300000);
+                $planet->deuterium = random_int(1000, 150000);
+                $planet->metal_mine = random_int($minLevel, $level);
+                $planet->crystal_mine = random_int($minLevel, max($minLevel, (int)($level * 0.8)));
+                $planet->deuterium_synthesizer = random_int($minLevel, max($minLevel, (int)($level * 0.6)));
+                $planet->solar_plant = random_int($minLevel, max($minLevel, $level));
+                $planet->robot_factory = random_int(1, min(10, max(1, $level)));
+                $planet->shipyard = random_int(1, min(12, max(1, (int)ceil($level / 2))));
+                $planet->research_lab = random_int(1, min(12, max(1, (int)ceil($level / 2))));
+
+                $shipNames = ['light_fighter', 'heavy_fighter', 'cruiser', 'battle_ship', 'bomber', 'destroyer', 'small_cargo', 'large_cargo', 'recycler'];
+                foreach ($shipNames as $shipName) {
+                    $planet->{$shipName} = random_int(0, max(1, $level * 4));
+                }
+                $planet->save();
+
+                $player = $this->playerServiceFactory->make($bot->id, true);
+                foreach (ObjectService::getResearchObjects() as $research) {
+                    $player->setResearchLevel($research->machine_name, random_int(0, min($level, 12)));
+                }
+
+                return $bot;
+            });
+
+            $planet = Planet::where('user_id', $bot->id)->first();
+            if ($planet !== null) {
+                $planetService = $this->planetServiceFactory->make($planet->id, true);
+                if ($planetService !== null) {
+                    $this->makeBotAttack($bot, $planetService);
+                }
+            }
+
+            $bot = $bot->refresh();
+        } finally {
+            $spawnLock->release();
+        }
+
         if ($planet === null) {
             throw new Exception('Bot planet could not be created.');
-        }
-
-        $planet->name = 'Bot Colony';
-        $planet->metal = random_int(5000, 500000);
-        $planet->crystal = random_int(3000, 300000);
-        $planet->deuterium = random_int(1000, 150000);
-        $planet->metal_mine = random_int($minLevel, $level);
-        $planet->crystal_mine = random_int($minLevel, max($minLevel, (int)($level * 0.8)));
-        $planet->deuterium_synthesizer = random_int($minLevel, max($minLevel, (int)($level * 0.6)));
-        $planet->solar_plant = random_int($minLevel, max($minLevel, $level));
-        $planet->robot_factory = random_int(1, min(10, max(1, $level)));
-        $planet->shipyard = random_int(1, min(12, max(1, (int)ceil($level / 2))));
-        $planet->research_lab = random_int(1, min(12, max(1, (int)ceil($level / 2))));
-
-        $shipNames = ['light_fighter', 'heavy_fighter', 'cruiser', 'battle_ship', 'bomber', 'destroyer', 'small_cargo', 'large_cargo', 'recycler'];
-        foreach ($shipNames as $shipName) {
-            $planet->{$shipName} = random_int(0, max(1, $level * 4));
-        }
-        $planet->save();
-
-        $player = $this->playerServiceFactory->make($bot->id, true);
-        foreach (ObjectService::getResearchObjects() as $research) {
-            $player->setResearchLevel($research->machine_name, random_int(0, min($level, 12)));
-        }
-
-        $planetService = $this->planetServiceFactory->make($planet->id, true);
-        if ($planetService !== null) {
-            $this->makeBotAttack($bot, $planetService);
         }
         $this->notifyAdmins(
             $bot->username,
@@ -143,65 +176,80 @@ class BotService
 
     public function makeBotAttack(User $bot, PlanetService|null $originPlanet = null): FleetMission|null
     {
-        $player = $this->playerServiceFactory->make($bot->id, true);
-        $originPlanet ??= $player->planets->current();
-        if ($originPlanet === null) {
+        $attackLock = Cache::lock('ogamex-bot-attack-' . $bot->id, 120);
+        if (!$attackLock->get()) {
             return null;
         }
 
-        $target = null;
-        foreach (Planet::query()
-            ->where('destroyed', false)
-            ->where('planet_type', PlanetType::Planet->value)
-            ->where('user_id', '!=', $bot->id)
-            ->inRandomOrder()
-            ->limit(100)
-            ->get() as $candidate) {
-            $targetUser = User::find($candidate->user_id);
-            if (
-                $targetUser !== null
-                && !(bool)$targetUser->vacation_mode
-                && !$targetUser->hasRole('0admin0')
-            ) {
-                $target = $candidate;
-                break;
+        try {
+            $player = $this->playerServiceFactory->make($bot->id, true);
+            $originPlanet ??= $player->planets->current();
+            if ($originPlanet === null) {
+                return null;
             }
-        }
-        if ($target === null) {
-            return null;
-        }
 
-        $units = new UnitCollection();
-        foreach (ObjectService::getMilitaryShipObjects() as $ship) {
-            $available = (int)$originPlanet->getObjectAmount($ship->machine_name);
-            if ($available > 0) {
-                $units->addUnit($ship, max(1, (int)floor($available * random_int(25, 100) / 100)));
+            $candidates = Planet::query()
+                ->where('destroyed', false)
+                ->where('planet_type', PlanetType::Planet->value)
+                ->where('user_id', '!=', $bot->id)
+                ->inRandomOrder()
+                ->limit(100)
+                ->get();
+            $targetUsers = User::query()
+                ->whereIn('id', $candidates->pluck('user_id')->unique())
+                ->get()
+                ->keyBy('id');
+
+            $target = null;
+            foreach ($candidates as $candidate) {
+                $targetUser = $targetUsers->get($candidate->user_id);
+                if (
+                    $targetUser !== null
+                    && !(bool)$targetUser->vacation_mode
+                ) {
+                    $target = $candidate;
+                    break;
+                }
             }
+            if ($target === null) {
+                return null;
+            }
+
+            $units = new UnitCollection();
+            foreach (ObjectService::getMilitaryShipObjects() as $ship) {
+                $available = (int)$originPlanet->getObjectAmount($ship->machine_name);
+                if ($available > 0) {
+                    $units->addUnit($ship, max(1, (int)floor($available * random_int(25, 100) / 100)));
+                }
+            }
+            if (count($units->units) === 0) {
+                return null;
+            }
+
+            $mission = $this->fleetMissionService->createNewFromPlanet(
+                $originPlanet,
+                new Coordinate($target->galaxy, $target->system, $target->planet),
+                PlanetType::Planet,
+                1,
+                $units,
+                new Resources(),
+                100
+            );
+
+            User::whereKey($bot->id)->update([
+                'bot_last_action_at' => now(),
+                'time' => (string)now()->timestamp,
+            ]);
+            $this->notifyAdmins(
+                $bot->username,
+                '[' . $target->galaxy . ':' . $target->system . ':' . $target->planet . ']',
+                'Bot launched an attack.'
+            );
+
+            return $mission;
+        } finally {
+            $attackLock->release();
         }
-        if (count($units->units) === 0) {
-            return null;
-        }
-
-        $mission = $this->fleetMissionService->createNewFromPlanet(
-            $originPlanet,
-            new Coordinate($target->galaxy, $target->system, $target->planet),
-            PlanetType::Planet,
-            1,
-            $units,
-            new Resources(),
-            10
-        );
-
-        $bot->bot_last_action_at = now();
-        $bot->time = (string)now()->timestamp;
-        $bot->save();
-        $this->notifyAdmins(
-            $bot->username,
-            '[' . $target->galaxy . ':' . $target->system . ':' . $target->planet . ']',
-            'Bot launched an attack.'
-        );
-
-        return $mission;
     }
 
     public function cleanupInactiveBots(): int
@@ -219,10 +267,14 @@ class BotService
 
         $removed = 0;
         foreach ($bots as $bot) {
-            Planet::where('user_id', $bot->id)->update(['destroyed' => 1]);
-            $bot->vacation_mode = true;
-            $bot->save();
-            $removed++;
+            DB::transaction(function () use ($bot, &$removed) {
+                Planet::where('user_id', $bot->id)->update([
+                    'destroyed' => now()->timestamp,
+                ]);
+                $bot->vacation_mode = true;
+                $bot->save();
+                $removed++;
+            });
         }
         return $removed;
     }
