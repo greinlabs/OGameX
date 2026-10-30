@@ -15096,11 +15096,87 @@ var ogame = ogame || {};
         try {
             sessionStorage.setItem(getScrollKey(), JSON.stringify({
                 x: window.scrollX || window.pageXOffset || 0,
-                y: window.scrollY || window.pageYOffset || 0
+                y: window.scrollY || window.pageYOffset || 0,
+                activeElement: getActiveElementSnapshot(),
+                listPositions: getListPositions()
             }));
         } catch (error) {
             // Storage can be unavailable in private browsing contexts.
         }
+    }
+
+    function getActiveElementSnapshot() {
+        var active = document.activeElement;
+        if (!active || active === document.body) {
+            return null;
+        }
+
+        var snapshot = {
+            id: active.id || '',
+            name: active.getAttribute ? active.getAttribute('name') : '',
+            tagName: active.tagName ? active.tagName.toLowerCase() : ''
+        };
+
+        if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
+            snapshot.selectionStart = active.selectionStart;
+            snapshot.selectionEnd = active.selectionEnd;
+        }
+
+        return snapshot;
+    }
+
+    function getListPositions() {
+        var positions = {};
+        document.querySelectorAll('[data-mobile-scroll-key]').forEach(function (element) {
+            positions[element.getAttribute('data-mobile-scroll-key')] = {
+                left: element.scrollLeft,
+                top: element.scrollTop
+            };
+        });
+        return positions;
+    }
+
+    function restoreActiveElement(snapshot) {
+        if (!snapshot) {
+            return;
+        }
+
+        var selector = snapshot.id
+            ? '#' + snapshot.id
+            : snapshot.name
+                ? snapshot.tagName + '[name="' + snapshot.name.replace(/"/g, '\\"') + '"]'
+                : null;
+
+        if (!selector) {
+            return;
+        }
+
+        var active = document.querySelector(selector);
+        if (!active || typeof active.focus !== 'function') {
+            return;
+        }
+
+        active.focus({preventScroll: true});
+        if (typeof snapshot.selectionStart === 'number' &&
+            typeof active.setSelectionRange === 'function') {
+            active.setSelectionRange(snapshot.selectionStart, snapshot.selectionEnd);
+        }
+    }
+
+    function restoreListPositions(positions) {
+        if (!positions) {
+            return;
+        }
+
+        Object.keys(positions).forEach(function (key) {
+            var element = document.querySelector('[data-mobile-scroll-key="' + key.replace(/"/g, '\\"') + '"]');
+            if (!element) {
+                return;
+            }
+
+            element.scrollLeft = positions[key].left || 0;
+            element.scrollTop = positions[key].top || 0;
+        });
     }
 
     function restoreScrollPosition() {
@@ -15117,6 +15193,8 @@ var ogame = ogame || {};
             var position = JSON.parse(saved);
             window.requestAnimationFrame(function () {
                 window.scrollTo(position.x || 0, position.y || 0);
+                restoreListPositions(position.listPositions);
+                restoreActiveElement(position.activeElement);
             });
         } catch (error) {
             // Invalid or unavailable session storage should not block rendering.
@@ -29669,7 +29747,8 @@ ogame.messages = {
                 },
                 success: function (d) {
                     if (d.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -29686,7 +29765,9 @@ ogame.messages = {
                 data: {messageId: a, action: 103, ajax: 1},
                 success: function (c) {
                     if (c[a] == true) {
-                        location.reload()
+                        $(".detail_msg[data-msg-id=" + a + "]").closest(".ui-dialog").remove();
+                        $("li.msg[data-msg-id=" + a + "]").remove();
+                        $(".overlayDiv[data-msg-id=" + a + "]").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -29729,7 +29810,8 @@ ogame.messages = {
                 },
                 success: function (d) {
                     if (d.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -29768,7 +29850,8 @@ ogame.messages = {
                 },
                 success: function (c) {
                     if (c.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -32444,6 +32527,19 @@ var TimerHandler = function (d, c) {
     this._lastId = 0;
     this.pageReloadAlreadyTriggered = false;
     this.checkEventsAlreadyQueued = false;
+    this._visibilityPaused = false;
+    var instance = this;
+    if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'hidden') {
+                instance._visibilityPaused = true;
+                instance.stopTimer();
+            } else if (instance._visibilityPaused) {
+                instance._visibilityPaused = false;
+                instance.startTimer();
+            }
+        });
+    }
     if (c != false) {
         this.startTimer()
     }
@@ -32458,12 +32554,21 @@ TimerHandler.prototype.removeCallback = function (b) {
 };
 TimerHandler.prototype.startTimer = function () {
     var b = this;
+    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+        return;
+    }
+    if (b._intervalId !== null) {
+        window.clearInterval(b._intervalId);
+    }
     this._intervalId = window.setInterval(function () {
         b._timer()
     }, this._interval)
 };
 TimerHandler.prototype.stopTimer = function () {
-    window.clearInterval(this._intervalId)
+    if (this._intervalId !== null) {
+        window.clearInterval(this._intervalId);
+        this._intervalId = null;
+    }
 };
 TimerHandler.prototype._timer = function () {
     for (var b in this._callbacks) {
@@ -32489,6 +32594,19 @@ var TimerHandler = function (interval, autostart) {
   this._lastId = 0;
   this.pageReloadAlreadyTriggered = false;
   this.checkEventsAlreadyQueued = false;
+  this._visibilityPaused = false;
+  var timerInstance = this;
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') {
+        timerInstance._visibilityPaused = true;
+        timerInstance.stopTimer();
+      } else if (timerInstance._visibilityPaused) {
+        timerInstance._visibilityPaused = false;
+        timerInstance.startTimer();
+      }
+    });
+  }
 
   if (autostart != false) {
     this.startTimer();
@@ -32522,6 +32640,12 @@ TimerHandler.prototype.removeCallback = function (index) {
 
 TimerHandler.prototype.startTimer = function () {
   var instance = this;
+  if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+    return;
+  }
+  if (instance._intervalId !== null) {
+    window.clearInterval(instance._intervalId);
+  }
   this._intervalId = window.setInterval(function () {
     instance._timer();
   }, this._interval);
@@ -32534,7 +32658,10 @@ TimerHandler.prototype.startTimer = function () {
 
 
 TimerHandler.prototype.stopTimer = function () {
-  window.clearInterval(this._intervalId);
+  if (this._intervalId !== null) {
+    window.clearInterval(this._intervalId);
+    this._intervalId = null;
+  }
 };
 /**
  * Timer which is called every N seconds
@@ -61270,6 +61397,36 @@ function ajaxCall(url, targetSelector, callback) {
     x: window.scrollX || window.pageXOffset || 0,
     y: window.scrollY || window.pageYOffset || 0
   };
+  var activeElement = document.activeElement;
+  var activeSnapshot = activeElement ? {
+    id: activeElement.id || '',
+    name: activeElement.getAttribute ? activeElement.getAttribute('name') : '',
+    selectionStart: activeElement.selectionStart,
+    selectionEnd: activeElement.selectionEnd
+  } : null;
+  var restoreActiveElement = function () {
+    if (!activeSnapshot) {
+      return;
+    }
+    var selector = activeSnapshot.id
+      ? '#' + activeSnapshot.id
+      : activeSnapshot.name
+        ? '[name="' + activeSnapshot.name.replace(/"/g, '\\"') + '"]'
+        : null;
+    var element = selector ? document.querySelector(selector) : null;
+    if (!element || typeof element.focus !== 'function') {
+      return;
+    }
+    element.focus({preventScroll: true});
+    if (typeof activeSnapshot.selectionStart === 'number' &&
+      typeof element.setSelectionRange === 'function') {
+      element.setSelectionRange(activeSnapshot.selectionStart, activeSnapshot.selectionEnd);
+    }
+  };
+  var targetKey = typeof targetSelector === 'string' ? targetSelector : null;
+  if (targetKey && $(targetKey).data('mobileAjaxRequest')) {
+    $(targetKey).data('mobileAjaxRequest').abort();
+  }
 
   if (typeof targetSelector === 'string') {
     let $targetHTMLObj = $(targetSelector);
@@ -61277,7 +61434,7 @@ function ajaxCall(url, targetSelector, callback) {
     $targetHTMLObj.html('<p class=\"ajaxLoad\"></p>');
   }
 
-  $.post(url, function (data) {
+  var request = $.post(url, function (data) {
     if (typeof targetSelector === 'string') {
       let $targetHTMLObj = $(targetSelector);
       $targetHTMLObj.html(data);
@@ -61290,8 +61447,12 @@ function ajaxCall(url, targetSelector, callback) {
 
     window.requestAnimationFrame(function () {
       window.scrollTo(scrollPosition.x, scrollPosition.y);
+      restoreActiveElement();
     });
   });
+  if (targetKey) {
+    $(targetKey).data('mobileAjaxRequest', request);
+  }
 }
 
 function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
@@ -61299,6 +61460,36 @@ function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
     x: window.scrollX || window.pageXOffset || 0,
     y: window.scrollY || window.pageYOffset || 0
   };
+  var activeElement = document.activeElement;
+  var activeSnapshot = activeElement ? {
+    id: activeElement.id || '',
+    name: activeElement.getAttribute ? activeElement.getAttribute('name') : '',
+    selectionStart: activeElement.selectionStart,
+    selectionEnd: activeElement.selectionEnd
+  } : null;
+  var restoreActiveElement = function () {
+    if (!activeSnapshot) {
+      return;
+    }
+    var selector = activeSnapshot.id
+      ? '#' + activeSnapshot.id
+      : activeSnapshot.name
+        ? '[name="' + activeSnapshot.name.replace(/"/g, '\\"') + '"]'
+        : null;
+    var element = selector ? document.querySelector(selector) : null;
+    if (!element || typeof element.focus !== 'function') {
+      return;
+    }
+    element.focus({preventScroll: true});
+    if (typeof activeSnapshot.selectionStart === 'number' &&
+      typeof element.setSelectionRange === 'function') {
+      element.setSelectionRange(activeSnapshot.selectionStart, activeSnapshot.selectionEnd);
+    }
+  };
+  var targetKey = typeof targetSelector === 'string' ? targetSelector : null;
+  if (targetKey && $(targetKey).data('mobileAjaxRequest')) {
+    $(targetKey).data('mobileAjaxRequest').abort();
+  }
 
   if (typeof targetSelector === 'string') {
     let $targetHTMLObj = $(targetSelector);
@@ -61307,7 +61498,7 @@ function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
   }
 
   let formData = typeof formDataOrSelector === 'string' ? $(formDataOrSelector).serialize() : formDataOrSelector;
-  $.post(url, formData, function (data) {
+  var request = $.post(url, formData, function (data) {
     if (typeof targetSelector === 'string') {
       let $targetHTMLObj = $(targetSelector);
       $targetHTMLObj.html(data);
@@ -61320,8 +61511,12 @@ function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
 
     window.requestAnimationFrame(function () {
       window.scrollTo(scrollPosition.x, scrollPosition.y);
+      restoreActiveElement();
     });
   });
+  if (targetKey) {
+    $(targetKey).data('mobileAjaxRequest', request);
+  }
 }
 
 Number.prototype.isBetween = function (min, max) {

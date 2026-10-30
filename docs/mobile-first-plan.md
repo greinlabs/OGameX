@@ -6,6 +6,7 @@
 - Fase 2 concluida.
 - Fase 3 concluida.
 - Fase 4 concluida.
+- Fase 5 concluida.
 - Viewport foi adicionado aos layouts in-game e out-game.
 - Foi criada uma camada CSS mobile separada e progressiva.
 - A classe `is-mobile` detecta telas abaixo de 768 px sem alterar o layout desktop.
@@ -412,10 +413,26 @@ Critério de conclusao: todas as funcionalidades existentes continuam disponivei
 #### Status da fase 5
 - Implementada a preservacao da posicao de scroll em navegacoes e recarregamentos pelo script de `resources/js/ingame/mobile.js`.
 - As funcoes AJAX `ajaxCall` e `ajaxSubmit` preservam as posicoes horizontal e vertical apos atualizacoes parciais.
+- As atualizacoes AJAX restauram o elemento com foco e a selecao de texto quando o elemento ainda existe.
+- Requests AJAX concorrentes com o mesmo alvo agora abortam o request anterior.
+- Timers do `TimerHandler` pausam em abas ocultas e retomam ao voltar para a aba visivel.
+- Acoes em massa de mensagens removem mensagens e dialogs no DOM sem recarregar a pagina inteira.
 - Atualizacoes AJAX exibem uma barra de progresso fixa sem substituir o shell da pagina.
 - Campos, botoes e links recebem tamanho tipografico adequado ao celular, `touch-action` e feedback de toque.
 - Areas de rolagem usam contencao de overscroll para evitar arrasto do fundo da pagina.
 - Orientacao landscape usa alturas compactas para shell, navegacao inferior e dialogs.
+
+## Revisao geral final
+
+- A meta viewport esta presente nos layouts in-game e out-game.
+- O layout desktop acima de 767 px continua separado pelas classes `is-mobile` e `is-desktop`.
+- `resources/css/mobile-foundation.css` cobre shell, telas de alto uso, telas secundarias, dialogs, toque, safe areas e landscape.
+- O shell mobile entrega planetas, recursos, drawer, navegacao inferior, mensagens e administracao.
+- Galaxy, fleet, mensagens, tecnologias, alliance, ranking, chat, options, admin, merchant e jumpgate possuem overrides responsivos.
+- `ajaxCall`/`ajaxSubmit` preservam scroll, abortam requests duplicados para o mesmo alvo e restauram o foco.
+- O timer legado foi protegido contra execucao em abas ocultas.
+- Os reloads de acoes em massa de mensagens identificados na revisao foram substituidos por remocao parcial do DOM.
+- O ponto restante de recarregamento da interface deve ser tratado por contexto funcional; reloads necessarios continuam preservando scroll atraves do `mobile.js`.
 
 ## Arquivos a criar ou testar
 
