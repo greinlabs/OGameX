@@ -1539,6 +1539,8 @@ return [
         'bot_level_min'                => 'Minimum randomized level:',
         'bot_level_max'                => 'Maximum randomized level:',
         'bot_run_action'               => 'Run Bot Action Now',
+        'bot_action_error'             => 'An error occurred while running the bot action.',
+        'bot_action_success'           => 'Bot action completed: :spawned bots spawned, :attacks attacks launched.',
         'debris_defense'               => 'Defensive structures in debris fields:',
         'debris_deuterium'             => 'Deuterium in debris fields:',
         'debris_ships'                 => 'Destroyed ships in debris fields:',
