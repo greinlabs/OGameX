@@ -21,6 +21,8 @@ body {
 body {
     overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    overflow-anchor: auto;
 }
 
 img,
@@ -1026,5 +1028,76 @@ table {
     html.is-mobile .searchresults {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    /* Phase 5: loading, touch and orientation stability. */
+    html.is-mobile input,
+    html.is-mobile select,
+    html.is-mobile textarea {
+        font-size: 16px;
+        touch-action: manipulation;
+    }
+
+    html.is-mobile button,
+    html.is-mobile a,
+    html.is-mobile input[type="button"],
+    html.is-mobile input[type="submit"] {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html.is-mobile .mobileLoadingIndicator {
+        display: block;
+        position: fixed;
+        z-index: 100000;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background: #6cbeff;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    html.is-mobile body.mobileLoading .mobileLoadingIndicator {
+        width: 100%;
+        opacity: 1;
+        animation: mobileLoadingProgress 1.2s ease-in-out infinite;
+    }
+
+    html.is-mobile .ui-dialog .ui-dialog-content,
+    html.is-mobile #galaxyContent,
+    html.is-mobile #content,
+    html.is-mobile .tabs_wrap,
+    html.is-mobile .searchresults,
+    html.is-mobile table {
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    @media (orientation: landscape) and (max-height: 500px) {
+        html.is-mobile .mobileShell {
+            height: calc(48px + env(safe-area-inset-top));
+        }
+
+        html.is-mobile .mobileBottomNav {
+            height: calc(48px + env(safe-area-inset-bottom));
+        }
+
+        html.is-mobile .ui-dialog {
+            max-height: calc(100vh - 8px);
+        }
+    }
+}
+
+@keyframes mobileLoadingProgress {
+    0% {
+        transform: translateX(-100%);
+    }
+    50% {
+        transform: translateX(25%);
+    }
+    100% {
+        transform: translateX(100%);
     }
 }
