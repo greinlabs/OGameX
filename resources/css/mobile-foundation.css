@@ -698,4 +698,333 @@ table {
     html.is-mobile table.messageList {
         width: 100%;
     }
+
+    /* Phase 4: alliance, search and secondary tabs. */
+    html.is-mobile #alliancecomponent,
+    html.is-mobile #netz,
+    html.is-mobile #alliance,
+    html.is-mobile #alliance .alliance_wrapper,
+    html.is-mobile #alliance .allianceContent,
+    html.is-mobile #preferencescomponent,
+    html.is-mobile #preferences {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #tab-ally,
+    html.is-mobile .tabsbelow,
+    html.is-mobile .subsection_tabs {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    html.is-mobile #tab-ally li,
+    html.is-mobile .tabsbelow li,
+    html.is-mobile .subsection_tabs li {
+        flex: 0 0 auto;
+        min-width: 88px;
+    }
+
+    html.is-mobile #tab-ally li a,
+    html.is-mobile .tabsbelow li a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 10px;
+    }
+
+    html.is-mobile #alliance .alliance_wrapper,
+    html.is-mobile .searchLayer,
+    html.is-mobile .ajaxContent {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    html.is-mobile .searchall,
+    html.is-mobile .searchresults {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #searchText {
+        width: min(260px, calc(100vw - 100px));
+    }
+
+    /* Phase 4: options forms. */
+    html.is-mobile #preferences .tabwrapper,
+    html.is-mobile #preferences .contentzs,
+    html.is-mobile #preferences #prefs,
+    html.is-mobile #preferences .content,
+    html.is-mobile #preferences .wrap,
+    html.is-mobile #preferences .group {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #preferences .fieldwrapper {
+        width: 100%;
+        height: auto;
+        min-height: 44px;
+        display: grid;
+        grid-template-columns: minmax(130px, 42%) minmax(0, 58%);
+        align-items: center;
+    }
+
+    html.is-mobile #preferences .fieldwrapper label,
+    html.is-mobile #preferences .thefield {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #preferences .fieldwrapper input,
+    html.is-mobile #preferences .fieldwrapper select,
+    html.is-mobile #preferences .fieldwrapper textarea {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    /* Phase 4: highscore. */
+    html.is-mobile #highscoreContent,
+    html.is-mobile #highscoreContent .content,
+    html.is-mobile #stat_list_content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #row {
+        height: auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    html.is-mobile #categoryButtons,
+    html.is-mobile #typeButtons,
+    html.is-mobile #typeButtons .subnav {
+        width: 100%;
+        height: auto;
+        float: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile #categoryButtons .navButton,
+    html.is-mobile #typeButtons .navButton {
+        flex: 0 0 72px;
+        width: 72px;
+        min-height: 72px;
+    }
+
+    html.is-mobile #stat_list_content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile table.userHighscore {
+        width: 620px;
+        min-width: 620px;
+    }
+
+    html.is-mobile table.userHighscore .sendmsg {
+        width: 72px;
+    }
+
+    /* Phase 4: chat. */
+    html.is-mobile #chatContent,
+    html.is-mobile #chatContent .header,
+    html.is-mobile #chatContent .content,
+    html.is-mobile .largeChatContainer,
+    html.is-mobile .editor_wrap {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #chatContent {
+        height: auto;
+        float: none;
+    }
+
+    html.is-mobile #chatContent .header {
+        height: auto;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px;
+    }
+
+    html.is-mobile #chatpartner {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    html.is-mobile .largeChatContainer {
+        height: min(420px, calc(100vh - 280px));
+        min-height: 220px;
+    }
+
+    html.is-mobile ul.chat.largeChat {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile ul.chat.largeChat .chat_msg {
+        width: calc(100% - 16px);
+        max-width: 420px;
+        min-height: 44px;
+    }
+
+    html.is-mobile .editor_wrap textarea {
+        width: 100%;
+        max-width: 100%;
+        min-height: 88px;
+    }
+
+    html.is-mobile .send_new_msg {
+        width: 100%;
+        margin-top: 6px;
+        text-align: center;
+    }
+
+    /* Phase 4: admin bar and admin settings. */
+    html.is-mobile #adminbar {
+        height: 44px;
+        min-height: 44px;
+        overflow: hidden;
+    }
+
+    html.is-mobile #adminbar #mmoContent {
+        width: 100%;
+        height: 44px;
+        padding: 4px 8px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    html.is-mobile #adminbar #adminLogo {
+        display: none;
+    }
+
+    html.is-mobile #adminbar ul {
+        width: 100%;
+        height: 36px;
+        margin: 0;
+        float: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile #adminbar ul li {
+        flex: 0 0 auto;
+        margin: 0 4px 4px 0;
+    }
+
+    html.is-mobile #adminbar ul li a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 10px;
+    }
+
+    html.is-mobile #resourcesettingscomponent,
+    html.is-mobile #resourcesettingscomponent #buttonz,
+    html.is-mobile #resourcesettingscomponent form,
+    html.is-mobile #resourcesettingscomponent .content,
+    html.is-mobile #resourcesettingscomponent .buddylistContent {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #resourcesettingscomponent .fieldwrapper {
+        width: 100%;
+        height: auto;
+        min-height: 44px;
+        display: grid;
+        grid-template-columns: minmax(140px, 44%) minmax(0, 56%);
+        align-items: center;
+    }
+
+    html.is-mobile #resourcesettingscomponent .thefield,
+    html.is-mobile #resourcesettingscomponent input,
+    html.is-mobile #resourcesettingscomponent select,
+    html.is-mobile #resourcesettingscomponent textarea {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    /* Phase 4: merchant, jump gate and search dialogs. */
+    html.is-mobile #traderOverviewcomponent,
+    html.is-mobile #traderOverview,
+    html.is-mobile #jumpgate,
+    html.is-mobile .jumpgate,
+    html.is-mobile .searchLayer,
+    html.is-mobile .messagebox {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #traderOverview #planet {
+        min-height: 420px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        padding: 6px;
+        align-content: start;
+    }
+
+    html.is-mobile #traderOverview .trader_link {
+        position: relative;
+        width: 100%;
+        height: 96px;
+        left: auto;
+        top: auto;
+        margin: 0;
+    }
+
+    html.is-mobile #jumpgate {
+        height: auto;
+        overflow-x: hidden;
+        padding: 4px;
+    }
+
+    html.is-mobile #jumpgate .fleft,
+    html.is-mobile #jumpgate .fright {
+        width: 100%;
+        float: none;
+    }
+
+    html.is-mobile #jumpgate select {
+        width: 100%;
+    }
+
+    html.is-mobile .searchLayer .searchall form {
+        width: 100%;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    html.is-mobile .searchresults {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
