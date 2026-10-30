@@ -278,7 +278,7 @@ table {
     }
 
     html.is-mobile #pageContent {
-        padding-top: 96px;
+        padding-top: calc(96px + env(safe-area-inset-top));
         padding-bottom: calc(72px + env(safe-area-inset-bottom));
     }
 
@@ -424,5 +424,278 @@ table {
     html.is-mobile .container {
         width: 100%;
         max-width: 100%;
+    }
+
+    /* Phase 3: overview and resource screens. */
+    html.is-mobile #inhalt,
+    html.is-mobile #supplies,
+    html.is-mobile #research,
+    html.is-mobile #shipyard,
+    html.is-mobile #defense,
+    html.is-mobile #fleetdispatchcomponent {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #planet,
+    html.is-mobile #detailWrapper {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 220px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    html.is-mobile #planetdata,
+    html.is-mobile #planetDetails {
+        width: 100%;
+        max-width: 100%;
+        left: 0;
+    }
+
+    html.is-mobile #planetDetails table {
+        width: 100%;
+    }
+
+    html.is-mobile #planetDetails td.desc,
+    html.is-mobile #planetDetails td.data {
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+
+    html.is-mobile #planetOptions {
+        width: 100%;
+        height: auto;
+        left: 0;
+        bottom: 0;
+        padding: 6px;
+    }
+
+    html.is-mobile #technologies,
+    html.is-mobile #technologies_basic,
+    html.is-mobile #technologies_drive,
+    html.is-mobile #technologies_advanced,
+    html.is-mobile #technologies_combat,
+    html.is-mobile #technologies_battle,
+    html.is-mobile #technologies_civil {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #technologies ul.icons,
+    html.is-mobile #supplies #producers {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+        gap: 4px;
+        margin: 0;
+        padding: 6px;
+    }
+
+    html.is-mobile #technologies ul.icons li.technology {
+        width: 72px;
+        height: 88px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    html.is-mobile #technologydetails_wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #productionboxBottom,
+    html.is-mobile .boxColumn,
+    html.is-mobile .productionboxbuilding,
+    html.is-mobile .productionboxresearch,
+    html.is-mobile .productionboxshipyard {
+        width: 100%;
+        max-width: 100%;
+        float: none;
+    }
+
+    html.is-mobile #productionboxBottom {
+        height: auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding-top: 8px;
+    }
+
+    /* Phase 3: galaxy. */
+    html.is-mobile #galaxycomponent,
+    html.is-mobile #galaxyContent {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #galaxyContent {
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-inline: contain;
+    }
+
+    html.is-mobile .galaxyTable {
+        width: 620px;
+        min-width: 620px;
+    }
+
+    html.is-mobile #galaxyHeader {
+        width: 100%;
+        height: auto;
+    }
+
+    html.is-mobile #galaxyHeader form {
+        display: grid;
+        grid-template-columns: 44px minmax(64px, 1fr) 44px minmax(64px, 1fr) 44px;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        padding: 4px;
+    }
+
+    html.is-mobile #galaxyHeader input {
+        width: 100%;
+        min-width: 64px;
+        text-align: center;
+    }
+
+    html.is-mobile #galaxyHeader .btn_blue {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-top: 2px;
+        line-height: 44px;
+        text-align: center;
+    }
+
+    html.is-mobile #galaxyHeader .systembuttons {
+        grid-column: 1 / -1;
+        width: 100%;
+        height: auto;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+    }
+
+    html.is-mobile #galaxyHeader .systembuttons .btn_blue,
+    html.is-mobile #galaxyHeader .systembuttons #discoverSystemBtn {
+        min-width: 0;
+        width: 100%;
+        padding: 4px;
+        line-height: 36px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Phase 3: fleet and ship selection. */
+    html.is-mobile #fleetdispatchcomponent,
+    html.is-mobile #sendfleet,
+    html.is-mobile #fleet1,
+    html.is-mobile #fleet2,
+    html.is-mobile #fleet3,
+    html.is-mobile #station,
+    html.is-mobile .fleetStatus {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile .fleetdispatch,
+    html.is-mobile .fleetstep,
+    html.is-mobile .fleetstepcontent,
+    html.is-mobile .move-box-wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile .ship_selection_table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile .ship_selection_table tbody {
+        width: 100%;
+        min-width: 520px;
+    }
+
+    html.is-mobile .ship_selection_table td {
+        height: 44px;
+    }
+
+    html.is-mobile .ship_selection_table input {
+        width: 64px;
+        text-align: right;
+    }
+
+    html.is-mobile #planetSelector,
+    html.is-mobile #resources,
+    html.is-mobile #speedLinks {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Phase 3: messages and tabular content. */
+    html.is-mobile #content,
+    html.is-mobile #buttonz,
+    html.is-mobile #buttonz .content,
+    html.is-mobile .tabs_wrap {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile .tabs_btn {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    html.is-mobile .tabs_btn li.list_item {
+        flex: 0 0 72px;
+        width: 72px;
+        min-width: 72px;
+        height: 72px;
+    }
+
+    html.is-mobile .tabs_btn_img {
+        width: 72px;
+    }
+
+    html.is-mobile .tabs_btn_img img {
+        width: 44px;
+        height: 44px;
+    }
+
+    html.is-mobile .icon_caption {
+        max-width: 72px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 9px;
+    }
+
+    html.is-mobile .ui-tabs-panel {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile .ui-tabs-panel table {
+        width: 100%;
+        min-width: 520px;
+    }
+
+    html.is-mobile table.list,
+    html.is-mobile table.messageList {
+        width: 100%;
     }
 }
