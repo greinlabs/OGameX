@@ -101,6 +101,9 @@ abstract class AbstractBuildingsController extends OGameController
                 $view_model->object = $object;
                 $view_model->current_level = $current_level;
                 $view_model->requirements_met = $requirements_met;
+                $view_model->missing_requirements = $requirements_met
+                    ? []
+                    : ObjectService::getMissingRequirements($object_machine_name, $this->planet);
                 $view_model->character_class_met = $character_class_met;
                 $view_model->valid_planet_type = $valid_planet_type;
                 $view_model->enough_resources = $enough_resources;

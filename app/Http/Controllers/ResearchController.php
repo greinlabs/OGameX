@@ -95,6 +95,9 @@ class ResearchController extends OGameController
                 $view_model->object = $object;
                 $view_model->current_level = $current_level;
                 $view_model->requirements_met = $requirements_met;
+                $view_model->missing_requirements = $requirements_met
+                    ? []
+                    : ObjectService::getMissingRequirements($object->machine_name, $planet);
                 $view_model->count = $count;
                 $view_model->enough_resources = $enough_resources;
                 $view_model->currently_building = (!empty($research_active) && $research_active->object->machine_name === $object->machine_name);

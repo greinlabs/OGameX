@@ -11,6 +11,8 @@ class UnitViewModel
     public GameObject $object;
     public int $amount;
     public bool $requirements_met;
+    /** @var array<int, array{title: string, current: int, required: int}> */
+    public array $missing_requirements = [];
     public bool $character_class_met;
     public bool $enough_resources;
     public int $max_build_amount;

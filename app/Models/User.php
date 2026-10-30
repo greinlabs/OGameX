@@ -47,6 +47,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $dark_matter_last_regen
  * @property bool $vacation_mode
  * @property Carbon|null $vacation_mode_activated_at
+ * @property bool $is_bot
+ * @property Carbon|null $bot_last_action_at
  * @property Carbon|null $vacation_mode_until
  * @property int|null $character_class
  * @property bool $character_class_free_used
