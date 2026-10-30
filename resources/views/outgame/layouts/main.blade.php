@@ -19,6 +19,7 @@
 -->
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="language" content="{{ app()->getLocale() }}"/>
     <meta name="author" content="OGameX"/>
@@ -38,6 +39,23 @@
     @vite(['resources/css/outgame.css', 'resources/js/outgame.js'])
 
     <script type="text/javascript">
+        (function () {
+            var mobileQuery = window.matchMedia('(max-width: 767px)');
+
+            function updateMobileClass() {
+                document.documentElement.classList.toggle('is-mobile', mobileQuery.matches);
+                document.documentElement.classList.toggle('is-desktop', !mobileQuery.matches);
+            }
+
+            updateMobileClass();
+
+            if (typeof mobileQuery.addEventListener === 'function') {
+                mobileQuery.addEventListener('change', updateMobileClass);
+            } else if (typeof mobileQuery.addListener === 'function') {
+                mobileQuery.addListener(updateMobileClass);
+            }
+        })();
+
         // <![CDATA[
         (function ($) {
             $.fn.validationEngineLanguage = function () {

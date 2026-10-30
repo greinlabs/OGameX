@@ -1,0 +1,130 @@
+/*
+ * Phase 1 mobile foundation.
+ * These rules only override small screens and do not change the desktop layout.
+ */
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+html,
+body {
+    max-width: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+}
+
+img,
+video,
+canvas {
+    max-width: 100%;
+}
+
+table {
+    max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+    #pageContent {
+        width: calc(100% - 16px);
+        max-width: 990px;
+    }
+
+    .maincontent {
+        width: calc(100% - 16px);
+        max-width: 670px;
+    }
+}
+
+@media (max-width: 767px) {
+    html.is-mobile,
+    html.is-mobile body {
+        width: 100%;
+    }
+
+    html.is-mobile body {
+        min-width: 0;
+    }
+
+    html.is-mobile #pageContent {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+
+    html.is-mobile #top,
+    html.is-mobile #middle,
+    html.is-mobile #bottom,
+    html.is-mobile .maincontent,
+    html.is-mobile #content,
+    html.is-mobile #inhalt,
+    html.is-mobile #buttonz,
+    html.is-mobile #sendfleet,
+    html.is-mobile #movement {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile form,
+    html.is-mobile fieldset {
+        max-width: 100%;
+    }
+
+    html.is-mobile input[type="text"],
+    html.is-mobile input[type="number"],
+    html.is-mobile input[type="email"],
+    html.is-mobile input[type="password"],
+    html.is-mobile input[type="search"],
+    html.is-mobile select,
+    html.is-mobile textarea {
+        max-width: 100%;
+        min-height: 44px;
+    }
+
+    html.is-mobile button,
+    html.is-mobile input[type="submit"],
+    html.is-mobile input[type="button"],
+    html.is-mobile a.btn,
+    html.is-mobile a.button,
+    html.is-mobile .btn_blue {
+        min-height: 44px;
+    }
+
+    html.is-mobile .ui-dialog,
+    html.is-mobile .overlayDiv {
+        max-width: calc(100vw - 16px);
+    }
+
+    html.is-mobile .ui-dialog {
+        width: calc(100vw - 16px) !important;
+        max-height: calc(100vh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        left: 8px !important;
+        right: 8px !important;
+    }
+
+    html.is-mobile .ui-dialog-content {
+        max-height: calc(100vh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        overflow-y: auto;
+    }
+
+    html.is-mobile #start,
+    html.is-mobile #login,
+    html.is-mobile #wrapper,
+    html.is-mobile #main,
+    html.is-mobile .container {
+        width: 100%;
+        max-width: 100%;
+    }
+}
