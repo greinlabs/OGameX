@@ -47,7 +47,7 @@
                                 title="{{ $building->object->title }}<br/>{{ __('t_ingame.buildings.vacation_mode_error') }}"
                             @elseif (!$building->requirements_met)
                                 data-status="off"
-                                title="{{ $building->object->title }}<br/>{{ __('t_ingame.buildings.requirements_not_met') }}"
+                                title="{{ $building->object->title }}<br/>{{ __('t_ingame.buildings.requirements_not_met') }}@foreach ($building->missing_requirements as $missing)<br/><small>{{ __('t_ingame.buildings.missing_requirement_hint', ['name' => $missing['title'], 'current' => $missing['current'], 'required' => $missing['required']]) }}</small>@endforeach"
                             @elseif (!$building->character_class_met)
                                 data-status="disabled"
                                 title="{{ $building->object->title }}<br/>{{ __('t_ingame.buildings.wrong_class') }}"

@@ -66,6 +66,7 @@ return [
         'under_construction'     => 'Under construction',
         'vacation_mode_error'    => 'Error, player is in vacation mode',
         'requirements_not_met'   => 'Requirements are not met!',
+        'missing_requirement_hint' => ':name: level :current/:required',
         'wrong_class'            => 'You do not have the required character class for this building.',
         'wrong_class_general'    => 'To be able to build this ship, you need to have selected the General class.',
         'wrong_class_collector'  => 'To be able to build this ship, you need to have selected the Collector class.',
