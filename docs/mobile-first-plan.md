@@ -2,10 +2,13 @@
 
 ## Status da implementacao
 
-- Fase 1 iniciada.
+- Fase 1 concluida.
+- Fase 2 concluida.
 - Viewport foi adicionado aos layouts in-game e out-game.
 - Foi criada uma camada CSS mobile separada e progressiva.
 - A classe `is-mobile` detecta telas abaixo de 768 px sem alterar o layout desktop.
+- O shell in-game mobile inclui header, barra de planetas, drawer, recursos compactos e navegacao inferior.
+- O drawer fecha por botao, backdrop, Escape e selecao de rota, preserva o foco anterior e libera o scroll ao fechar.
 
 ## Objetivo
 
@@ -363,11 +366,13 @@ Critério de conclusao: nenhuma tela principal exige zoom para abrir e nenhum ov
 
 ### Fase 2: Shell do jogo
 
-1. Compactar header superior.
-2. Criar barra compacta de recursos.
-3. Criar drawer/menu mobile.
-4. Compactar planetas.
-5. Adaptar dialog e overlay.
+1. Compactar header superior em `resources/views/ingame/layouts/main.blade.php`.
+2. Criar barra compacta de recursos no mobile.
+3. Criar drawer/menu mobile com links existentes, mensagem, administracao e logout.
+4. Compactar planetas em barra horizontal.
+5. Adicionar navegacao inferior para acoes principais.
+6. Finalizar abertura, fechamento, foco, backdrop, Escape e bloqueio de scroll.
+7. Adaptar dialogs e overlays jQuery a viewport e suporte a safe areas.
 
 Critério de conclusao: navegacao principal, recursos, planetas, mensagens e logout funcionam por toque.
 
