@@ -28792,6 +28792,11 @@ function handlerToSubmitAjaxForm(form) {
 }
 
 function ajaxCall(url, targetSelector, callback) {
+  var scrollPosition = {
+    x: window.scrollX || window.pageXOffset || 0,
+    y: window.scrollY || window.pageYOffset || 0
+  };
+
   if (typeof targetSelector === 'string') {
     let $targetHTMLObj = $(targetSelector);
     $targetHTMLObj.find('select').ogameDropDown('destroy');
@@ -28808,10 +28813,19 @@ function ajaxCall(url, targetSelector, callback) {
     if (typeof callback === 'function') {
       callback();
     }
+
+    window.requestAnimationFrame(function () {
+      window.scrollTo(scrollPosition.x, scrollPosition.y);
+    });
   });
 }
 
 function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
+  var scrollPosition = {
+    x: window.scrollX || window.pageXOffset || 0,
+    y: window.scrollY || window.pageYOffset || 0
+  };
+
   if (typeof targetSelector === 'string') {
     let $targetHTMLObj = $(targetSelector);
     $targetHTMLObj.find('select').ogameDropDown('destroy');
@@ -28829,6 +28843,10 @@ function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
     if (typeof callback === 'function') {
       callback();
     }
+
+    window.requestAnimationFrame(function () {
+      window.scrollTo(scrollPosition.x, scrollPosition.y);
+    });
   });
 }
 

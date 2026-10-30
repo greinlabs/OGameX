@@ -409,6 +409,14 @@ Critério de conclusao: todas as funcionalidades existentes continuam disponivei
 4. Melhorar toque, contraste e orientacao.
 5. Medir performance em celular.
 
+#### Status da fase 5
+- Implementada a preservacao da posicao de scroll em navegacoes e recarregamentos pelo script de `resources/js/ingame/mobile.js`.
+- As funcoes AJAX `ajaxCall` e `ajaxSubmit` preservam as posicoes horizontal e vertical apos atualizacoes parciais.
+- Atualizacoes AJAX exibem uma barra de progresso fixa sem substituir o shell da pagina.
+- Campos, botoes e links recebem tamanho tipografico adequado ao celular, `touch-action` e feedback de toque.
+- Areas de rolagem usam contencao de overscroll para evitar arrasto do fundo da pagina.
+- Orientacao landscape usa alturas compactas para shell, navegacao inferior e dialogs.
+
 ## Arquivos a criar ou testar
 
 Além dos novos CSS/JS, esta suite pode ser criada:
