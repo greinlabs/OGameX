@@ -31,6 +31,32 @@ class MessagesTest extends MoonTestCase
     }
 
     /**
+     * Verify communication report subtabs load through the messages AJAX endpoint.
+     */
+    public function testCommunicationReportSubtabsLoadViaAjax(): void
+    {
+        $subtabs = ['shared_combat', 'shared_espionage', 'expeditions'];
+        $tabResponse = $this->get(route('messages.ajax.gettabcontents', [
+            'tab' => 'communication',
+        ]));
+
+        $tabResponse->assertOk();
+
+        foreach ($subtabs as $subtab) {
+            $url = route('messages.ajax.gettabcontents', [
+                'tab' => 'communication',
+                'subtab' => $subtab,
+            ]);
+            $tabResponse->assertSee($url, false);
+
+            $response = $this->get($url);
+
+            $response->assertOk();
+            $response->assertSee('id="defaultmessagespage"', false);
+        }
+    }
+
+    /**
      * Test all GameMessage classes to make sure they can be instantiated and the subject and body return a non-empty string.
      */
     public function testGameMessages(): void

@@ -31,7 +31,8 @@
                 <li id="subtabs-nfCommunication12" class="list_item ui-tabs-tab ui-corner-top ui-state-default ui-tab"
                     data-subtabname="Shared Combat Reports" data-tabid="12" role="tab" tabindex="-1"
                     aria-controls="ui-id-36" aria-labelledby="ui-id-35" aria-selected="false" aria-expanded="false">
-                    <a href="#" class="txt_link ui-tabs-anchor"
+                    <a href="{{ route('messages.ajax.gettabcontents', ['tab' => 'communication', 'subtab' => 'shared_combat']) }}"
+                       class="txt_link ui-tabs-anchor"
                        role="presentation" tabindex="-1" id="ui-id-35">
                         {{ __('t_ingame.messages.subtab_shared_combat') }}
                         <span></span>
@@ -40,7 +41,8 @@
                 <li id="subtabs-nfCommunication11" class="list_item ui-tabs-tab ui-corner-top ui-state-default ui-tab"
                     data-subtabname="Shared Espionage Reports" data-tabid="11" role="tab" tabindex="-1"
                     aria-controls="ui-id-38" aria-labelledby="ui-id-37" aria-selected="false" aria-expanded="false">
-                    <a href="#" class="txt_link ui-tabs-anchor"
+                    <a href="{{ route('messages.ajax.gettabcontents', ['tab' => 'communication', 'subtab' => 'shared_espionage']) }}"
+                       class="txt_link ui-tabs-anchor"
                        role="presentation" tabindex="-1" id="ui-id-37">
                         {{ __('t_ingame.messages.subtab_shared_espionage') }}
                         <span></span>
@@ -50,7 +52,8 @@
                     class="list_item last ui-tabs-tab ui-corner-top ui-state-default ui-tab"
                     data-subtabname="Expeditions" data-tabid="13" role="tab" tabindex="-1" aria-controls="ui-id-40"
                     aria-labelledby="ui-id-39" aria-selected="false" aria-expanded="false">
-                    <a href="#" class="txt_link ui-tabs-anchor"
+                    <a href="{{ route('messages.ajax.gettabcontents', ['tab' => 'communication', 'subtab' => 'expeditions']) }}"
+                       class="txt_link ui-tabs-anchor"
                        role="presentation" tabindex="-1" id="ui-id-39">
                         {{ __('t_ingame.messages.subtab_expeditions') }}
                         <span></span>

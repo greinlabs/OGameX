@@ -1,0 +1,352 @@
+webserver
+10.0.4.2 - - [27/Oct/2026:19:04:32 +0000] "GET /img/icons/1f57d944fff38ee51d49c027f574ef.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:32 +0000] "GET /img/icons/3f9884806436537bdec305aa26fc60.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:32 +0000] "GET /img/layout/pixel.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:32 +0000] "GET /img/planets/medium/ice_5.png HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:32 +0000] "GET /img/admin/admin-menu-bg.jpg HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:32 +0000] "GET /img/flags/a176fcd6f3e3de2bed6a73a8b1d5e7.png HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:33 +0000] "GET /img/headers/overview/ice.jpg HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:33 +0000] "GET /ajax/fleet/eventbox/fetch HTTP/1.1" 200 175 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:33 +0000] "GET /ajax/fleet/eventlist/fetch HTTP/1.1" 200 4692 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:33 +0000] "GET /buddies/online HTTP/1.1" 200 107 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "POST /logout HTTP/1.1" 302 406 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET / HTTP/1.1" 301 294 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /overview HTTP/1.1" 302 430 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /login HTTP/1.1" 200 21117 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/1817433e4a8d432a8d8ed25a4d6060.png HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /build/assets/outgame-Bd4b_3cr.css HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/c98a4685de676300b80da072ab6ad7.png HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /build/assets/outgame-1a0852d6.js HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/0a5fa2929f5326fade793585415a22.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/f88cc2bd8efa2b7d232e50d56a1180.png HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/113abb97b5fff99cb7d4d5019f04eb.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/1867da5b5f8769b547bb91d88bb4f8.jpg HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/76cbf0115f4559fb1d6f25e9819ecb.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/daeabdae9844ec3d61c235e5ee1a64.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/f1c317aff2183c9b8b905bbbca9e8a.jpg HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/2c3d8b94dc095ab950a202f7089995.jpg HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/aef3bd3bdfb1d2be6d99ff39e7a394.png HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/de8b29a965ae085e8f3cdfcc63fb8e.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/72a97f02af4493519c741f49f7180b.jpg HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/9ee28c83e3a3554b9d195e29309ebe.png HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/246742ee5fa2f53100ef6a5b823249.png HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:35 +0000] "GET /img/outgame/480120d537b7f69afcfda1356dd39e.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:43 +0000] "GET /ajax/main/contact?fancybox=true HTTP/1.1" 200 186 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:46 +0000] "GET /ajax/main/rules?fancybox=true HTTP/1.1" 200 173 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:49 +0000] "GET /ajax/main/privacy-policy?fancybox=true HTTP/1.1" 200 181 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:04:54 +0000] "GET /favicon.ico HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:03 +0000] "GET /login HTTP/1.1" 200 21117 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:06 +0000] "GET /login HTTP/1.1" 200 21094 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:28 +0000] "GET /img/outgame/c732feb94125f1122741b89857eaf6.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:28 +0000] "GET /img/outgame/5f68e42f93bad65d7a1a6ddd130543.gif HTTP/1.1" 304 0 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:40 +0000] "POST /login HTTP/1.1" 302 438 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:40 +0000] "GET /overview HTTP/1.1" 200 112408 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:40 +0000] "GET /build/assets/ingame-C9U8U3hi.css HTTP/1.1" 200 886636 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:41 +0000] "GET /ajax/fleet/eventbox/fetch HTTP/1.1" 200 175 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:41 +0000] "GET /ajax/fleet/eventlist/fetch HTTP/1.1" 200 4692 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:06:41 +0000] "GET /buddies/online HTTP/1.1" 200 107 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:02 +0000] "GET /overview HTTP/1.1" 302 430 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:03 +0000] "GET /login HTTP/1.1" 200 21117 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:03 +0000] "GET /build/assets/outgame-1a0852d6.js HTTP/1.1" 200 440008 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:03 +0000] "GET /build/assets/outgame-Bd4b_3cr.css HTTP/1.1" 200 42526 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:03 +0000] "GET /img/outgame/1817433e4a8d432a8d8ed25a4d6060.png HTTP/1.1" 200 8147 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:03 +0000] "GET /img/outgame/c98a4685de676300b80da072ab6ad7.png HTTP/1.1" 200 1454 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/0a5fa2929f5326fade793585415a22.gif HTTP/1.1" 200 95 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/1867da5b5f8769b547bb91d88bb4f8.jpg HTTP/1.1" 200 179325 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/f88cc2bd8efa2b7d232e50d56a1180.png HTTP/1.1" 200 20593 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/113abb97b5fff99cb7d4d5019f04eb.gif HTTP/1.1" 200 95 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/76cbf0115f4559fb1d6f25e9819ecb.gif HTTP/1.1" 200 162 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/480120d537b7f69afcfda1356dd39e.gif HTTP/1.1" 200 19568 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/daeabdae9844ec3d61c235e5ee1a64.gif HTTP/1.1" 200 72 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/aef3bd3bdfb1d2be6d99ff39e7a394.png HTTP/1.1" 200 210 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/f1c317aff2183c9b8b905bbbca9e8a.jpg HTTP/1.1" 200 344 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/2c3d8b94dc095ab950a202f7089995.jpg HTTP/1.1" 200 74610 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/de8b29a965ae085e8f3cdfcc63fb8e.gif HTTP/1.1" 200 3562 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/72a97f02af4493519c741f49f7180b.jpg HTTP/1.1" 200 3427 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/246742ee5fa2f53100ef6a5b823249.png HTTP/1.1" 200 541 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:04 +0000] "GET /img/outgame/9ee28c83e3a3554b9d195e29309ebe.png HTTP/1.1" 200 1513 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:05 +0000] "GET /favicon.ico HTTP/1.1" 200 894 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:05 +0000] "GET /img/outgame/c732feb94125f1122741b89857eaf6.gif HTTP/1.1" 200 6021 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:05 +0000] "GET /img/outgame/5f68e42f93bad65d7a1a6ddd130543.gif HTTP/1.1" 200 6470 "https://ogame.vgreinlabs.freeddns.org/build/assets/outgame-Bd4b_3cr.css" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:07:24 +0000] "GET /overview HTTP/1.1" 200 112404 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:24 +0000] "GET /build/assets/ingame-C9U8U3hi.css HTTP/1.1" 200 886636 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:24 +0000] "GET /img/banners/de0dadddb0285ba78b026ce18fc898.jpg HTTP/1.1" 200 28255 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:24 +0000] "GET /build/assets/ingame-d9e2d17e.js HTTP/1.1" 200 2967197 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:24 +0000] "GET /img/icons/401d1a91ff40dc7c8acfa4377d3d65.gif HTTP/1.1" 200 7829 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /img/layout/pixel.gif HTTP/1.1" 200 43 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /img/icons/3f9884806436537bdec305aa26fc60.gif HTTP/1.1" 200 673 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /img/planets/medium/ice_5.png HTTP/1.1" 200 7587 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /img/icons/1f57d944fff38ee51d49c027f574ef.gif HTTP/1.1" 200 616 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /img/admin/admin-menu-bg.jpg HTTP/1.1" 200 1259 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /img/flags/a176fcd6f3e3de2bed6a73a8b1d5e7.png HTTP/1.1" 200 550 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /img/headers/overview/ice.jpg HTTP/1.1" 200 42115 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /ajax/fleet/eventbox/fetch HTTP/1.1" 200 175 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /ajax/fleet/eventlist/fetch HTTP/1.1" 200 4698 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:07:25 +0000] "GET /buddies/online HTTP/1.1" 200 107 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "POST /login HTTP/1.1" 302 438 "https://ogame.vgreinlabs.freeddns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /overview HTTP/1.1" 200 112408 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /build/assets/ingame-d9e2d17e.js HTTP/1.1" 200 2967197 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/icons/401d1a91ff40dc7c8acfa4377d3d65.gif HTTP/1.1" 200 7829 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /build/assets/ingame-C9U8U3hi.css HTTP/1.1" 200 886636 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/banners/de0dadddb0285ba78b026ce18fc898.jpg HTTP/1.1" 200 28255 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/layout/pixel.gif HTTP/1.1" 200 43 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/icons/3f9884806436537bdec305aa26fc60.gif HTTP/1.1" 200 673 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/planets/medium/ice_5.png HTTP/1.1" 200 7587 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/icons/1f57d944fff38ee51d49c027f574ef.gif HTTP/1.1" 200 616 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/flags/a176fcd6f3e3de2bed6a73a8b1d5e7.png HTTP/1.1" 200 550 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/admin/admin-menu-bg.jpg HTTP/1.1" 200 1259 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /img/headers/overview/ice.jpg HTTP/1.1" 200 42115 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /ajax/fleet/eventbox/fetch HTTP/1.1" 200 175 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /ajax/fleet/eventlist/fetch HTTP/1.1" 200 4698 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+10.0.4.2 - - [27/Oct/2026:19:08:01 +0000] "GET /buddies/online HTTP/1.1" 200 107 "https://ogame.vgreinlabs.freeddns.org/overview" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+
+
+
+ogamex-db
+2026-10-27 17:17:26+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:11.3.2+maria~ubu2204 started.
+2026-10-27 17:17:26+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+2026-10-27 17:17:26+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:11.3.2+maria~ubu2204 started.
+2026-10-27 17:17:26+00:00 [Note] [Entrypoint]: MariaDB upgrade not required
+2026-10-27 17:17:26+00:00 [Warn] [Entrypoint]: /sys/fs/cgroup///memory.pressure not writable, functionality unavailable to MariaDB
+2026-10-27 17:17:26 0 [Note] Starting MariaDB 11.3.2-MariaDB-1:11.3.2+maria~ubu2204 source revision 068a6819eb63bcb01fdfa037c9bf3bf63c33ee42 as process 1
+2026-10-27 17:17:26 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2026-10-27 17:17:26 0 [Note] InnoDB: Number of transaction pools: 1
+2026-10-27 17:17:26 0 [Note] InnoDB: Using ARMv8 crc32 + pmull instructions
+2026-10-27 17:17:26 0 [Warning] mariadbd: io_uring_queue_init() failed with errno 1
+2026-10-27 17:17:26 0 [Warning] InnoDB: liburing disabled: falling back to innodb_use_native_aio=OFF
+2026-10-27 17:17:26 0 [Note] InnoDB: Initializing buffer pool, total size = 128.000MiB, chunk size = 2.000MiB
+2026-10-27 17:17:26 0 [Note] InnoDB: Completed initialization of buffer pool
+2026-10-27 17:17:26 0 [Note] InnoDB: File system buffers for log disabled (block size=4096 bytes)
+2026-10-27 17:17:26 0 [Note] InnoDB: End of log at LSN=4047659
+2026-10-27 17:17:26 0 [Note] InnoDB: Opened 3 undo tablespaces
+2026-10-27 17:17:26 0 [Note] InnoDB: 128 rollback segments in 3 undo tablespaces are active.
+2026-10-27 17:17:26 0 [Note] InnoDB: Setting file './ibtmp1' size to 12.000MiB. Physically writing the file full; Please wait ...
+2026-10-27 17:17:26 0 [Note] InnoDB: File './ibtmp1' size is now 12.000MiB.
+2026-10-27 17:17:26 0 [Note] InnoDB: log sequence number 4047659; transaction id 4388
+2026-10-27 17:17:26 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+2026-10-27 17:17:26 0 [Note] Plugin 'FEEDBACK' is disabled.
+2026-10-27 17:17:26 0 [Note] Plugin 'wsrep-provider' is disabled.
+2026-10-27 17:17:26 0 [Note] Server socket created on IP: '0.0.0.0'.
+2026-10-27 17:17:26 0 [Note] Server socket created on IP: '::'.
+2026-10-27 17:17:27 0 [Note] mariadbd: Event Scheduler: Loaded 0 events
+2026-10-27 17:17:27 0 [Note] mariadbd: ready for connections.
+Version: '11.3.2-MariaDB-1:11.3.2+maria~ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 3306  mariadb.org binary distribution
+2026-10-27 17:17:27 0 [Note] InnoDB: Buffer pool(s) load completed at 261027 17:17:27
+
+ogamex-app
+10.0.4.7 -  27/Oct/2026:17:53:53 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:17:54:31 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:17:54:31 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:17:54:32 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:17:54:32 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:17:54:32 +0000 "GET /index.php" 404
+10.0.4.7 -  27/Oct/2026:17:54:32 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:17:54:46 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:17:54:46 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:17:54:47 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:17:54:47 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:17:54:47 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:17:54:47 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:17:54:58 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:17:54:58 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:17:54:58 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:17:55:40 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:04:47 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:18:04:51 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:09:56 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:18:10:04 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:20:27 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:20:31 +0000 "GET /index.php" 404
+10.0.4.7 -  27/Oct/2026:18:20:39 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:20:46 +0000 "GET /index.php" 404
+10.0.4.7 -  27/Oct/2026:18:25:11 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:18:25:12 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:25:12 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:25:12 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:25:14 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:25:15 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:25:16 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:25:17 +0000 "GET /index.php" 404
+10.0.4.7 -  27/Oct/2026:18:26:48 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:18:26:54 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:28:34 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:18:28:34 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:28:35 +0000 "GET /index.php" 302
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+10.0.4.7 -  27/Oct/2026:18:28:35 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:28:36 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:28:37 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:28:38 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:28:40 +0000 "GET /index.php" 404
+10.0.4.7 -  27/Oct/2026:18:48:24 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:18:48:26 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:48:30 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:48:38 +0000 "GET /index.php" 404
+10.0.4.7 -  27/Oct/2026:18:48:40 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:48:41 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:48:41 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:48:41 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:48:42 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:48:42 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:48:57 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:18:49:03 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:18:52:11 +0000 "GET /index.php" 404
+10.0.4.7 -  27/Oct/2026:18:52:12 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:52:13 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:52:13 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:52:14 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:52:14 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:18:52:14 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:02:33 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:19:02:36 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:02:41 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:04:32 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:04:32 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:04:32 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:04:33 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:04:35 +0000 "POST /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:04:35 +0000 "GET /index.php" 301
+10.0.4.7 -  27/Oct/2026:19:04:35 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:04:35 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:04:43 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:04:46 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:04:49 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:06:03 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:06:06 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:06:39 +0000 "POST /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:06:40 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:06:41 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:06:41 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:06:41 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:07:02 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:07:03 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:07:24 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:07:25 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:07:25 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:07:25 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:08:00 +0000 "POST /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:08:01 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:08:01 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:08:01 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:08:01 +0000 "GET /index.php" 200
+10.0.4.7 -  27/Oct/2026:19:10:13 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:10:13 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:10:14 +0000 "GET /index.php" 302
+10.0.4.7 -  27/Oct/2026:19:10:15 +0000 "GET /index.php" 302
+
+
+
+ogamex-scheduler
+  2026-10-27 18:50:29 Running ['artisan' ogamex:scheduler:generate-highscore-ranks]  266.57ms DONE
+  ⇂ Generates Highscore rank data for players and alliances  
+  2026-10-27 18:50:29 Running ['artisan' ogamex:scheduler:darkmatter-regenerate]  247.04ms DONE
+  ⇂ Process Dark Matter regeneration for all eligible users  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+  2026-10-27 18:55:30 Running ['artisan' ogamex:scheduler:generate-highscores]  735.97ms DONE
+  ⇂ Generates Highscore data  
+  2026-10-27 18:55:31 Running ['artisan' ogamex:scheduler:generate-alliance-highscores]  209.35ms DONE
+  ⇂ Generates Alliance Highscore data by aggregating member scores  
+  2026-10-27 18:55:31 Running ['artisan' ogamex:scheduler:generate-highscore-ranks]  247.80ms DONE
+  ⇂ Generates Highscore rank data for players and alliances  
+  2026-10-27 18:55:31 Running ['artisan' ogamex:scheduler:darkmatter-regenerate]  208.51ms DONE
+  ⇂ Process Dark Matter regeneration for all eligible users  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+  2026-10-27 19:00:33 Running ['artisan' ogamex:scheduler:generate-highscores]  729.62ms DONE
+  ⇂ Generates Highscore data  
+  2026-10-27 19:00:33 Running ['artisan' ogamex:scheduler:generate-alliance-highscores]  209.73ms DONE
+  ⇂ Generates Alliance Highscore data by aggregating member scores  
+  2026-10-27 19:00:33 Running ['artisan' ogamex:scheduler:generate-highscore-ranks]  253.33ms DONE
+  ⇂ Generates Highscore rank data for players and alliances  
+  2026-10-27 19:00:34 Running ['artisan' ogamex:scheduler:cleanup-wreckfields]  207.88ms DONE
+  ⇂ Clean up expired wreck fields and process completed repairs  
+  2026-10-27 19:00:34 Running ['artisan' ogamex:scheduler:delete-old-messages]  211.36ms DONE
+  ⇂ Deletes player inbox messages and archives chat messages older than the retention period  
+  2026-10-27 19:00:34 Running ['artisan' ogamex:scheduler:darkmatter-regenerate]  204.83ms DONE
+  ⇂ Process Dark Matter regeneration for all eligible users  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+  2026-10-27 19:05:35 Running ['artisan' ogamex:scheduler:generate-highscores]  752.48ms DONE
+  ⇂ Generates Highscore data  
+  2026-10-27 19:05:36 Running ['artisan' ogamex:scheduler:generate-alliance-highscores]  213.01ms DONE
+  ⇂ Generates Alliance Highscore data by aggregating member scores  
+  2026-10-27 19:05:36 Running ['artisan' ogamex:scheduler:generate-highscore-ranks]  262.34ms DONE
+  ⇂ Generates Highscore rank data for players and alliances  
+  2026-10-27 19:05:37 Running ['artisan' ogamex:scheduler:darkmatter-regenerate]  213.19ms DONE
+  ⇂ Process Dark Matter regeneration for all eligible users  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+  2026-10-27 19:10:38 Running ['artisan' ogamex:scheduler:generate-highscores]  728.72ms DONE
+  ⇂ Generates Highscore data  
+  2026-10-27 19:10:39 Running ['artisan' ogamex:scheduler:generate-alliance-highscores]  209.10ms DONE
+  ⇂ Generates Alliance Highscore data by aggregating member scores  
+  2026-10-27 19:10:39 Running ['artisan' ogamex:scheduler:generate-highscore-ranks]  257.35ms DONE
+  ⇂ Generates Highscore rank data for players and alliances  
+  2026-10-27 19:10:39 Running ['artisan' ogamex:scheduler:darkmatter-regenerate]  213.30ms DONE
+  ⇂ Process Dark Matter regeneration for all eligible users  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+
+ogamex-queue-worker
+.env file not found, copied .env.example to .env
+
+
+
+ogamex-reverb
+.env file not found, copied .env.example to .env
+
+   INFO  Starting server on 0.0.0.0:8090 (localhost).  
+
