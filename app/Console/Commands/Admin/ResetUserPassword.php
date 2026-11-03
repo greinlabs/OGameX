@@ -30,8 +30,8 @@ class ResetUserPassword extends Command
             return 1;
         }
 
-        // Generate password
-        $password = $this->option('random') ? Str::random(12) : '12345678';
+        // Always use a strong password. The --random option is retained for command compatibility.
+        $password = Str::random(32);
 
         // Update password
         $user->password = Hash::make($password);

@@ -277,6 +277,7 @@ Route::middleware(['auth', 'globalgame', 'locale', 'admin'])->group(function () 
     Route::post('/admin/users/masquerade', [UserManagementController::class, 'masquerade'])->name('admin.users.masquerade');
     Route::post('/admin/users/block', [UserManagementController::class, 'block'])->name('admin.users.block');
     Route::post('/admin/users/unblock', [UserManagementController::class, 'unblock'])->name('admin.users.unblock');
+    Route::post('/admin/users/reset-password', [UserManagementController::class, 'resetPassword'])->name('admin.users.reset-password');
     Route::post('/admin/users/admin', [UserManagementController::class, 'setAdmin'])->name('admin.users.admin');
 
     // Rules

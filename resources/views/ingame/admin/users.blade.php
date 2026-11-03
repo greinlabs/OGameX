@@ -7,6 +7,9 @@
     @if (session('error'))
         <script>fadeBox('{{ session('error') }}', true);</script>
     @endif
+    @if (session('password_reset'))
+        <script>fadeBox('New temporary password: {{ session('password_reset') }}', false);</script>
+    @endif
 
     <style>
         .user-admin-table { width: 100%; min-width: 980px; border-collapse: collapse; font-size: 11px; }
@@ -157,7 +160,7 @@
                                                 </form>
                                             @endif
 
-                                            @if (!$isAdmin)
+                                            @if ($user->id !== auth()->id())
                                                 @if ($isBlocked)
                                                     <form method="POST" action="{{ route('admin.users.unblock') }}" class="user-action-form user-action-single">
                                                         @csrf
@@ -179,6 +182,14 @@
                                                         <input type="submit" class="btn_blue" value="Block">
                                                     </form>
                                                 @endif
+                                            @endif
+
+                                            @if ($user->id !== auth()->id())
+                                                <form method="POST" action="{{ route('admin.users.reset-password') }}" class="user-action-form user-action-single" onsubmit="return confirm('Reset this user password and invalidate existing login access?')">
+                                                    @csrf
+                                                    <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                                    <input type="submit" class="btn_blue" value="Reset password">
+                                                </form>
                                             @endif
 
                                             @if ($isAdmin)

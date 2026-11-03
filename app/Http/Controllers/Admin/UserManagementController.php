@@ -5,6 +5,9 @@ namespace OGame\Http\Controllers\Admin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use OGame\Factories\PlayerServiceFactory;
 use OGame\Http\Controllers\OGameController;
 use OGame\Models\Ban;
@@ -28,7 +31,6 @@ class UserManagementController extends OGameController
                         $q->whereNull('banned_until')->orWhere('banned_until', '>', now());
                     });
             }])
-            ->where('username', '!=', 'Legor')
             ->orderByDesc('created_at');
 
         if ($search !== '') {
@@ -105,8 +107,8 @@ class UserManagementController extends OGameController
         ]);
 
         $user = User::findOrFail((int)$validated['user_id']);
-        if ($user->hasRole('admin')) {
-            return redirect()->back()->with('error', 'Administrators cannot be blocked.');
+        if ($request->user()?->id === $user->id) {
+            return redirect()->back()->with('error', 'You cannot block your own account.');
         }
         if ($user->isBanned()) {
             return redirect()->back()->with('error', 'User is already blocked.');
@@ -141,6 +143,22 @@ class UserManagementController extends OGameController
         }
 
         return redirect()->back()->with('success', "User \"{$user->username}\" has been unblocked.");
+    }
+
+    public function resetPassword(Request $request): RedirectResponse
+    {
+        $request->validate(['user_id' => ['required', 'integer', 'exists:users,id']]);
+        $user = User::findOrFail((int)$request->input('user_id'));
+
+        $password = Str::random(32);
+        $user->password = Hash::make($password);
+        $user->remember_token = null;
+        $user->save();
+        DB::table('sessions')->where('user_id', $user->id)->delete();
+
+        return redirect()->back()
+            ->with('success', "Password reset for \"{$user->username}\".")
+            ->with('password_reset', $password);
     }
 
     public function setAdmin(Request $request): RedirectResponse
