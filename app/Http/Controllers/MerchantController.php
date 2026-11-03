@@ -34,6 +34,31 @@ class MerchantController extends OGameController
     }
 
     /**
+     * Show information about an unfinished merchant feature.
+     *
+     * @param string $feature
+     * @return View
+     */
+    public function featureInfo(string $feature): View
+    {
+        $featureContent = match ($feature) {
+            'auctioneer' => [
+                'title' => __('t_merchant.auctioneer'),
+                'description' => __('t_merchant.auctioneer_desc'),
+            ],
+            'import-export' => [
+                'title' => __('t_merchant.import_export'),
+                'description' => __('t_merchant.import_export_desc'),
+            ],
+            default => abort(404),
+        };
+
+        $this->setBodyId('traderOverview');
+
+        return view('ingame.merchant.feature-info', $featureContent);
+    }
+
+    /**
      * Show the resource market selection page
      *
      * @param Request $request

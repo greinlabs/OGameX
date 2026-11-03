@@ -478,6 +478,21 @@
                                 </div>
                             </div>
                             <div class="fieldwrapper">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_attack_enabled') }}</label>
+                                <div class="thefield">
+                                    <square-checkbox class="square-checkbox">
+                                        <input type="checkbox" id="square-checkBotAttackEnabled" name="bot_attack_enabled" value="1" {{ $bot_attack_enabled ? 'checked' : '' }}>
+                                        <label for="square-checkBotAttackEnabled"></label>
+                                    </square-checkbox>
+                                </div>
+                            </div>
+                            <div class="fieldwrapper">
+                                <label class="styled textBeefy">{{ __('t_ingame.admin.bot_attack_interval') }}</label>
+                                <div class="thefield">
+                                    <input type="number" min="60" class="textInput w130 textCenter textBeefy" name="bot_attack_interval" value="{{ $bot_attack_interval }}">
+                                </div>
+                            </div>
+                            <div class="fieldwrapper">
                                 <label class="styled textBeefy">{{ __('t_ingame.admin.bot_attack_chance') }}</label>
                                 <div class="thefield">
                                     <input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_attack_chance" value="{{ $bot_attack_chance }}">
@@ -540,9 +555,13 @@
                     </div>
                 </div>
             </form>
-            <form method="POST" action="{{ route('admin.serversettings.run-bot-action') }}" style="margin-top: 10px; text-align: center;">
+            <form method="POST" action="{{ route('admin.serversettings.spawn-bot') }}" style="margin-top: 10px; text-align: center;">
                 @csrf
-                <input type="submit" class="btn_blue" value="{{ __('t_ingame.admin.bot_run_action') }}">
+                <input type="submit" class="btn_blue" value="{{ __('t_ingame.admin.bot_spawn_now') }}">
+            </form>
+            <form method="POST" action="{{ route('admin.serversettings.run-bot-attack-round') }}" style="margin-top: 10px; text-align: center;">
+                @csrf
+                <input type="submit" class="btn_blue" value="{{ __('t_ingame.admin.bot_attack_now') }}">
             </form>
         </div>
         <script language="javascript">

@@ -36,6 +36,7 @@ return [
     'auctioneer' => 'Leiloeiro',
     'import_export' => 'Importação / Exportação',
     'coming_soon' => 'Em breve',
+    'feature_not_implemented' => 'Este recurso ainda não está disponível.',
 
     // Resource Market
     'trade_metal_desc' => 'Troque Metal por Cristal ou Deutério',

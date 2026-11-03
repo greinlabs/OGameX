@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use OGame\Factories\PlanetServiceFactory;
 use OGame\Factories\PlayerServiceFactory;
+use OGame\GameObjects\Models\Abstracts\GameObject;
 use OGame\GameObjects\Models\Units\UnitCollection;
 use OGame\Models\Enums\PlanetType;
 use OGame\Models\FleetMission;
@@ -38,7 +39,8 @@ class BotService
 
     public function runScheduledCycle(): array
     {
-        $result = ['spawned' => 0, 'attacks' => 0, 'errors' => []];
+        $result = ['spawned' => 0, 'attacks' => 0, 'produced' => 0, 'errors' => []];
+        $now = now()->timestamp;
         $cycleLock = Cache::lock('ogamex-bot-cycle', 300);
         if (!$cycleLock->get()) {
             $result['errors'][] = 'Bot cycle is already running.';
@@ -52,36 +54,191 @@ class BotService
             $interval = (int)$this->settingsService->get('bot_spawn_interval', 86400);
             if (
                 (bool)(int)$this->settingsService->get('bot_spawn_enabled', 0)
-                && (time() - $lastSpawn) >= max(60, $interval)
+                && ($now - $lastSpawn) >= max(60, $interval)
             ) {
                 try {
                     $this->spawnBot();
                     $result['spawned']++;
-                    $this->settingsService->set('bot_last_spawn_at', time());
+                    $this->settingsService->set('bot_last_spawn_at', $now);
                 } catch (Throwable $e) {
                     Log::error('Scheduled bot spawn failed', ['exception' => $e]);
                     $result['errors'][] = 'Bot spawn failed.';
                 }
             }
 
-            foreach (User::where('is_bot', true)->where('vacation_mode', false)->get() as $bot) {
-                $chance = min(100, max(0, (int)$this->settingsService->get('bot_attack_chance', 75)));
-                if (random_int(1, 100) <= $chance) {
-                    try {
-                        if ($this->makeBotAttack($bot) !== null) {
-                            $result['attacks']++;
-                        }
-                    } catch (Throwable $e) {
-                        Log::error('Scheduled bot attack failed', ['bot_id' => $bot->id, 'exception' => $e]);
-                        $result['errors'][] = 'Bot attack failed.';
-                    }
-                }
+            $lastAttackSetting = $this->settingsService->get('bot_last_attack_at', '');
+            $lastAttack = $lastAttackSetting === '' ? $now : (int)$lastAttackSetting;
+            if ($lastAttackSetting === '') {
+                $this->settingsService->set('bot_last_attack_at', $now);
+            }
+            $attackInterval = (int)$this->settingsService->get('bot_attack_interval', 604800);
+            if (
+                (bool)(int)$this->settingsService->get('bot_attack_enabled', 1)
+                && ($now - $lastAttack) >= max(60, $attackInterval)
+            ) {
+                $attackResult = $this->runAttackRound();
+                $result['attacks'] = $attackResult['attacks'];
+                $result['errors'] = [...$result['errors'], ...$attackResult['errors']];
+                $this->settingsService->set('bot_last_attack_at', $now);
+            }
+
+            $lastProductionSetting = $this->settingsService->get('bot_last_production_at', '');
+            $lastProduction = $lastProductionSetting === '' ? $now : (int)$lastProductionSetting;
+            if ($lastProductionSetting === '') {
+                $this->settingsService->set('bot_last_production_at', $now);
+            }
+            if (($now - $lastProduction) >= 86400) {
+                $productionResult = $this->produceForBots();
+                $result['produced'] = $productionResult['produced'];
+                $result['errors'] = [...$result['errors'], ...$productionResult['errors']];
+                $this->settingsService->set('bot_last_production_at', $now);
             }
         } finally {
             $cycleLock->release();
         }
 
         return $result;
+    }
+
+    /**
+     * Run one probabilistic attack round independently of the configured schedule.
+     *
+     * @return array{attacks: int, errors: array<string>}
+     */
+    public function runAttackRound(): array
+    {
+        $result = ['attacks' => 0, 'errors' => []];
+        $chance = min(100, max(0, (int)$this->settingsService->get('bot_attack_chance', 75)));
+
+        foreach (User::where('is_bot', true)->where('vacation_mode', false)->get() as $bot) {
+            if (random_int(1, 100) > $chance) {
+                continue;
+            }
+
+            try {
+                if ($this->makeBotAttack($bot) !== null) {
+                    $result['attacks']++;
+                }
+            } catch (Throwable $e) {
+                Log::error('Bot attack round failed for bot', ['bot_id' => $bot->id, 'exception' => $e]);
+                $result['errors'][] = 'Bot attack failed.';
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Spend up to half of each bot planet's stored resources on a randomized mix of ships and defenses.
+     *
+     * @return array{produced: int, errors: array<string>}
+     */
+    public function produceForBots(): array
+    {
+        $result = ['produced' => 0, 'errors' => []];
+        $productionLock = Cache::lock('ogamex-bot-production', 300);
+        if (!$productionLock->get()) {
+            $result['errors'][] = 'Bot production is already running.';
+            return $result;
+        }
+
+        try {
+            $bots = User::where('is_bot', true)->where('vacation_mode', false)->get();
+            foreach ($bots as $bot) {
+                try {
+                    $player = $this->playerServiceFactory->make($bot->id, true);
+                    foreach ($player->planets->allPlanets() as $planetService) {
+                        $planetId = $planetService->getPlanetId();
+                        $produced = DB::transaction(function () use ($planetService, $planetId): int {
+                            $planet = Planet::whereKey($planetId)->lockForUpdate()->first();
+                            if ($planet === null || (int)$planet->destroyed !== 0) {
+                                return 0;
+                            }
+
+                            $planetService->setPlanet($planet);
+                            $available = $planetService->getResources();
+                            $budget = new Resources(
+                                floor($available->metal->get() * 0.5),
+                                floor($available->crystal->get() * 0.5),
+                                floor($available->deuterium->get() * 0.5)
+                            );
+                            if (!$budget->any()) {
+                                return 0;
+                            }
+
+                            $objects = [
+                                ...ObjectService::getShipObjects(),
+                                ...ObjectService::getDefenseObjects(),
+                            ];
+                            $objects = array_values(array_filter(
+                                $objects,
+                                fn (GameObject $object): bool => ObjectService::objectRequirementsMet($object->machine_name, $planetService)
+                                    && ObjectService::objectCharacterClassMet($object->machine_name, $planetService)
+                            ));
+                            shuffle($objects);
+
+                            $built = 0;
+                            foreach ($objects as $object) {
+                                $price = $object->price->resources;
+                                $amount = $this->getAffordableUnitCount($budget, $price);
+                                if ($amount < 1) {
+                                    continue;
+                                }
+
+                                $amount = random_int(max(1, (int)ceil($amount * 0.75)), $amount);
+                                $cost = new Resources(
+                                    $price->metal->get() * $amount,
+                                    $price->crystal->get() * $amount,
+                                    $price->deuterium->get() * $amount
+                                );
+                                $budget->metal->set($budget->metal->get() - $cost->metal->get());
+                                $budget->crystal->set($budget->crystal->get() - $cost->crystal->get());
+                                $budget->deuterium->set($budget->deuterium->get() - $cost->deuterium->get());
+
+                                $planetService->addUnit($object->machine_name, $amount, false);
+                                $planet->metal -= $cost->metal->get();
+                                $planet->crystal -= $cost->crystal->get();
+                                $planet->deuterium -= $cost->deuterium->get();
+                                $built += $amount;
+                            }
+
+                            if ($built > 0) {
+                                $planet->save();
+                            }
+                            return $built;
+                        });
+
+                        if ($produced > 0) {
+                            $result['produced'] += $produced;
+                            User::whereKey($bot->id)->update([
+                                'bot_last_action_at' => now(),
+                                'time' => (string)now()->timestamp,
+                            ]);
+                        }
+                    }
+                } catch (Throwable $e) {
+                    Log::error('Bot production failed', ['bot_id' => $bot->id, 'exception' => $e]);
+                    $result['errors'][] = 'Bot production failed.';
+                }
+            }
+        } finally {
+            $productionLock->release();
+        }
+
+        return $result;
+    }
+
+    private function getAffordableUnitCount(Resources $budget, Resources $price): int
+    {
+        $limits = [];
+        foreach (['metal', 'crystal', 'deuterium'] as $resource) {
+            $unitPrice = $price->{$resource}->get();
+            if ($unitPrice > 0) {
+                $limits[] = (int)floor($budget->{$resource}->get() / $unitPrice);
+            }
+        }
+
+        return $limits === [] ? 0 : min($limits);
     }
 
     public function spawnBot(): User
@@ -149,26 +306,19 @@ class BotService
                 return $bot;
             });
 
-            $planet = Planet::where('user_id', $bot->id)->first();
-            if ($planet !== null) {
-                $planetService = $this->planetServiceFactory->make($planet->id, true);
-                if ($planetService !== null) {
-                    $this->makeBotAttack($bot, $planetService);
-                }
-            }
-
             $bot = $bot->refresh();
         } finally {
             $spawnLock->release();
         }
 
+        $planet = Planet::where('user_id', $bot->id)->first();
         if ($planet === null) {
             throw new Exception('Bot planet could not be created.');
         }
         $this->notifyAdmins(
             $bot->username,
             '[' . $planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ']',
-            'Bot created and initial action scheduled.'
+            'Bot created.'
         );
 
         return $bot->refresh();
@@ -203,23 +353,30 @@ class BotService
             $target = null;
             foreach ($candidates as $candidate) {
                 $targetUser = $targetUsers->get($candidate->user_id);
-                if (
-                    $targetUser !== null
-                    && !(bool)$targetUser->vacation_mode
-                ) {
-                    $target = $candidate;
-                    break;
+                if ($targetUser === null || (bool)$targetUser->vacation_mode) {
+                    continue;
                 }
+
+                $targetPlayer = $this->playerServiceFactory->make($targetUser->id, true);
+                if ($targetPlayer->isNewbie($player) || $targetPlayer->isStrong($player)) {
+                    continue;
+                }
+
+                $target = $candidate;
+                break;
             }
             if ($target === null) {
                 return null;
             }
 
             $units = new UnitCollection();
-            foreach (ObjectService::getMilitaryShipObjects() as $ship) {
+            foreach (ObjectService::getShipObjects() as $ship) {
+                if ($ship->machine_name === 'solar_satellite') {
+                    continue;
+                }
                 $available = (int)$originPlanet->getObjectAmount($ship->machine_name);
                 if ($available > 0) {
-                    $units->addUnit($ship, max(1, (int)floor($available * random_int(25, 100) / 100)));
+                    $units->addUnit($ship, $available);
                 }
             }
             if (count($units->units) === 0) {

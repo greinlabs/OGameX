@@ -36,6 +36,7 @@ return [
     'auctioneer' => 'Auctioneer',
     'import_export' => 'Import / Export',
     'coming_soon' => 'Coming soon',
+    'feature_not_implemented' => 'This feature is not available yet.',
 
     // Resource Market
     'trade_metal_desc' => 'Trade Metal for Crystal or Deuterium',

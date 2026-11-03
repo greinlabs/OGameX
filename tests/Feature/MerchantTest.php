@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\App;
 use OGame\GameMessages\ExpeditionMerchantFound;
 use OGame\Models\Resources;
 use OGame\Services\MerchantService;
@@ -37,6 +38,32 @@ class MerchantTest extends IsolatedAccountTestCase
         $response->assertStatus(200);
         $response->assertSee('Resource Market');
         $response->assertSee('Scrap Merchant');
+        $response->assertSee(route('merchant.feature-info', ['feature' => 'auctioneer']), false);
+        $response->assertSee(route('merchant.feature-info', ['feature' => 'import-export']), false);
+    }
+
+    /**
+     * Unfinished merchant options explain their purpose and availability.
+     */
+    public function testUnfinishedMerchantPagesExplainTheirPurpose(): void
+    {
+        $auctioneerResponse = $this->get(route('merchant.feature-info', ['feature' => 'auctioneer']));
+        $auctioneerResponse->assertOk();
+        $auctioneerResponse->assertSee('Auctioneer');
+        $auctioneerResponse->assertSee('Items are offered here daily and can be purchased using resources.');
+        $auctioneerResponse->assertSee('This feature is not available yet.');
+
+        $importExportResponse = $this->get(route('merchant.feature-info', ['feature' => 'import-export']));
+        $importExportResponse->assertOk();
+        $importExportResponse->assertSee('Import / Export');
+        $importExportResponse->assertSee('Containers with unknown contents are sold here for resources every day.');
+        $importExportResponse->assertSee('This feature is not available yet.');
+
+        App::setLocale('pt-BR');
+        $localizedResponse = $this->get(route('merchant.feature-info', ['feature' => 'auctioneer']));
+        $localizedResponse->assertOk();
+        $localizedResponse->assertSee('Leiloeiro');
+        $localizedResponse->assertSee('Este recurso ainda não está disponível.');
     }
 
     /**

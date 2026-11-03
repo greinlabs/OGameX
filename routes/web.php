@@ -168,6 +168,7 @@ Route::middleware(['auth', 'banned', 'globalgame', 'locale', 'firstlogin'])->gro
 
     // Misc
     Route::get('/merchant', [MerchantController::class, 'index'])->name('merchant.index');
+    Route::get('/merchant/features/{feature}', [MerchantController::class, 'featureInfo'])->name('merchant.feature-info');
     Route::get('/merchant/resource-market', [MerchantController::class, 'resourceMarket'])->name('merchant.resource-market');
     Route::get('/merchant/market/{type}', [MerchantController::class, 'showMarket'])->name('merchant.market');
     Route::post('/merchant/call', [MerchantController::class, 'callMerchant'])->name('merchant.call');
@@ -254,8 +255,11 @@ Route::middleware(['auth', 'globalgame', 'locale', 'admin'])->group(function () 
     // Server settings
     Route::get('/admin/server-settings', [AdminServerSettingsController::class, 'index'])->name('admin.serversettings.index');
     Route::post('/admin/server-settings', [AdminServerSettingsController::class, 'update'])->name('admin.serversettings.update');
-    Route::post('/admin/server-settings/run-bot-action', [AdminServerSettingsController::class, 'runBotAction'])
-        ->name('admin.serversettings.run-bot-action')
+    Route::post('/admin/server-settings/spawn-bot', [AdminServerSettingsController::class, 'runBotSpawn'])
+        ->name('admin.serversettings.spawn-bot')
+        ->middleware('throttle:5,1');
+    Route::post('/admin/server-settings/run-bot-attack-round', [AdminServerSettingsController::class, 'runBotAttackRound'])
+        ->name('admin.serversettings.run-bot-attack-round')
         ->middleware('throttle:5,1');
 
     // Rules

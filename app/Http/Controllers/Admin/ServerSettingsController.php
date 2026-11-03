@@ -80,6 +80,8 @@ class ServerSettingsController extends OGameController
             'bot_spawn_interval' => (int)$settingsService->get('bot_spawn_interval', 86400),
             'bot_max_count' => (int)$settingsService->get('bot_max_count', 20),
             'bot_inactive_days' => (int)$settingsService->get('bot_inactive_days', 90),
+            'bot_attack_enabled' => (bool)(int)$settingsService->get('bot_attack_enabled', 1),
+            'bot_attack_interval' => (int)$settingsService->get('bot_attack_interval', 604800),
             'bot_attack_chance' => (int)$settingsService->get('bot_attack_chance', 75),
             'bot_level_min' => (int)$settingsService->get('bot_level_min', 3),
             'bot_level_max' => (int)$settingsService->get('bot_level_max', 25),
@@ -96,6 +98,7 @@ class ServerSettingsController extends OGameController
     {
         $this->validate(request(), [
             'bot_spawn_interval' => ['required', 'integer', 'min:60', 'max:31536000'],
+            'bot_attack_interval' => ['required', 'integer', 'min:60', 'max:31536000'],
             'bot_max_count' => ['required', 'integer', 'min:0', 'max:1000'],
             'bot_inactive_days' => ['required', 'integer', 'min:1', 'max:3650'],
             'bot_attack_chance' => ['required', 'integer', 'min:0', 'max:100'],
@@ -164,6 +167,8 @@ class ServerSettingsController extends OGameController
         $settingsService->set('highscore_admin_visible', request('highscore_admin_visible', 0));
         $settingsService->set('bot_spawn_enabled', request('bot_spawn_enabled', 0));
         $settingsService->set('bot_spawn_interval', max(60, (int)request('bot_spawn_interval', 86400)));
+        $settingsService->set('bot_attack_enabled', request('bot_attack_enabled', 0));
+        $settingsService->set('bot_attack_interval', max(60, (int)request('bot_attack_interval', 604800)));
         $settingsService->set('bot_max_count', max(0, (int)request('bot_max_count', 20)));
         $settingsService->set('bot_inactive_days', max(1, (int)request('bot_inactive_days', 90)));
         $settingsService->set('bot_attack_chance', min(100, max(0, (int)request('bot_attack_chance', 75))));
@@ -176,30 +181,44 @@ class ServerSettingsController extends OGameController
         return redirect()->route('admin.serversettings.index')->with('success', __('Changes saved!'));
     }
 
-    public function runBotAction(BotService $botService): RedirectResponse
+    public function runBotSpawn(BotService $botService): RedirectResponse
     {
         try {
-            $result = $botService->runScheduledCycle();
+            $bot = $botService->spawnBot();
+            return redirect()->route('admin.serversettings.index')->with(
+                'success',
+                __('t_ingame.admin.bot_spawn_success', ['bot' => $bot->username])
+            );
+        } catch (Throwable $exception) {
+            Log::error('Manual bot spawn failed', ['exception' => $exception]);
+            return redirect()->route('admin.serversettings.index')->with(
+                'error',
+                __('t_ingame.admin.bot_spawn_error')
+            );
+        }
+    }
+
+    public function runBotAttackRound(BotService $botService): RedirectResponse
+    {
+        try {
+            $result = $botService->runAttackRound();
             if ($result['errors'] !== []) {
-                Log::error('Bot action completed with errors', ['errors' => $result['errors']]);
+                Log::error('Manual bot attack round completed with errors', ['errors' => $result['errors']]);
                 return redirect()->route('admin.serversettings.index')->with(
                     'error',
-                    __('t_ingame.admin.bot_action_error')
+                    __('t_ingame.admin.bot_attack_error')
                 );
             }
 
             return redirect()->route('admin.serversettings.index')->with(
                 'success',
-                __('t_ingame.admin.bot_action_success', [
-                    'spawned' => $result['spawned'],
-                    'attacks' => $result['attacks'],
-                ])
+                __('t_ingame.admin.bot_attack_success', ['attacks' => $result['attacks']])
             );
         } catch (Throwable $exception) {
-            Log::error('Bot action failed', ['exception' => $exception]);
+            Log::error('Manual bot attack round failed', ['exception' => $exception]);
             return redirect()->route('admin.serversettings.index')->with(
                 'error',
-                __('t_ingame.admin.bot_action_error')
+                __('t_ingame.admin.bot_attack_error')
             );
         }
     }

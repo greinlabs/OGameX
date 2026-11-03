@@ -42,5 +42,5 @@ Schedule::command(CleanupDestroyedPlanets::class)->dailyAt('03:00')->withoutOver
 // Process Dark Matter regeneration every 5 minutes
 Schedule::command(DarkMatterRegenerateCommand::class)->everyFiveMinutes()->withoutOverlapping();
 
-// Evaluate bot spawning, attacks, and inactivity cleanup every five minutes
-Schedule::command(BotCycleCommand::class)->everyFiveMinutes()->withoutOverlapping();
+// Evaluate bot spawn, attack, and daily production schedules independently each minute
+Schedule::command(BotCycleCommand::class)->everyMinute()->withoutOverlapping();

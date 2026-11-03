@@ -7,7 +7,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use OGame\Services\BotService;
 
-#[Description('Run the configured bot spawn and activity cycle')]
+#[Description('Run configured bot spawn, attack, and production schedules')]
 #[Signature('ogamex:scheduler:bot-cycle')]
 class BotCycleCommand extends Command
 {
@@ -27,9 +27,10 @@ class BotCycleCommand extends Command
         }
 
         $this->info(sprintf(
-            'Bot cycle completed: %d spawned, %d attacks.',
+            'Bot cycle completed: %d spawned, %d attacks, %d units produced.',
             $result['spawned'],
-            $result['attacks']
+            $result['attacks'],
+            $result['produced']
         ));
         return Command::SUCCESS;
     }
