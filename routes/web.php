@@ -6,6 +6,7 @@ use OGame\Http\Controllers\Admin\FleetTimingController;
 use OGame\Http\Controllers\Admin\RulesController as AdminRulesController;
 use OGame\Http\Controllers\Admin\ServerAdministrationController;
 use OGame\Http\Controllers\Admin\BotSettingsController;
+use OGame\Http\Controllers\Admin\UserManagementController;
 use OGame\Http\Controllers\Admin\ServerSettingsController as AdminServerSettingsController;
 use OGame\Http\Controllers\AllianceController;
 use OGame\Http\Controllers\AllianceDepotController;
@@ -271,6 +272,12 @@ Route::middleware(['auth', 'globalgame', 'locale', 'admin'])->group(function () 
     Route::post('/admin/bot-settings/run-bot-attack-round', [BotSettingsController::class, 'runBotAttackRound'])
         ->name('admin.botsettings.run-bot-attack-round')
         ->middleware('throttle:5,1');
+
+    Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
+    Route::post('/admin/users/masquerade', [UserManagementController::class, 'masquerade'])->name('admin.users.masquerade');
+    Route::post('/admin/users/block', [UserManagementController::class, 'block'])->name('admin.users.block');
+    Route::post('/admin/users/unblock', [UserManagementController::class, 'unblock'])->name('admin.users.unblock');
+    Route::post('/admin/users/admin', [UserManagementController::class, 'setAdmin'])->name('admin.users.admin');
 
     // Rules
     Route::get('/admin/rules', [AdminRulesController::class, 'index'])->name('admin.rules.index');

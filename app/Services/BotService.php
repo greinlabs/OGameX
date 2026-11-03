@@ -15,6 +15,7 @@ use OGame\GameObjects\Models\Abstracts\GameObject;
 use OGame\GameObjects\Models\Units\UnitCollection;
 use OGame\Models\Enums\PlanetType;
 use OGame\Models\FleetMission;
+use OGame\Models\Highscore;
 use OGame\Models\Planet;
 use OGame\Models\Planet\Coordinate;
 use OGame\Models\Resources;
@@ -378,6 +379,23 @@ class BotService
             '[' . $planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ']',
             'Bot created.'
         );
+
+        $player = $this->playerServiceFactory->make($bot->id, true);
+        $highscoreService = resolve(HighscoreService::class);
+        Highscore::updateOrCreate(['player_id' => $bot->id], [
+            'general' => $highscoreService->getPlayerScore($player),
+            'economy' => $highscoreService->getPlayerScoreEconomy($player),
+            'research' => $highscoreService->getPlayerScoreResearch($player),
+            'military' => $highscoreService->getPlayerScoreMilitary($player),
+        ]);
+        Cache::forget('highscore-player-count-0');
+        Cache::forget('highscore-player-count-1');
+        foreach (['general', 'economy', 'research', 'military'] as $type) {
+            for ($page = 1; $page <= 100; $page++) {
+                Cache::forget(sprintf('highscores-%s-%d-0', $type, $page));
+                Cache::forget(sprintf('highscores-%s-%d-1', $type, $page));
+            }
+        }
 
         return $bot->refresh();
     }

@@ -83,6 +83,7 @@
                 <li><a class="{{(Request::is('admin/developer-shortcuts') ? 'active' : '') }}" href="{{ route('admin.developershortcuts.index') }}">Developer shortcuts</a></li>
                 <li><a class="{{(Request::is('admin/server-settings') ? 'active' : '') }}" href="{{ route('admin.serversettings.index') }}">Server settings</a></li>
                 <li><a class="{{(Request::is('admin/bot-settings') ? 'active' : '') }}" href="{{ route('admin.botsettings.index') }}">Bot settings</a></li>
+                <li><a class="{{(Request::is('admin/users*') ? 'active' : '') }}" href="{{ route('admin.users.index') }}">Users</a></li>
                 <li><a class="{{(Request::is('admin/fleet-timing*') ? 'active' : '') }}" href="{{ route('admin.fleettiming.index') }}">Fleet Timing</a></li>
                 <li><a class="{{(Request::is('admin/rules') ? 'active' : '') }}" href="{{ route('admin.rules.index') }}">Rules & Legal</a></li>
                 <li><a class="{{(Request::is('admin/server-administration*') ? 'active' : '') }}" href="{{ route('admin.server-administration.index') }}">Server Administration</a></li>
