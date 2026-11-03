@@ -9,7 +9,7 @@
     @endif
 
     <style>
-        .user-admin-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .user-admin-table { width: 100%; min-width: 980px; border-collapse: collapse; font-size: 11px; }
         .user-admin-table th, .user-admin-table td { border-bottom: 1px solid #334; padding: 7px 6px; vertical-align: middle; }
         .user-admin-table th { background: #1a2430; text-align: left; }
         .user-admin-table tr:hover { background: rgba(255,255,255,.035); }
@@ -18,8 +18,21 @@
         .user-status-blocked { color: #ff7b7b; }
         .user-status-offline { color: #aaa; }
         .user-status-admin { color: #f4b942; }
-        .user-action-form { display: inline-block; margin: 2px 2px 2px 0; }
+        .user-actions-cell { width: 220px; }
+        .user-actions { display: flex; flex-direction: column; gap: 4px; width: 220px; }
+        .user-action-form { display: flex; width: 100%; margin: 0; gap: 4px; align-items: center; }
         .user-action-form select, .user-action-form input[type="text"] { margin-right: 4px; }
+        .user-action-form select { width: 112px; height: 28px; box-sizing: border-box; }
+        .user-action-form .btn_blue {
+            min-width: 100px;
+            height: 28px;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0 8px;
+            white-space: nowrap;
+            text-align: center;
+        }
+        .user-action-form.user-action-single .btn_blue { width: 100%; }
     </style>
 
     <div id="resourcesettingscomponent" class="maincontent">
@@ -73,7 +86,7 @@
                                     <th>Last activity</th>
                                     <th>Status</th>
                                     <th>Role</th>
-                                    <th>Actions</th>
+                                    <th class="user-actions-cell">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -134,9 +147,10 @@
                                                 Player
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="user-actions-cell">
+                                            <div class="user-actions">
                                             @if ($user->id !== auth()->id())
-                                                <form method="POST" action="{{ route('admin.users.masquerade') }}" class="user-action-form">
+                                                <form method="POST" action="{{ route('admin.users.masquerade') }}" class="user-action-form user-action-single">
                                                     @csrf
                                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                     <input type="submit" class="btn_blue" value="Masquerade" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
@@ -145,7 +159,7 @@
 
                                             @if (!$isAdmin)
                                                 @if ($isBlocked)
-                                                    <form method="POST" action="{{ route('admin.users.unblock') }}" class="user-action-form">
+                                                    <form method="POST" action="{{ route('admin.users.unblock') }}" class="user-action-form user-action-single">
                                                         @csrf
                                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                         <input type="submit" class="btn_blue" value="Unblock">
@@ -169,7 +183,7 @@
 
                                             @if ($isAdmin)
                                                 @if ($user->id !== auth()->id())
-                                                    <form method="POST" action="{{ route('admin.users.admin') }}" class="user-action-form">
+                                                    <form method="POST" action="{{ route('admin.users.admin') }}" class="user-action-form user-action-single">
                                                         @csrf
                                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                         <input type="hidden" name="action" value="revoke">
@@ -177,13 +191,14 @@
                                                     </form>
                                                 @endif
                                             @else
-                                                <form method="POST" action="{{ route('admin.users.admin') }}" class="user-action-form">
+                                                <form method="POST" action="{{ route('admin.users.admin') }}" class="user-action-form user-action-single">
                                                     @csrf
                                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                     <input type="hidden" name="action" value="grant">
                                                     <input type="submit" class="btn_blue" value="Make admin">
                                                 </form>
                                             @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
