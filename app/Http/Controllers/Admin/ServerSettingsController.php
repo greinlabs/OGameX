@@ -96,16 +96,6 @@ class ServerSettingsController extends OGameController
      */
     public function update(SettingsService $settingsService): RedirectResponse
     {
-        $this->validate(request(), [
-            'bot_spawn_interval' => ['required', 'integer', 'min:60', 'max:31536000'],
-            'bot_attack_interval' => ['required', 'integer', 'min:60', 'max:31536000'],
-            'bot_max_count' => ['required', 'integer', 'min:0', 'max:1000'],
-            'bot_inactive_days' => ['required', 'integer', 'min:1', 'max:3650'],
-            'bot_attack_chance' => ['required', 'integer', 'min:0', 'max:100'],
-            'bot_level_min' => ['required', 'integer', 'min:0', 'max:100'],
-            'bot_level_max' => ['required', 'integer', 'min:1', 'max:100', 'gte:bot_level_min'],
-        ]);
-
         $settingsService->set('fleet_speed_war', request('fleet_speed_war'));
         $settingsService->set('fleet_speed_holding', request('fleet_speed_holding'));
         $settingsService->set('fleet_speed_peaceful', request('fleet_speed_peaceful'));
@@ -165,15 +155,6 @@ class ServerSettingsController extends OGameController
         $settingsService->set('hamill_manoeuvre_chance', max(1, (int)request('hamill_probability', 1000)));
 
         $settingsService->set('highscore_admin_visible', request('highscore_admin_visible', 0));
-        $settingsService->set('bot_spawn_enabled', request('bot_spawn_enabled', 0));
-        $settingsService->set('bot_spawn_interval', max(60, (int)request('bot_spawn_interval', 86400)));
-        $settingsService->set('bot_attack_enabled', request('bot_attack_enabled', 0));
-        $settingsService->set('bot_attack_interval', max(60, (int)request('bot_attack_interval', 604800)));
-        $settingsService->set('bot_max_count', max(0, (int)request('bot_max_count', 20)));
-        $settingsService->set('bot_inactive_days', max(1, (int)request('bot_inactive_days', 90)));
-        $settingsService->set('bot_attack_chance', min(100, max(0, (int)request('bot_attack_chance', 75))));
-        $settingsService->set('bot_level_min', max(0, (int)request('bot_level_min', 3)));
-        $settingsService->set('bot_level_max', max(1, (int)request('bot_level_max', 25)));
 
         // Clear highscore cache when admin visibility setting changes
         $this->clearHighscoreCache();
@@ -185,13 +166,13 @@ class ServerSettingsController extends OGameController
     {
         try {
             $bot = $botService->spawnBot();
-            return redirect()->route('admin.serversettings.index')->with(
+            return redirect()->route('admin.botsettings.index')->with(
                 'success',
                 __('t_ingame.admin.bot_spawn_success', ['bot' => $bot->username])
             );
         } catch (Throwable $exception) {
             Log::error('Manual bot spawn failed', ['exception' => $exception]);
-            return redirect()->route('admin.serversettings.index')->with(
+            return redirect()->route('admin.botsettings.index')->with(
                 'error',
                 __('t_ingame.admin.bot_spawn_error')
             );
@@ -204,19 +185,19 @@ class ServerSettingsController extends OGameController
             $result = $botService->runAttackRound();
             if ($result['errors'] !== []) {
                 Log::error('Manual bot attack round completed with errors', ['errors' => $result['errors']]);
-                return redirect()->route('admin.serversettings.index')->with(
+                return redirect()->route('admin.botsettings.index')->with(
                     'error',
                     __('t_ingame.admin.bot_attack_error')
                 );
             }
 
-            return redirect()->route('admin.serversettings.index')->with(
+            return redirect()->route('admin.botsettings.index')->with(
                 'success',
                 __('t_ingame.admin.bot_attack_success', ['attacks' => $result['attacks']])
             );
         } catch (Throwable $exception) {
             Log::error('Manual bot attack round failed', ['exception' => $exception]);
-            return redirect()->route('admin.serversettings.index')->with(
+            return redirect()->route('admin.botsettings.index')->with(
                 'error',
                 __('t_ingame.admin.bot_attack_error')
             );

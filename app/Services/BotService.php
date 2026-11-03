@@ -51,7 +51,10 @@ class BotService
             $this->cleanupInactiveBots();
 
             $lastSpawn = (int)$this->settingsService->get('bot_last_spawn_at', 0);
-            $interval = (int)$this->settingsService->get('bot_spawn_interval', 86400);
+            $spawnIntervalDays = (int)$this->settingsService->get('bot_spawn_interval_days', 0);
+            $interval = $spawnIntervalDays > 0
+                ? $spawnIntervalDays * 86400
+                : (int)$this->settingsService->get('bot_spawn_interval', 86400);
             if (
                 (bool)(int)$this->settingsService->get('bot_spawn_enabled', 0)
                 && ($now - $lastSpawn) >= max(60, $interval)
@@ -71,7 +74,10 @@ class BotService
             if ($lastAttackSetting === '') {
                 $this->settingsService->set('bot_last_attack_at', $now);
             }
-            $attackInterval = (int)$this->settingsService->get('bot_attack_interval', 604800);
+            $attackIntervalDays = (int)$this->settingsService->get('bot_attack_interval_days', 0);
+            $attackInterval = $attackIntervalDays > 0
+                ? $attackIntervalDays * 86400
+                : (int)$this->settingsService->get('bot_attack_interval', 604800);
             if (
                 (bool)(int)$this->settingsService->get('bot_attack_enabled', 1)
                 && ($now - $lastAttack) >= max(60, $attackInterval)
@@ -87,7 +93,11 @@ class BotService
             if ($lastProductionSetting === '') {
                 $this->settingsService->set('bot_last_production_at', $now);
             }
-            if (($now - $lastProduction) >= 86400) {
+            $productionIntervalDays = (int)$this->settingsService->get('bot_resource_spend_interval_days', 0);
+            $productionInterval = $productionIntervalDays > 0
+                ? $productionIntervalDays * 86400
+                : (int)$this->settingsService->get('bot_production_interval', 259200);
+            if (($now - $lastProduction) >= max(86400, $productionInterval)) {
                 $productionResult = $this->produceForBots();
                 $result['produced'] = $productionResult['produced'];
                 $result['errors'] = [...$result['errors'], ...$productionResult['errors']];
@@ -149,7 +159,7 @@ class BotService
                     $player = $this->playerServiceFactory->make($bot->id, true);
                     foreach ($player->planets->allPlanets() as $planetService) {
                         $planetId = $planetService->getPlanetId();
-                        $produced = DB::transaction(function () use ($planetService, $planetId): int {
+                        $produced = DB::transaction(function () use ($planetService, $planetId, $player): int {
                             $planet = Planet::whereKey($planetId)->lockForUpdate()->first();
                             if ($planet === null || (int)$planet->destroyed !== 0) {
                                 return 0;
@@ -157,10 +167,16 @@ class BotService
 
                             $planetService->setPlanet($planet);
                             $available = $planetService->getResources();
+                            $spendPercentage = min(100, max(0, (int)$this->settingsService->get('bot_resource_spend_percentage', 50)));
+                            $militaryPercentage = min(100, max(0, (int)$this->settingsService->get('bot_attack_defense_percentage', 30)));
+                            $researchPercentage = min(100, max(0, (int)$this->settingsService->get('bot_research_percentage', 10)));
+                            $miningPercentage = min(100, max(0, (int)$this->settingsService->get('bot_mining_percentage', 10)));
+                            $categoryTotal = $militaryPercentage + $researchPercentage + $miningPercentage;
+                            $militaryShare = $categoryTotal > 0 ? $militaryPercentage / $categoryTotal : 0;
                             $budget = new Resources(
-                                floor($available->metal->get() * 0.5),
-                                floor($available->crystal->get() * 0.5),
-                                floor($available->deuterium->get() * 0.5)
+                                floor($available->metal->get() * ($spendPercentage / 100) * $militaryShare),
+                                floor($available->crystal->get() * ($spendPercentage / 100) * $militaryShare),
+                                floor($available->deuterium->get() * ($spendPercentage / 100) * $militaryShare)
                             );
                             if (!$budget->any()) {
                                 return 0;
@@ -200,6 +216,48 @@ class BotService
                                 $planet->crystal -= $cost->crystal->get();
                                 $planet->deuterium -= $cost->deuterium->get();
                                 $built += $amount;
+                            }
+
+                            if ($categoryTotal > 0) {
+                                $miningShare = $miningPercentage / $categoryTotal;
+                                $researchShare = $researchPercentage / $categoryTotal;
+                                $miningCostMetal = floor($available->metal->get() * ($spendPercentage / 100) * $miningShare);
+                                $miningCostCrystal = floor($available->crystal->get() * ($spendPercentage / 100) * $miningShare);
+                                $miningCostDeuterium = floor($available->deuterium->get() * ($spendPercentage / 100) * $miningShare);
+
+                                if ($miningPercentage > 0
+                                    && $planet->metal >= $miningCostMetal
+                                    && $planet->crystal >= $miningCostCrystal
+                                    && $planet->deuterium >= $miningCostDeuterium) {
+                                    $planet->metal -= $miningCostMetal;
+                                    $planet->crystal -= $miningCostCrystal;
+                                    $planet->deuterium -= $miningCostDeuterium;
+                                    $mineFields = ['metal_mine', 'crystal_mine', 'deuterium_synthesizer'];
+                                    $mineField = $mineFields[random_int(0, 2)];
+                                    $planet->{$mineField} = (int)$planet->{$mineField} + 1;
+                                    $built++;
+                                }
+
+                                $researchCostMetal = floor($available->metal->get() * ($spendPercentage / 100) * $researchShare);
+                                $researchCostCrystal = floor($available->crystal->get() * ($spendPercentage / 100) * $researchShare);
+                                $researchCostDeuterium = floor($available->deuterium->get() * ($spendPercentage / 100) * $researchShare);
+
+                                if ($researchPercentage > 0
+                                    && $planet->metal >= $researchCostMetal
+                                    && $planet->crystal >= $researchCostCrystal
+                                    && $planet->deuterium >= $researchCostDeuterium) {
+                                    $planet->metal -= $researchCostMetal;
+                                    $planet->crystal -= $researchCostCrystal;
+                                    $planet->deuterium -= $researchCostDeuterium;
+                                    $researchObjects = ObjectService::getResearchObjects();
+                                    if ($researchObjects !== []) {
+                                        shuffle($researchObjects);
+                                        $research = $researchObjects[0];
+                                        $currentLevel = $player->getResearchLevel($research->machine_name);
+                                        $player->setResearchLevel($research->machine_name, $currentLevel + 1);
+                                        $built++;
+                                    }
+                                }
                             }
 
                             if ($built > 0) {

@@ -5,6 +5,7 @@ use OGame\Http\Controllers\Admin\DeveloperShortcutsController;
 use OGame\Http\Controllers\Admin\FleetTimingController;
 use OGame\Http\Controllers\Admin\RulesController as AdminRulesController;
 use OGame\Http\Controllers\Admin\ServerAdministrationController;
+use OGame\Http\Controllers\Admin\BotSettingsController;
 use OGame\Http\Controllers\Admin\ServerSettingsController as AdminServerSettingsController;
 use OGame\Http\Controllers\AllianceController;
 use OGame\Http\Controllers\AllianceDepotController;
@@ -260,6 +261,15 @@ Route::middleware(['auth', 'globalgame', 'locale', 'admin'])->group(function () 
         ->middleware('throttle:5,1');
     Route::post('/admin/server-settings/run-bot-attack-round', [AdminServerSettingsController::class, 'runBotAttackRound'])
         ->name('admin.serversettings.run-bot-attack-round')
+        ->middleware('throttle:5,1');
+
+    Route::get('/admin/bot-settings', [BotSettingsController::class, 'index'])->name('admin.botsettings.index');
+    Route::post('/admin/bot-settings', [BotSettingsController::class, 'update'])->name('admin.botsettings.update');
+    Route::post('/admin/bot-settings/spawn-bot', [BotSettingsController::class, 'runBotSpawn'])
+        ->name('admin.botsettings.spawn-bot')
+        ->middleware('throttle:5,1');
+    Route::post('/admin/bot-settings/run-bot-attack-round', [BotSettingsController::class, 'runBotAttackRound'])
+        ->name('admin.botsettings.run-bot-attack-round')
         ->middleware('throttle:5,1');
 
     // Rules
