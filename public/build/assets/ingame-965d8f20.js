@@ -29224,6 +29224,18 @@ var Spinners = {version: "3.0.0"};
 })(jQuery);
 
 ;
+// Closes a message detail dialog without a page reload. Removing only the DOM leaves the
+// jQuery UI modal overlay behind, so the dialog is destroyed first.
+function closeMessageDialog($el) {
+    var $dialog = $el.closest('.ui-dialog');
+    var $content = $dialog.find('.ui-dialog-content');
+    if ($content.length && $content.data('ui-dialog')) {
+        $content.dialog('destroy');
+    }
+    $content.remove();
+    $dialog.remove();
+}
+
 ogame.messagecounter = {
     countData: {chat: 0, messages: 0, buddy: 0},
     newChats: Array(),
@@ -29748,7 +29760,7 @@ ogame.messages = {
                 success: function (d) {
                     if (d.result == true) {
                         $("#messageContent li.msg").remove();
-                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
+                        closeMessageDialog($(".overlayDiv .detail_msg"));
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -29765,7 +29777,7 @@ ogame.messages = {
                 data: {messageId: a, action: 103, ajax: 1},
                 success: function (c) {
                     if (c[a] == true) {
-                        $(".detail_msg[data-msg-id=" + a + "]").closest(".ui-dialog").remove();
+                        closeMessageDialog($(".detail_msg[data-msg-id=" + a + "]"));
                         $("li.msg[data-msg-id=" + a + "]").remove();
                         $(".overlayDiv[data-msg-id=" + a + "]").remove();
                     } else {
@@ -29811,7 +29823,7 @@ ogame.messages = {
                 success: function (d) {
                     if (d.result == true) {
                         $("#messageContent li.msg").remove();
-                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
+                        closeMessageDialog($(".overlayDiv .detail_msg"));
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -29851,7 +29863,7 @@ ogame.messages = {
                 success: function (c) {
                     if (c.result == true) {
                         $("#messageContent li.msg").remove();
-                        $(".overlayDiv .detail_msg").closest(".ui-dialog").remove();
+                        closeMessageDialog($(".overlayDiv .detail_msg"));
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -32527,19 +32539,6 @@ var TimerHandler = function (d, c) {
     this._lastId = 0;
     this.pageReloadAlreadyTriggered = false;
     this.checkEventsAlreadyQueued = false;
-    this._visibilityPaused = false;
-    var instance = this;
-    if (typeof document !== 'undefined') {
-        document.addEventListener('visibilitychange', function () {
-            if (document.visibilityState === 'hidden') {
-                instance._visibilityPaused = true;
-                instance.stopTimer();
-            } else if (instance._visibilityPaused) {
-                instance._visibilityPaused = false;
-                instance.startTimer();
-            }
-        });
-    }
     if (c != false) {
         this.startTimer()
     }
@@ -32554,21 +32553,12 @@ TimerHandler.prototype.removeCallback = function (b) {
 };
 TimerHandler.prototype.startTimer = function () {
     var b = this;
-    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
-        return;
-    }
-    if (b._intervalId !== null) {
-        window.clearInterval(b._intervalId);
-    }
     this._intervalId = window.setInterval(function () {
         b._timer()
     }, this._interval)
 };
 TimerHandler.prototype.stopTimer = function () {
-    if (this._intervalId !== null) {
-        window.clearInterval(this._intervalId);
-        this._intervalId = null;
-    }
+    window.clearInterval(this._intervalId)
 };
 TimerHandler.prototype._timer = function () {
     for (var b in this._callbacks) {
@@ -61446,7 +61436,10 @@ function ajaxCall(url, targetSelector, callback) {
     }
 
     window.requestAnimationFrame(function () {
-      window.scrollTo(scrollPosition.x, scrollPosition.y);
+      // Only restore the window scroll on small screens; desktop keeps its native behaviour.
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        window.scrollTo(scrollPosition.x, scrollPosition.y);
+      }
       restoreActiveElement();
     });
   });
@@ -61510,7 +61503,10 @@ function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
     }
 
     window.requestAnimationFrame(function () {
-      window.scrollTo(scrollPosition.x, scrollPosition.y);
+      // Only restore the window scroll on small screens; desktop keeps its native behaviour.
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        window.scrollTo(scrollPosition.x, scrollPosition.y);
+      }
       restoreActiveElement();
     });
   });

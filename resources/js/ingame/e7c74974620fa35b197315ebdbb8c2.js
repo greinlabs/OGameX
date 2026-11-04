@@ -28867,7 +28867,10 @@ function ajaxCall(url, targetSelector, callback) {
     }
 
     window.requestAnimationFrame(function () {
-      window.scrollTo(scrollPosition.x, scrollPosition.y);
+      // Only restore the window scroll on small screens; desktop keeps its native behaviour.
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        window.scrollTo(scrollPosition.x, scrollPosition.y);
+      }
       restoreActiveElement();
     });
   });
@@ -28931,7 +28934,10 @@ function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
     }
 
     window.requestAnimationFrame(function () {
-      window.scrollTo(scrollPosition.x, scrollPosition.y);
+      // Only restore the window scroll on small screens; desktop keeps its native behaviour.
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        window.scrollTo(scrollPosition.x, scrollPosition.y);
+      }
       restoreActiveElement();
     });
   });
