@@ -21,34 +21,37 @@
         .user-status-blocked { color: #ff7b7b; }
         .user-status-offline { color: #aaa; }
         .user-status-admin { color: #f4b942; }
-        .user-actions-cell { width: 176px; }
-        .user-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; width: 176px; }
-        .user-action-form { display: flex; width: 100%; margin: 0; gap: 4px; align-items: center; }
-        .user-action-form:not(.user-action-single) { grid-column: 1 / -1; }
+        .user-actions-cell { width: 19%; }
+        .user-actions { display: grid; grid-template-columns: repeat(4, 32px); gap: 4px; width: 140px; }
+        .user-action-form { display: flex; width: 32px; margin: 0; gap: 4px; align-items: center; }
+        .user-action-form.user-action-block { grid-column: 1 / -1; width: 140px; }
         .user-action-form select, .user-action-form input[type="text"] { margin-right: 4px; }
-        .user-action-form select { width: 92px; height: 28px; box-sizing: border-box; }
+        .user-action-form select { width: 104px; height: 28px; box-sizing: border-box; }
         .user-action-form .btn_blue {
             min-width: 0;
             height: 28px;
             box-sizing: border-box;
             margin: 0;
-            padding: 0 8px;
+            padding: 0;
             white-space: nowrap;
             text-align: center;
         }
-        .user-action-form.user-action-single .btn_blue { width: 100%; }
+        .user-action-form .user-action-icon { width: 32px; font-size: 15px; line-height: 28px; }
+        .user-action-form.user-action-block .btn_blue { width: 32px; }
         .user-admin-table th:nth-child(1),
-        .user-admin-table td:nth-child(1) { width: 42px; }
+        .user-admin-table td:nth-child(1) { width: 5%; }
+        .user-admin-table th:nth-child(2),
+        .user-admin-table td:nth-child(2) { width: 18%; overflow-wrap: anywhere; }
         .user-admin-table th:nth-child(3),
-        .user-admin-table td:nth-child(3) { width: 105px; }
+        .user-admin-table td:nth-child(3) { width: 12%; }
         .user-admin-table th:nth-child(4),
-        .user-admin-table td:nth-child(4) { width: 76px; }
+        .user-admin-table td:nth-child(4) { width: 9%; }
         .user-admin-table th:nth-child(5),
-        .user-admin-table td:nth-child(5) { width: 120px; }
+        .user-admin-table td:nth-child(5) { width: 16%; }
         .user-admin-table th:nth-child(6),
-        .user-admin-table td:nth-child(6) { width: 78px; }
+        .user-admin-table td:nth-child(6) { width: 10%; }
         .user-admin-table th:nth-child(7),
-        .user-admin-table td:nth-child(7) { width: 90px; }
+        .user-admin-table td:nth-child(7) { width: 11%; }
     </style>
 
     <div id="resourcesettingscomponent" class="maincontent">
@@ -169,7 +172,7 @@
                                                 <form method="POST" action="{{ route('admin.users.masquerade') }}" class="user-action-form user-action-single">
                                                     @csrf
                                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                                    <input type="submit" class="btn_blue" value="Masquerade" {{ $user->id === auth()->id() ? 'disabled' : '' }}>
+                                                    <input type="submit" class="btn_blue user-action-icon" value="&#8644;" title="Masquerade as {{ $user->username }}" aria-label="Masquerade as {{ $user->username }}">
                                                 </form>
                                             @endif
 
@@ -178,21 +181,21 @@
                                                     <form method="POST" action="{{ route('admin.users.unblock') }}" class="user-action-form user-action-single">
                                                         @csrf
                                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                                        <input type="submit" class="btn_blue" value="Unblock">
+                                                        <input type="submit" class="btn_blue user-action-icon" value="&#10003;" title="Unblock {{ $user->username }}" aria-label="Unblock {{ $user->username }}">
                                                     </form>
                                                 @else
-                                                    <form method="POST" action="{{ route('admin.users.block') }}" class="user-action-form" onsubmit="return confirm('Block this user?')">
+                                                    <form method="POST" action="{{ route('admin.users.block') }}" class="user-action-form user-action-block" onsubmit="return confirm('Block this user?')">
                                                         @csrf
                                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                         <input type="hidden" name="reason" value="Administrative block">
                                                         <select name="duration">
-                                                            <option value="86400">1 day</option>
-                                                            <option value="259200">3 days</option>
-                                                            <option value="604800">7 days</option>
-                                                            <option value="2592000">30 days</option>
-                                                            <option value="permanent">Permanent</option>
+                                                            <option value="86400" title="1 day">1d</option>
+                                                            <option value="259200" title="3 days">3d</option>
+                                                            <option value="604800" title="7 days">7d</option>
+                                                            <option value="2592000" title="30 days">30d</option>
+                                                            <option value="permanent" title="Permanent">&#8734;</option>
                                                         </select>
-                                                        <input type="submit" class="btn_blue" value="Block">
+                                                        <input type="submit" class="btn_blue user-action-icon" value="&#215;" title="Block {{ $user->username }}" aria-label="Block {{ $user->username }}">
                                                     </form>
                                                 @endif
                                             @endif
@@ -201,7 +204,7 @@
                                                 <form method="POST" action="{{ route('admin.users.reset-password') }}" class="user-action-form user-action-single" onsubmit="return confirm('Reset this user password and invalidate existing login access?')">
                                                     @csrf
                                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                                    <input type="submit" class="btn_blue" value="Reset password">
+                                                    <input type="submit" class="btn_blue user-action-icon" value="&#8635;" title="Reset password for {{ $user->username }}" aria-label="Reset password for {{ $user->username }}">
                                                 </form>
                                             @endif
 
@@ -211,7 +214,7 @@
                                                         @csrf
                                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                         <input type="hidden" name="action" value="revoke">
-                                                        <input type="submit" class="btn_blue" value="Revoke admin">
+                                                        <input type="submit" class="btn_blue user-action-icon" value="&#9734;" title="Revoke administrator access from {{ $user->username }}" aria-label="Revoke administrator access from {{ $user->username }}">
                                                     </form>
                                                 @endif
                                             @else
@@ -219,7 +222,7 @@
                                                     @csrf
                                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                     <input type="hidden" name="action" value="grant">
-                                                    <input type="submit" class="btn_blue" value="Make admin">
+                                                    <input type="submit" class="btn_blue user-action-icon" value="&#9733;" title="Make {{ $user->username }} administrator" aria-label="Make {{ $user->username }} administrator">
                                                 </form>
                                             @endif
                                             </div>
