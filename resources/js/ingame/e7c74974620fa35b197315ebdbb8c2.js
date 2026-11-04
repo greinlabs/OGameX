@@ -15,6 +15,19 @@ var TimerHandler = function (interval, autostart) {
   this._lastId = 0;
   this.pageReloadAlreadyTriggered = false;
   this.checkEventsAlreadyQueued = false;
+  this._visibilityPaused = false;
+  var timerInstance = this;
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') {
+        timerInstance._visibilityPaused = true;
+        timerInstance.stopTimer();
+      } else if (timerInstance._visibilityPaused) {
+        timerInstance._visibilityPaused = false;
+        timerInstance.startTimer();
+      }
+    });
+  }
 
   if (autostart != false) {
     this.startTimer();
@@ -48,6 +61,12 @@ TimerHandler.prototype.removeCallback = function (index) {
 
 TimerHandler.prototype.startTimer = function () {
   var instance = this;
+  if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+    return;
+  }
+  if (instance._intervalId !== null) {
+    window.clearInterval(instance._intervalId);
+  }
   this._intervalId = window.setInterval(function () {
     instance._timer();
   }, this._interval);
@@ -60,7 +79,10 @@ TimerHandler.prototype.startTimer = function () {
 
 
 TimerHandler.prototype.stopTimer = function () {
-  window.clearInterval(this._intervalId);
+  if (this._intervalId !== null) {
+    window.clearInterval(this._intervalId);
+    this._intervalId = null;
+  }
 };
 /**
  * Timer which is called every N seconds
@@ -28792,13 +28814,48 @@ function handlerToSubmitAjaxForm(form) {
 }
 
 function ajaxCall(url, targetSelector, callback) {
+  var scrollPosition = {
+    x: window.scrollX || window.pageXOffset || 0,
+    y: window.scrollY || window.pageYOffset || 0
+  };
+  var activeElement = document.activeElement;
+  var activeSnapshot = activeElement ? {
+    id: activeElement.id || '',
+    name: activeElement.getAttribute ? activeElement.getAttribute('name') : '',
+    selectionStart: activeElement.selectionStart,
+    selectionEnd: activeElement.selectionEnd
+  } : null;
+  var restoreActiveElement = function () {
+    if (!activeSnapshot) {
+      return;
+    }
+    var selector = activeSnapshot.id
+      ? '#' + activeSnapshot.id
+      : activeSnapshot.name
+        ? '[name="' + activeSnapshot.name.replace(/"/g, '\\"') + '"]'
+        : null;
+    var element = selector ? document.querySelector(selector) : null;
+    if (!element || typeof element.focus !== 'function') {
+      return;
+    }
+    element.focus({preventScroll: true});
+    if (typeof activeSnapshot.selectionStart === 'number' &&
+      typeof element.setSelectionRange === 'function') {
+      element.setSelectionRange(activeSnapshot.selectionStart, activeSnapshot.selectionEnd);
+    }
+  };
+  var targetKey = typeof targetSelector === 'string' ? targetSelector : null;
+  if (targetKey && $(targetKey).data('mobileAjaxRequest')) {
+    $(targetKey).data('mobileAjaxRequest').abort();
+  }
+
   if (typeof targetSelector === 'string') {
     let $targetHTMLObj = $(targetSelector);
     $targetHTMLObj.find('select').ogameDropDown('destroy');
     $targetHTMLObj.html('<p class=\"ajaxLoad\"></p>');
   }
 
-  $.post(url, function (data) {
+  var request = $.post(url, function (data) {
     if (typeof targetSelector === 'string') {
       let $targetHTMLObj = $(targetSelector);
       $targetHTMLObj.html(data);
@@ -28808,10 +28865,56 @@ function ajaxCall(url, targetSelector, callback) {
     if (typeof callback === 'function') {
       callback();
     }
+
+    window.requestAnimationFrame(function () {
+      // Only restore the window scroll on small screens; desktop keeps its native behaviour.
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        window.scrollTo(scrollPosition.x, scrollPosition.y);
+      }
+      restoreActiveElement();
+    });
   });
+  if (targetKey) {
+    $(targetKey).data('mobileAjaxRequest', request);
+  }
 }
 
 function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
+  var scrollPosition = {
+    x: window.scrollX || window.pageXOffset || 0,
+    y: window.scrollY || window.pageYOffset || 0
+  };
+  var activeElement = document.activeElement;
+  var activeSnapshot = activeElement ? {
+    id: activeElement.id || '',
+    name: activeElement.getAttribute ? activeElement.getAttribute('name') : '',
+    selectionStart: activeElement.selectionStart,
+    selectionEnd: activeElement.selectionEnd
+  } : null;
+  var restoreActiveElement = function () {
+    if (!activeSnapshot) {
+      return;
+    }
+    var selector = activeSnapshot.id
+      ? '#' + activeSnapshot.id
+      : activeSnapshot.name
+        ? '[name="' + activeSnapshot.name.replace(/"/g, '\\"') + '"]'
+        : null;
+    var element = selector ? document.querySelector(selector) : null;
+    if (!element || typeof element.focus !== 'function') {
+      return;
+    }
+    element.focus({preventScroll: true});
+    if (typeof activeSnapshot.selectionStart === 'number' &&
+      typeof element.setSelectionRange === 'function') {
+      element.setSelectionRange(activeSnapshot.selectionStart, activeSnapshot.selectionEnd);
+    }
+  };
+  var targetKey = typeof targetSelector === 'string' ? targetSelector : null;
+  if (targetKey && $(targetKey).data('mobileAjaxRequest')) {
+    $(targetKey).data('mobileAjaxRequest').abort();
+  }
+
   if (typeof targetSelector === 'string') {
     let $targetHTMLObj = $(targetSelector);
     $targetHTMLObj.find('select').ogameDropDown('destroy');
@@ -28819,7 +28922,7 @@ function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
   }
 
   let formData = typeof formDataOrSelector === 'string' ? $(formDataOrSelector).serialize() : formDataOrSelector;
-  $.post(url, formData, function (data) {
+  var request = $.post(url, formData, function (data) {
     if (typeof targetSelector === 'string') {
       let $targetHTMLObj = $(targetSelector);
       $targetHTMLObj.html(data);
@@ -28829,7 +28932,18 @@ function ajaxSubmit(url, formDataOrSelector, targetSelector, callback) {
     if (typeof callback === 'function') {
       callback();
     }
+
+    window.requestAnimationFrame(function () {
+      // Only restore the window scroll on small screens; desktop keeps its native behaviour.
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        window.scrollTo(scrollPosition.x, scrollPosition.y);
+      }
+      restoreActiveElement();
+    });
   });
+  if (targetKey) {
+    $(targetKey).data('mobileAjaxRequest', request);
+  }
 }
 
 Number.prototype.isBetween = function (min, max) {

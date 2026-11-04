@@ -1,0 +1,2334 @@
+/*
+ * Phase 1 mobile foundation.
+ * These rules only override small screens and do not change the desktop layout.
+ */
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+html,
+body {
+    max-width: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    overflow-anchor: auto;
+}
+
+img,
+video,
+canvas {
+    max-width: 100%;
+}
+
+table {
+    max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+    #pageContent {
+        width: calc(100% - 16px);
+        max-width: 990px;
+    }
+
+    .maincontent {
+        width: calc(100% - 16px);
+        max-width: 670px;
+    }
+}
+
+/* Mobile shell elements are hidden everywhere by default; they only show when html.is-mobile is set. */
+.mobileShell,
+.mobilePlanetBar,
+.mobileMenuBackdrop,
+.mobileMenuDrawer,
+.mobileBottomNav {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    /* Legacy desktop widgets (chat bar, footer, overview boxes) can be wider than the phone.
+       Clip them at the viewport so the layout viewport never grows and the fixed shell keeps its width. */
+    html.is-mobile,
+    html.is-mobile body {
+        overflow-x: hidden;
+    }
+
+    html.is-mobile body {
+        display: block !important;
+    }
+
+    html.is-mobile #mobileShell,
+    html.is-mobile .mobileShell {
+        width: 100%;
+        max-width: 100vw;
+        left: 0;
+        right: 0;
+    }
+
+    html.is-mobile .mobileShell,
+    html.is-mobile .mobilePlanetBar,
+    html.is-mobile .mobileMenuDrawer,
+    html.is-mobile .mobileBottomNav {
+        display: flex;
+    }
+
+    html.is-mobile .mobileShell {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: calc(48px + env(safe-area-inset-top));
+        z-index: 10050;
+        align-items: center;
+        gap: 8px;
+        padding: env(safe-area-inset-top) 8px 0;
+        border-bottom: 1px solid rgba(111, 159, 200, 0.4);
+        background: rgba(6, 16, 27, 0.98);
+    }
+
+    html.is-mobile .mobileMenuButton {
+        width: 44px;
+        height: 44px;
+        padding: 8px;
+        border: 0;
+        background: transparent;
+        color: #d6e6f5;
+    }
+
+    html.is-mobile .mobileMenuButton > span:not(.mobileMenuLabel) {
+        display: block;
+        width: 24px;
+        height: 2px;
+        margin: 4px 0;
+        background: currentColor;
+    }
+
+    html.is-mobile .mobileMenuLabel {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+    }
+
+    html.is-mobile .mobileShellOverview,
+    html.is-mobile .mobileShellMessages {
+        height: 44px;
+        line-height: 44px;
+        color: #d6e6f5;
+        text-decoration: none;
+    }
+
+    html.is-mobile .mobileShellOverview {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    html.is-mobile .mobileShellMessages {
+        width: 44px;
+        text-align: center;
+        background: url("/img/icons/401d1a91ff40dc7c8acfa4377d3d65.gif") no-repeat center / 22px;
+    }
+
+    html.is-mobile .mobileUnreadCount {
+        display: inline-block;
+        min-width: 18px;
+        height: 18px;
+        margin-top: 3px;
+        line-height: 18px;
+        border-radius: 9px;
+        background: #a33;
+        color: #fff;
+        font-size: 11px;
+    }
+
+    html.is-mobile .mobilePlanetBar {
+        position: fixed;
+        top: calc(48px + env(safe-area-inset-top));
+        left: 0;
+        right: 0;
+        height: 48px;
+        z-index: 10040;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        align-items: center;
+        background: rgba(11, 27, 42, 0.98);
+        border-bottom: 1px solid rgba(111, 159, 200, 0.3);
+        scrollbar-width: thin;
+    }
+
+    html.is-mobile .mobilePlanetBar a {
+        flex: 0 0 auto;
+        height: 48px;
+        min-width: 96px;
+        padding: 5px 10px;
+        text-align: center;
+        color: #a9bfd4;
+        font-size: 11px;
+        text-decoration: none;
+        border-right: 1px solid rgba(111, 159, 200, 0.18);
+    }
+
+    html.is-mobile .mobilePlanetBar a.active {
+        color: #fff;
+        background: rgba(111, 159, 200, 0.22);
+    }
+
+    html.is-mobile .mobilePlanetName {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 700;
+    }
+
+    html.is-mobile .mobileMenuDrawer {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10100;
+        width: min(300px, calc(100vw - 48px));
+        transform: translateX(-100%);
+        flex-direction: column;
+        overflow-y: auto;
+        background: #09131e;
+        border-right: 1px solid #4b718d;
+        box-shadow: 12px 0 30px rgba(0, 0, 0, 0.5);
+        transition: transform 180ms ease-out;
+    }
+
+    html.is-mobile .mobileMenuDrawer.open {
+        transform: translateX(0);
+    }
+
+    html.is-mobile .mobileMenuBackdrop.open {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 10090;
+        background: rgba(0, 0, 0, 0.65);
+    }
+
+    html.is-mobile .mobileDrawerHeader {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 8px 0 16px;
+        border-bottom: 1px solid rgba(111, 159, 200, 0.3);
+    }
+
+    html.is-mobile .mobileMenuClose {
+        width: 44px;
+        height: 44px;
+        border: 0;
+        background: transparent;
+        color: #fff;
+        font-size: 28px;
+    }
+
+    html.is-mobile .mobileDrawerLinks {
+        display: flex;
+        flex-direction: column;
+    }
+
+    html.is-mobile .mobileDrawerLinks a,
+    html.is-mobile .mobileDrawerLinks button {
+        min-height: 44px;
+        padding: 12px 16px;
+        border: 0;
+        border-bottom: 1px solid rgba(111, 159, 200, 0.12);
+        background: transparent;
+        color: #d6e6f5;
+        text-align: left;
+        text-decoration: none;
+    }
+
+    html.is-mobile .mobileDrawerLinks form {
+        margin: 0;
+    }
+
+    html.is-mobile .mobileBottomNav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10030;
+        height: calc(56px + env(safe-area-inset-bottom));
+        padding-bottom: env(safe-area-inset-bottom);
+        align-items: stretch;
+        border-top: 1px solid rgba(111, 159, 200, 0.35);
+        background: rgba(6, 16, 27, 0.98);
+    }
+
+    html.is-mobile .mobileBottomNav a,
+    html.is-mobile .mobileBottomNav button {
+        flex: 1;
+        min-width: 0;
+        min-height: 56px;
+        padding: 6px 2px;
+        border: 0;
+        border-right: 1px solid rgba(111, 159, 200, 0.12);
+        background: transparent;
+        color: #9fb5c6;
+        text-align: center;
+        font-size: 10px;
+        text-decoration: none;
+    }
+
+    html.is-mobile .mobileBottomNav a.active,
+    html.is-mobile .mobileBottomNav a:active,
+    html.is-mobile .mobileBottomNav button:active {
+        color: #fff;
+        background: rgba(111, 159, 200, 0.18);
+    }
+
+    html.is-mobile #pageContent {
+        padding-top: calc(96px + env(safe-area-inset-top));
+        padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    }
+
+    html.is-mobile #headerbarcomponent,
+    html.is-mobile #left,
+    html.is-mobile #right,
+    html.is-mobile #ipimenucomponent {
+        display: none !important;
+    }
+
+    html.is-mobile #top {
+        position: static !important;
+        height: 0 !important;
+        width: 100% !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent {
+        position: relative;
+        width: 100%;
+        height: auto;
+        float: none;
+        left: 0;
+        right: auto;
+        margin: 0;
+        z-index: 5;
+    }
+
+    html.is-mobile #resources {
+        width: 100%;
+        height: auto;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 2px;
+        padding: 4px;
+        background: rgba(6, 16, 27, 0.96);
+        border-radius: 4px;
+    }
+
+    html.is-mobile #resources .resource_tile {
+        position: relative;
+        width: 100%;
+        height: 44px;
+        min-width: 0;
+        overflow: hidden;
+        background: rgba(22, 37, 52, 0.5);
+        border-radius: 3px;
+    }
+
+    html.is-mobile #resources .resource_tile .resource {
+        position: relative;
+        width: 100%;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        padding-left: 30px;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile #resources .resourceIcon {
+        position: absolute;
+        left: 4px;
+        top: 50%;
+        transform: translateY(-50%) scale(0.7);
+        transform-origin: left center;
+        pointer-events: none;
+    }
+
+    html.is-mobile #resources .value {
+        position: static;
+        width: 100%;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.3;
+    }
+
+    html.is-mobile #resources .value > span {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Dark matter specific styling */
+    html.is-mobile #resources .resource_tile.darkmatter .resource {
+        padding-left: 34px;
+    }
+
+    html.is-mobile #resources .resource_tile.darkmatter .resourceIcon {
+        left: 2px;
+        width: 28px;
+        height: 28px;
+    }
+
+    html.is-mobile #middle {
+        width: 100%;
+        margin: 0;
+        float: none;
+    }
+
+    html.is-mobile,
+    html.is-mobile body {
+        width: 100%;
+    }
+
+    html.is-mobile body {
+        min-width: 0;
+    }
+
+    html.is-mobile #pageContent {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+
+    html.is-mobile #top,
+    html.is-mobile #middle,
+    html.is-mobile #bottom,
+    html.is-mobile .maincontent,
+    html.is-mobile #content,
+    html.is-mobile #inhalt,
+    html.is-mobile #buttonz,
+    html.is-mobile #sendfleet,
+    html.is-mobile #movement {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile form,
+    html.is-mobile fieldset {
+        max-width: 100%;
+    }
+
+    html.is-mobile input[type="text"],
+    html.is-mobile input[type="number"],
+    html.is-mobile input[type="email"],
+    html.is-mobile input[type="password"],
+    html.is-mobile input[type="search"],
+    html.is-mobile select,
+    html.is-mobile textarea {
+        max-width: 100%;
+        min-height: 44px;
+    }
+
+    html.is-mobile button,
+    html.is-mobile input[type="submit"],
+    html.is-mobile input[type="button"],
+    html.is-mobile a.btn,
+    html.is-mobile a.button,
+    html.is-mobile .btn_blue {
+        min-height: 44px;
+    }
+
+    html.is-mobile .ui-dialog,
+    html.is-mobile .overlayDiv {
+        max-width: calc(100vw - 16px);
+    }
+
+    html.is-mobile .ui-dialog {
+        width: calc(100vw - 16px) !important;
+        max-height: calc(100vh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        left: 8px !important;
+        right: 8px !important;
+    }
+
+    html.is-mobile .ui-dialog-content {
+        max-height: calc(100vh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        overflow-y: auto;
+    }
+
+    html.is-mobile #start,
+    html.is-mobile #login,
+    html.is-mobile #wrapper,
+    html.is-mobile #main,
+    html.is-mobile .container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Outgame (login/landing): the desktop layout uses fixed pixel widths. */
+    html.is-mobile #header,
+    html.is-mobile #contentWrap,
+    html.is-mobile #content,
+    html.is-mobile #footer,
+    html.is-mobile #footerContent {
+        width: auto;
+        max-width: 100%;
+        min-width: 0;
+        float: none;
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    html.is-mobile #loginForm,
+    html.is-mobile #serverLogin,
+    html.is-mobile #subscribeForm,
+    html.is-mobile #subscribe {
+        float: none;
+        width: auto;
+        max-width: 100%;
+    }
+
+    /* Phase 3: overview and resource screens. */
+    html.is-mobile #supplies header {
+        width: 100%;
+        height: clamp(180px, 62vw, 220px);
+        max-width: 100%;
+        margin: 0 0 8px;
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+    }
+
+    html.is-mobile #supplies header::after,
+    html.is-mobile #supplies header h2,
+    html.is-mobile #supplies header .slot {
+        max-width: 100%;
+    }
+
+    html.is-mobile #supplies header::after {
+        left: 0;
+        width: 100%;
+        background-size: contain;
+    }
+
+    html.is-mobile #supplies header h2 {
+        left: 12px;
+        right: 12px;
+        top: 8px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 20px;
+    }
+
+    html.is-mobile #facilities header,
+    html.is-mobile #research header,
+    html.is-mobile #shipyard header,
+    html.is-mobile #defense header {
+        width: 100%;
+        height: clamp(180px, 62vw, 220px);
+        max-width: 100%;
+        margin: 0 0 8px;
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+    }
+
+    html.is-mobile #facilities header h2,
+    html.is-mobile #research header h2,
+    html.is-mobile #shipyard header h2,
+    html.is-mobile #defense header h2 {
+        left: 12px;
+        right: 12px;
+        top: 8px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 20px;
+    }
+
+    html.is-mobile #inhalt,
+    html.is-mobile #supplies,
+    html.is-mobile #research,
+    html.is-mobile #shipyard,
+    html.is-mobile #defense,
+    html.is-mobile #fleetdispatchcomponent {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #planet,
+    html.is-mobile #detailWrapper {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 220px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    html.is-mobile #header_text {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 12px;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile #header_text h2 {
+        font-size: 16px;
+        line-height: 1.3;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    html.is-mobile #header_text .planetNameOverview {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    html.is-mobile #header_text #planetNameHeader {
+        font-size: 18px;
+        font-weight: 700;
+        display: block;
+    }
+
+    html.is-mobile #header_text .hinted {
+        width: 24px;
+        height: 24px;
+        margin-left: 8px;
+        flex-shrink: 0;
+    }
+
+    html.is-mobile #planetdata,
+    html.is-mobile #planetDetails {
+        width: 100%;
+        max-width: 100%;
+        left: 0;
+        padding: 0 12px;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile #planetDetails table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    html.is-mobile #planetDetails td.desc,
+    html.is-mobile #planetDetails td.data {
+        padding: 6px 8px;
+        font-size: 11px;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid rgba(111, 159, 200, 0.1);
+    }
+
+    html.is-mobile #planetDetails td.desc {
+        width: 40%;
+        font-weight: 600;
+        color: #848484;
+    }
+
+    html.is-mobile #planetDetails td.data {
+        width: 60%;
+        color: #f1f1f1;
+    }
+
+    html.is-mobile #planetOptions {
+        width: 100%;
+        height: auto;
+        left: 0;
+        bottom: 0;
+        padding: 8px 12px;
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(6, 16, 27, 0.96);
+        border-top: 1px solid rgba(111, 159, 200, 0.2);
+    }
+
+    html.is-mobile #planetOptions > * {
+        flex: 1 1 auto;
+        min-width: 120px;
+    }
+
+    html.is-mobile .planetMoveStart {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+    }
+
+    html.is-mobile .planetMoveProgress {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    html.is-mobile #moveCountdown,
+    html.is-mobile #moveProgress a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        font-size: 12px;
+    }
+
+    html.is-mobile .cancelMove {
+        width: 44px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    html.is-mobile .cancelMove .icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    html.is-mobile .openPlanetRenameGiveupBox {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6f9fc8;
+        text-decoration: none;
+    }
+
+    html.is-mobile .openPlanetRenameGiveupBox .icon {
+        width: 20px;
+        height: 20px;
+        margin-left: 6px;
+    }
+
+    /* Moon/Planet switcher on overview page */
+    html.is-mobile #moon,
+    html.is-mobile #planet_as_moon {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 10;
+    }
+
+    html.is-mobile #moon a,
+    html.is-mobile #planet_as_moon a {
+        display: block;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(6, 16, 27, 0.9);
+        border: 1px solid rgba(111, 159, 200, 0.3);
+        overflow: hidden;
+    }
+
+    html.is-mobile #moon img,
+    html.is-mobile #planet_as_moon img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+    }
+
+    /* Buff bar on overview page */
+    html.is-mobile #buffBar {
+        width: 100%;
+        max-width: 100%;
+        padding: 8px 12px;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile #buffBar .add_item {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+    }
+
+    html.is-mobile #buffBar .activate_item {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+
+    html.is-mobile #buffBar .active_items {
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    html.is-mobile #buffBar .active_items li {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+    }
+
+    html.is-mobile #buffBar .active_items li a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+        background: rgba(22, 37, 52, 0.6);
+        border: 1px solid rgba(111, 159, 200, 0.2);
+    }
+
+    html.is-mobile #technologies,
+    html.is-mobile #technologies_basic,
+    html.is-mobile #technologies_drive,
+    html.is-mobile #technologies_advanced,
+    html.is-mobile #technologies_combat,
+    html.is-mobile #technologies_battle,
+    html.is-mobile #technologies_civil {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #supplies #technologies::before,
+    html.is-mobile #supplies #technologies::after {
+        display: none;
+    }
+
+    /* Resources/Buildings/Research grid - responsive grid that adapts to screen width */
+    html.is-mobile #technologies ul.icons,
+    html.is-mobile #technologies_basic ul.icons,
+    html.is-mobile #technologies_drive ul.icons,
+    html.is-mobile #technologies_advanced ul.icons,
+    html.is-mobile #technologies_combat ul.icons,
+    html.is-mobile #technologies_battle ul.icons,
+    html.is-mobile #technologies_civil ul.icons,
+    html.is-mobile #supplies #producers {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+        gap: 6px;
+        margin: 0;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile #technologies ul.icons li.technology,
+    html.is-mobile #technologies_basic ul.icons li.technology,
+    html.is-mobile #technologies_drive ul.icons li.technology,
+    html.is-mobile #technologies_advanced ul.icons li.technology,
+    html.is-mobile #technologies_combat ul.icons li.technology,
+    html.is-mobile #technologies_battle ul.icons li.technology,
+    html.is-mobile #technologies_civil ul.icons li.technology,
+    html.is-mobile #supplies #producers li.technology {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 88px;
+        margin: 0;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    html.is-mobile #technologies ul.icons li.technology .icon.medium,
+    html.is-mobile #technologies ul.icons li.technology .icon.small,
+    html.is-mobile #technologies_basic ul.icons li.technology .icon.medium,
+    html.is-mobile #technologies_basic ul.icons li.technology .icon.small,
+    html.is-mobile #technologies_drive ul.icons li.technology .icon.medium,
+    html.is-mobile #technologies_drive ul.icons li.technology .icon.small,
+    html.is-mobile #technologies_advanced ul.icons li.technology .icon.medium,
+    html.is-mobile #technologies_advanced ul.icons li.technology .icon.small,
+    html.is-mobile #technologies_combat ul.icons li.technology .icon.medium,
+    html.is-mobile #technologies_combat ul.icons li.technology .icon.small,
+    html.is-mobile #technologies_battle ul.icons li.technology .icon.medium,
+    html.is-mobile #technologies_battle ul.icons li.technology .icon.small,
+    html.is-mobile #technologies_civil ul.icons li.technology .icon.medium,
+    html.is-mobile #technologies_civil ul.icons li.technology .icon.small,
+    html.is-mobile #supplies #producers li.technology .icon.medium,
+    html.is-mobile #supplies #producers li.technology .icon.small {
+        width: 72px;
+        height: 72px;
+        max-width: 72px;
+        flex-shrink: 0;
+    }
+
+    html.is-mobile #technologies ul.icons li.technology .icon .level,
+    html.is-mobile #technologies ul.icons li.technology .icon .amount,
+    html.is-mobile #technologies_basic ul.icons li.technology .icon .level,
+    html.is-mobile #technologies_basic ul.icons li.technology .icon .amount,
+    html.is-mobile #technologies_drive ul.icons li.technology .icon .level,
+    html.is-mobile #technologies_drive ul.icons li.technology .icon .amount,
+    html.is-mobile #technologies_advanced ul.icons li.technology .icon .level,
+    html.is-mobile #technologies_advanced ul.icons li.technology .icon .amount,
+    html.is-mobile #technologies_combat ul.icons li.technology .icon .level,
+    html.is-mobile #technologies_combat ul.icons li.technology .icon .amount,
+    html.is-mobile #technologies_battle ul.icons li.technology .icon .level,
+    html.is-mobile #technologies_battle ul.icons li.technology .icon .amount,
+    html.is-mobile #technologies_civil ul.icons li.technology .icon .level,
+    html.is-mobile #technologies_civil ul.icons li.technology .icon .amount,
+    html.is-mobile #supplies #producers li.technology .icon .level,
+    html.is-mobile #supplies #producers li.technology .icon .amount {
+        right: 0;
+        bottom: 0;
+        min-width: 28px;
+        width: auto;
+        padding: 0 4px 0 7px;
+        border-radius: 8px 0 0 0;
+        overflow: visible;
+        white-space: nowrap;
+        font-size: 10px;
+        line-height: 16px;
+    }
+
+    html.is-mobile #technologydetails_wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Technology/Building detail overlay - mobile fix */
+    html.is-mobile #technologydetails {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile #technologydetails .content {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile #productionboxBottom,
+    html.is-mobile .boxColumn,
+    html.is-mobile .productionboxbuilding,
+    html.is-mobile .productionboxresearch,
+    html.is-mobile .productionboxshipyard {
+        width: 100%;
+        max-width: 100%;
+        float: none;
+    }
+
+    html.is-mobile #productionboxBottom {
+        height: auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding-top: 8px;
+    }
+
+    html.is-mobile #productionboxBottom .content-box-s,
+    html.is-mobile #productionboxBottom .header,
+    html.is-mobile #productionboxBottom .content,
+    html.is-mobile #productionboxBottom .footer {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #productionboxBottom .header h3 {
+        padding: 0 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Phase 3: galaxy. */
+    html.is-mobile #galaxycomponent,
+    html.is-mobile #galaxyContent {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #galaxyContent {
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-inline: contain;
+    }
+
+    html.is-mobile .galaxyTable {
+        width: 100%;
+        min-width: 0;
+    }
+
+    html.is-mobile .galaxyRow {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 32px 36px minmax(76px, 1fr) minmax(100px, 1.25fr) 68px;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile .galaxyRow .galaxyCell {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    html.is-mobile .galaxyRow .cellMoon,
+    html.is-mobile .galaxyRow .cellDebris,
+    html.is-mobile .galaxyRow .cellAlliance {
+        display: none;
+    }
+
+    html.is-mobile .galaxyRow .cellPosition,
+    html.is-mobile .galaxyRow .cellPlanet,
+    html.is-mobile .galaxyRow .cellAction {
+        text-align: center;
+    }
+
+    html.is-mobile .galaxyRow .cellPlanetName,
+    html.is-mobile .galaxyRow .cellPlayerName {
+        overflow-wrap: anywhere;
+        font-size: 10px;
+    }
+
+    html.is-mobile #galaxyHeader {
+        width: 100%;
+        height: auto;
+    }
+
+    html.is-mobile #galaxyHeader form {
+        display: grid;
+        grid-template-columns: 44px minmax(64px, 1fr) 44px minmax(64px, 1fr) 44px;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        padding: 4px;
+    }
+
+    html.is-mobile #galaxyHeader form > .galaxy_icons {
+        display: none;
+    }
+
+    html.is-mobile #galaxyHeader form {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    html.is-mobile #galaxyHeader #galaxy_input {
+        grid-column: 1;
+    }
+
+    html.is-mobile #galaxyHeader #system_input {
+        grid-column: 2;
+    }
+
+    html.is-mobile #galaxyHeader .btn_blue {
+        grid-column: 1 / -1;
+    }
+
+    html.is-mobile #galaxyHeader input {
+        width: 100%;
+        min-width: 64px;
+        text-align: center;
+    }
+
+    html.is-mobile #galaxyHeader .btn_blue {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-top: 2px;
+        line-height: 44px;
+        text-align: center;
+    }
+
+    html.is-mobile #galaxyHeader .systembuttons {
+        grid-column: 1 / -1;
+        width: 100%;
+        height: auto;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+    }
+
+    html.is-mobile #galaxyHeader .systembuttons .btn_blue,
+    html.is-mobile #galaxyHeader .systembuttons #discoverSystemBtn {
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 116px !important;
+        justify-self: stretch;
+        padding: 4px;
+        line-height: 36px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Phase 3: fleet and ship selection. */
+    html.is-mobile #fleetdispatchcomponent,
+    html.is-mobile #sendfleet,
+    html.is-mobile #fleet1,
+    html.is-mobile #fleet2,
+    html.is-mobile #fleet3,
+    html.is-mobile #station,
+    html.is-mobile .fleetStatus {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #sendfleet,
+    html.is-mobile #fleet1,
+    html.is-mobile #fleet2,
+    html.is-mobile #fleet3,
+    html.is-mobile #fleetdispatchcomponent .fleetstep,
+    html.is-mobile #fleetdispatchcomponent .fleetstepcontent {
+        position: relative;
+        left: 0;
+        right: auto;
+        float: none;
+    }
+
+    html.is-mobile .fleetdispatch,
+    html.is-mobile .fleetstep,
+    html.is-mobile .fleetstepcontent,
+    html.is-mobile .move-box-wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile .ship_selection_table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile .ship_selection_table tbody {
+        width: 100%;
+        min-width: 520px;
+    }
+
+    html.is-mobile .ship_selection_table td {
+        height: 44px;
+    }
+
+    html.is-mobile .ship_selection_table input {
+        width: 64px;
+        text-align: right;
+    }
+
+    html.is-mobile #planetSelector,
+    html.is-mobile #resources,
+    html.is-mobile #speedLinks {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Phase 3: messages and tabular content. */
+    html.is-mobile #content,
+    html.is-mobile #buttonz,
+    html.is-mobile #buttonz .content,
+    html.is-mobile .tabs_wrap {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile .tabs_btn {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    html.is-mobile .tabs_btn li.list_item {
+        flex: 0 0 72px;
+        width: 72px;
+        min-width: 72px;
+        height: 72px;
+    }
+
+    html.is-mobile .tabs_btn_img {
+        width: 72px;
+    }
+
+    html.is-mobile .tabs_btn_img img {
+        width: 44px;
+        height: 44px;
+    }
+
+    html.is-mobile .icon_caption {
+        max-width: 72px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 9px;
+    }
+
+    html.is-mobile .ui-tabs-panel {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile .ui-tabs-panel table {
+        width: 100%;
+        min-width: 520px;
+    }
+
+    html.is-mobile table.list,
+    html.is-mobile table.messageList {
+        width: 100%;
+    }
+
+    /* Phase 4: alliance, search and secondary tabs. */
+    html.is-mobile #alliancecomponent,
+    html.is-mobile #netz,
+    html.is-mobile #alliance,
+    html.is-mobile #alliance .alliance_wrapper,
+    html.is-mobile #alliance .allianceContent,
+    html.is-mobile #preferencescomponent,
+    html.is-mobile #preferences {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #tab-ally,
+    html.is-mobile .tabsbelow,
+    html.is-mobile .subsection_tabs {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    html.is-mobile #tab-ally li,
+    html.is-mobile .tabsbelow li,
+    html.is-mobile .subsection_tabs li {
+        flex: 0 0 auto;
+        min-width: 88px;
+    }
+
+    html.is-mobile #tab-ally li a,
+    html.is-mobile .tabsbelow li a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 10px;
+    }
+
+    html.is-mobile #alliance .alliance_wrapper,
+    html.is-mobile .searchLayer,
+    html.is-mobile .ajaxContent {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    html.is-mobile .searchall,
+    html.is-mobile .searchresults {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #searchText {
+        width: min(260px, calc(100vw - 100px));
+    }
+
+    /* Phase 4: options forms. */
+    html.is-mobile #preferences .tabwrapper,
+    html.is-mobile #preferences .contentzs,
+    html.is-mobile #preferences #prefs,
+    html.is-mobile #preferences .content,
+    html.is-mobile #preferences .wrap,
+    html.is-mobile #preferences .group {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #preferences .fieldwrapper {
+        width: 100%;
+        height: auto;
+        min-height: 44px;
+        display: grid;
+        grid-template-columns: minmax(130px, 42%) minmax(0, 58%);
+        align-items: center;
+    }
+
+    html.is-mobile #preferences .fieldwrapper label,
+    html.is-mobile #preferences .thefield {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #preferences .fieldwrapper input,
+    html.is-mobile #preferences .fieldwrapper select,
+    html.is-mobile #preferences .fieldwrapper textarea {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    /* Phase 4: highscore. */
+    html.is-mobile #highscoreContent,
+    html.is-mobile #highscoreContent .content,
+    html.is-mobile #stat_list_content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #row {
+        height: auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    html.is-mobile #categoryButtons,
+    html.is-mobile #typeButtons,
+    html.is-mobile #typeButtons .subnav {
+        width: 100%;
+        height: auto;
+        float: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile #categoryButtons .navButton,
+    html.is-mobile #typeButtons .navButton {
+        flex: 0 0 72px;
+        width: 72px;
+        min-height: 72px;
+    }
+
+    html.is-mobile #stat_list_content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile table.userHighscore {
+        width: 620px;
+        min-width: 620px;
+    }
+
+    html.is-mobile table.userHighscore .sendmsg {
+        width: 72px;
+    }
+
+    /* Phase 4: chat. */
+    html.is-mobile #chatContent,
+    html.is-mobile #chatContent .header,
+    html.is-mobile #chatContent .content,
+    html.is-mobile .largeChatContainer,
+    html.is-mobile .editor_wrap {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #chatContent {
+        height: auto;
+        float: none;
+    }
+
+    html.is-mobile #chatContent .header {
+        height: auto;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px;
+    }
+
+    html.is-mobile #chatpartner {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    html.is-mobile .largeChatContainer {
+        height: min(420px, calc(100vh - 280px));
+        min-height: 220px;
+    }
+
+    html.is-mobile ul.chat.largeChat {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile ul.chat.largeChat .chat_msg {
+        width: calc(100% - 16px);
+        max-width: 420px;
+        min-height: 44px;
+    }
+
+    html.is-mobile .editor_wrap textarea {
+        width: 100%;
+        max-width: 100%;
+        min-height: 88px;
+    }
+
+    html.is-mobile .send_new_msg {
+        width: 100%;
+        margin-top: 6px;
+        text-align: center;
+    }
+
+    /* Phase 4: admin bar and admin settings. */
+    html.is-mobile #adminbar {
+        height: 44px;
+        min-height: 44px;
+        overflow: hidden;
+    }
+
+    html.is-mobile #adminbar #mmoContent {
+        width: 100%;
+        height: 44px;
+        padding: 4px 8px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    html.is-mobile #adminbar #adminLogo {
+        display: none;
+    }
+
+    html.is-mobile #adminbar ul {
+        width: 100%;
+        height: 36px;
+        margin: 0;
+        float: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html.is-mobile #adminbar ul li {
+        flex: 0 0 auto;
+        margin: 0 4px 4px 0;
+    }
+
+    html.is-mobile #adminbar ul li a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 10px;
+    }
+
+    html.is-mobile #resourcesettingscomponent,
+    html.is-mobile #resourcesettingscomponent #buttonz,
+    html.is-mobile #resourcesettingscomponent form,
+    html.is-mobile #resourcesettingscomponent .content,
+    html.is-mobile #resourcesettingscomponent .buddylistContent {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #resourcesettingscomponent .fieldwrapper {
+        width: 100%;
+        height: auto;
+        min-height: 44px;
+        display: grid;
+        grid-template-columns: minmax(140px, 44%) minmax(0, 56%);
+        align-items: center;
+    }
+
+    html.is-mobile #resourcesettingscomponent .thefield,
+    html.is-mobile #resourcesettingscomponent input,
+    html.is-mobile #resourcesettingscomponent select,
+    html.is-mobile #resourcesettingscomponent textarea {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    /* Phase 4: merchant, jump gate and search dialogs. */
+    html.is-mobile #traderOverviewcomponent,
+    html.is-mobile #traderOverview,
+    html.is-mobile #jumpgate,
+    html.is-mobile .jumpgate,
+    html.is-mobile .searchLayer,
+    html.is-mobile .messagebox {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    html.is-mobile #traderOverview #planet {
+        min-height: 420px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        padding: 6px;
+        align-content: start;
+    }
+
+    html.is-mobile #traderOverview .trader_link {
+        position: relative;
+        width: 100%;
+        height: 96px;
+        left: auto;
+        top: auto;
+        margin: 0;
+    }
+
+    html.is-mobile #jumpgate {
+        height: auto;
+        overflow-x: hidden;
+        padding: 4px;
+    }
+
+    html.is-mobile #jumpgate .fleft,
+    html.is-mobile #jumpgate .fright {
+        width: 100%;
+        float: none;
+    }
+
+    html.is-mobile #jumpgate select {
+        width: 100%;
+    }
+
+    html.is-mobile .searchLayer .searchall form {
+        width: 100%;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    html.is-mobile .searchresults {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Phase 5: loading, touch and orientation stability. */
+    html.is-mobile input,
+    html.is-mobile select,
+    html.is-mobile textarea {
+        font-size: 16px;
+        touch-action: manipulation;
+    }
+
+    html.is-mobile button,
+    html.is-mobile a,
+    html.is-mobile input[type="button"],
+    html.is-mobile input[type="submit"] {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html.is-mobile .mobileLoadingIndicator {
+        display: block;
+        position: fixed;
+        z-index: 100000;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background: #6cbeff;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    html.is-mobile body.mobileLoading .mobileLoadingIndicator {
+        width: 100%;
+        opacity: 1;
+        animation: mobileLoadingProgress 1.2s ease-in-out infinite;
+    }
+
+    /* Final resource-strip positioning: header, planet bar and resources stay in separate fixed bands. */
+    html.is-mobile #pageContent {
+        padding-top: calc(152px + env(safe-area-inset-top)) !important;
+    }
+
+    html.is-mobile #top {
+        position: static !important;
+        height: 0 !important;
+        width: 100% !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent {
+        position: fixed !important;
+        top: calc(96px + env(safe-area-inset-top)) !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: auto !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 56px !important;
+        min-height: 56px !important;
+        float: none !important;
+        margin: 0 !important;
+        z-index: 10025 !important;
+        overflow: hidden !important;
+        border-bottom: 1px solid rgba(111, 159, 200, 0.4);
+        background: rgba(6, 16, 27, 0.98);
+        padding: 4px env(safe-area-inset-right) 4px env(safe-area-inset-left) !important;
+        box-sizing: border-box !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent #resources {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 48px !important;
+        min-height: 48px !important;
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        gap: 2px !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: transparent !important;
+        border-radius: 3px !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .resource_tile,
+    html.is-mobile #resourcesbarcomponent .resource_tile .resource {
+        position: relative !important;
+        width: 100% !important;
+        height: 48px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .resource_tile .resource {
+        top: 0 !important;
+        left: 0 !important;
+        right: auto !important;
+        bottom: auto !important;
+        margin: 0 !important;
+        float: none !important;
+        display: flex !important;
+        align-items: center !important;
+        padding-left: 30px !important;
+        box-sizing: border-box !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .resource_tile {
+        flex: 1 1 0 !important;
+        float: none !important;
+        overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        left: auto !important;
+        right: auto !important;
+        background: rgba(22, 37, 52, 0.6) !important;
+        border-radius: 3px !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .resourceIcon {
+        position: absolute !important;
+        left: 4px !important;
+        top: 50% !important;
+        transform: translateY(-50%) scale(0.65) !important;
+        transform-origin: left center !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .value {
+        position: static !important;
+        left: auto !important;
+        top: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        height: auto !important;
+        line-height: 1.3 !important;
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        display: block !important;
+        text-align: left !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .value > span {
+        position: static !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        width: auto !important;
+        height: auto !important;
+        display: inline-block !important;
+        line-height: 1.3 !important;
+        font-size: 10px !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    /* Dark matter specific styling for fixed bar */
+    html.is-mobile #resourcesbarcomponent .resource_tile.darkmatter .resource {
+        padding-left: 34px !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .resource_tile.darkmatter .resourceIcon {
+        left: 2px !important;
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    html.is-mobile .ui-dialog .ui-dialog-content,
+    html.is-mobile #galaxyContent,
+    html.is-mobile #content,
+    html.is-mobile .tabs_wrap,
+    html.is-mobile .searchresults,
+    html.is-mobile table {
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Keep the resource strip above page cards while scrolling - ensure fixed positioning is maintained */
+    html.is-mobile #resourcesbarcomponent {
+        position: fixed !important;
+        z-index: 10025;
+        overflow: visible;
+        background: rgba(6, 16, 27, 0.98);
+        border-bottom: 1px solid rgba(111, 159, 200, 0.3);
+    }
+
+    html.is-mobile #resourcesbarcomponent #resources {
+        height: 48px !important;
+    }
+
+    /* Overview controls are part of normal document flow. */
+    html.is-mobile #planetDetails {
+        position: relative;
+        z-index: 1;
+    }
+
+    html.is-mobile #planetOptions {
+        position: relative !important;
+        z-index: 2;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 44px;
+        left: 0 !important;
+        bottom: auto !important;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+        padding: 6px;
+        overflow: visible;
+        background: rgba(6, 16, 27, 0.96);
+    }
+
+    html.is-mobile #planetOptions > * {
+        position: relative !important;
+        width: auto !important;
+        height: 44px !important;
+        float: none !important;
+        display: flex;
+        align-items: center;
+    }
+
+    html.is-mobile #technologies ul.icons li.technology .icon {
+        overflow: visible;
+    }
+
+    html.is-mobile #technologies ul.icons li.technology .level,
+    html.is-mobile #technologies ul.icons li.technology .amount {
+        z-index: 4;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
+
+    /* Galaxy uses only the five essential columns on a phone. */
+    html.is-mobile #galaxyContent {
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+    }
+
+    html.is-mobile .galaxyTable {
+        width: 378px !important;
+        max-width: 100% !important;
+        min-width: 378px !important;
+        overflow: visible;
+    }
+
+    html.is-mobile .galaxyRow {
+        width: 378px !important;
+        max-width: 100% !important;
+        min-width: 378px !important;
+        display: grid !important;
+        grid-template-columns: 26px 36px minmax(66px, 1fr) minmax(105px, 1.35fr) 64px;
+        overflow: hidden;
+    }
+
+    html.is-mobile .galaxyRow.ctGalaxyHead:first-child {
+        display: none;
+    }
+
+    html.is-mobile .galaxyRow .cellMoon,
+    html.is-mobile .galaxyRow .cellDebris,
+    html.is-mobile .galaxyRow .cellAlliance {
+        display: none !important;
+    }
+
+    html.is-mobile .galaxyRow .cellPosition {
+        width: 26px !important;
+        grid-column: 1;
+    }
+
+    html.is-mobile .galaxyRow .cellPlanet,
+    html.is-mobile .galaxyRow .span1-2 {
+        width: 36px !important;
+        grid-column: 2;
+    }
+
+    html.is-mobile .galaxyRow .cellPlanetName {
+        width: auto !important;
+        grid-column: 3;
+    }
+
+    html.is-mobile .galaxyRow .cellPlayerName {
+        width: auto !important;
+        grid-column: 4;
+    }
+
+    html.is-mobile .galaxyRow .cellAction {
+        width: 64px !important;
+        grid-column: 5;
+    }
+
+    html.is-mobile .galaxyRow .galaxyCell {
+        float: none !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        height: 44px;
+        line-height: 44px;
+        padding: 0 2px;
+        border-right: 1px solid rgba(111, 159, 200, 0.15);
+    }
+
+    html.is-mobile .galaxyRow .cellPlanetName,
+    html.is-mobile .galaxyRow .cellPlayerName {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 9px;
+    }
+
+    html.is-mobile .galaxyRow .cellAction a,
+    html.is-mobile .galaxyRow .cellAction button,
+    html.is-mobile .galaxyRow .cellAction input {
+        width: 44px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        margin: 0 auto;
+    }
+
+    html.is-mobile #galaxyHeader {
+        height: auto !important;
+    }
+
+    html.is-mobile #galaxyHeader .btn_blue {
+        height: 44px;
+        min-height: 44px;
+        line-height: 44px;
+    }
+
+    /* Fleet dispatch and production queues stay within the phone viewport. */
+    html.is-mobile #fleetdispatchcomponent,
+    html.is-mobile #sendfleet,
+    html.is-mobile #fleet1,
+    html.is-mobile #fleet2,
+    html.is-mobile #fleet3 {
+        height: auto !important;
+        overflow: visible;
+    }
+
+    html.is-mobile #fleetdispatchcomponent {
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-inline: contain;
+    }
+
+    html.is-mobile .fleetstep,
+    html.is-mobile .fleetstepcontent,
+    html.is-mobile .move-box-wrapper {
+        height: auto !important;
+        min-height: 44px;
+    }
+
+    html.is-mobile .ship_selection_table,
+    html.is-mobile .ship_selection_table tbody {
+        min-width: 100%;
+        width: 100%;
+    }
+
+    html.is-mobile .ship_selection_table tbody {
+        display: table;
+    }
+
+    html.is-mobile #productionboxBottom {
+        position: relative;
+        height: auto !important;
+        clear: both;
+        margin-top: 8px;
+        overflow: visible;
+    }
+
+    html.is-mobile #productionboxBottom .boxColumn,
+    html.is-mobile #productionboxBottom .content-box-s {
+        position: relative;
+        left: auto !important;
+        right: auto !important;
+    }
+
+    /* Dark Matter is the fifth resource and must keep the same compact alignment. */
+    html.is-mobile #resourcesbarcomponent .resource_tile.darkmatter {
+        flex: 1 1 0 !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .darkmatter .resourceIcon {
+        left: 0 !important;
+        width: 48px !important;
+    }
+
+    html.is-mobile #resourcesbarcomponent .darkmatter .value {
+        left: 34px !important;
+        width: 40px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* Mobile technology and unit detail overlays. */
+    html.is-mobile #technologydetails_wrapper {
+        position: fixed !important;
+        top: calc(152px + env(safe-area-inset-top)) !important;
+        left: 8px !important;
+        right: 8px !important;
+        bottom: calc(56px + env(safe-area-inset-bottom)) !important;
+        width: calc(100vw - 16px) !important;
+        height: calc(100vh - 208px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+        max-height: calc(100vh - 208px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+        z-index: 10020 !important;
+        display: none;
+        overflow: hidden !important;
+    }
+
+    html.is-mobile #technologydetails_wrapper.slide-up,
+    html.is-mobile #technologydetails_wrapper.slide-down {
+        display: block !important;
+    }
+
+    html.is-mobile #technologydetails_wrapper #technologydetails_content {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        animation: none !important;
+        background-color: rgba(7, 17, 28, 0.98);
+        background-size: cover;
+    }
+
+    /* Close button for technology details - mobile friendly */
+    html.is-mobile #technologydetails .close {
+        position: absolute !important;
+        right: 8px !important;
+        top: 8px !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        padding: 0 !important;
+        border: 1px solid rgba(111, 159, 200, 0.5) !important;
+        background: rgba(22, 37, 52, 0.9) !important;
+        color: #fff !important;
+        font-size: 24px !important;
+        line-height: 44px !important;
+        text-align: center !important;
+        z-index: 10 !important;
+        border-radius: 4px !important;
+    }
+
+    html.is-mobile #technologydetails .close:active {
+        background: rgba(111, 159, 200, 0.3) !important;
+    }
+
+    html.is-mobile #technologydetails {
+        position: relative !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 480px;
+        overflow: visible;
+        border: 1px solid rgba(111, 159, 200, 0.45);
+    }
+
+    html.is-mobile #technologydetails > .sprite,
+    html.is-mobile #technologydetails > .lifeformsprite {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        width: 120px !important;
+        height: 120px !important;
+        float: left;
+        background-size: 120px 120px;
+        border: 0;
+    }
+
+    html.is-mobile #technologydetails .content {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        width: calc(100% - 120px) !important;
+        height: auto !important;
+        min-height: 120px;
+        margin-left: 120px;
+        padding: 6px;
+        overflow: visible !important;
+    }
+
+    /* On very narrow screens, stack sprite and content vertically */
+    @media (max-width: 380px) {
+        html.is-mobile #technologydetails > .sprite,
+        html.is-mobile #technologydetails > .lifeformsprite {
+            float: none !important;
+            margin: 0 auto 12px !important;
+            width: 100px !important;
+            height: 100px !important;
+            background-size: 100px 100px;
+        }
+
+        html.is-mobile #technologydetails .content {
+            width: 100% !important;
+            margin-left: 0 !important;
+            min-height: auto !important;
+            padding: 8px !important;
+        }
+
+        html.is-mobile #technologydetails h3 {
+            padding-left: 0 !important;
+            text-align: center !important;
+        }
+    }
+
+    html.is-mobile #technologydetails h3 {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: 27px;
+        margin: 0;
+        padding-left: 28px;
+        font-size: 12px;
+    }
+
+    html.is-mobile #technologydetails .information {
+        margin-top: 4px !important;
+        padding: 4px !important;
+    }
+
+    html.is-mobile #technologydetails .information > ul.narrow {
+        width: 100% !important;
+    }
+
+    html.is-mobile #technologydetails .information > ul li {
+        margin-bottom: 6px;
+    }
+
+    html.is-mobile #technologydetails .costs {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        margin-top: 8px;
+    }
+
+    html.is-mobile #technologydetails .description {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        clear: both;
+        padding: 8px;
+        font-size: 11px;
+        line-height: 16px;
+    }
+
+    html.is-mobile #technologydetails .action,
+    html.is-mobile #technologydetails .actions,
+    html.is-mobile #technologydetails button.upgrade,
+    html.is-mobile #technologydetails input.build_amount {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        min-height: 44px;
+    }
+
+    html.is-mobile #technologydetails button.upgrade {
+        margin-top: 8px;
+    }
+
+    /* Construction queues use readable two-column mobile rows. */
+    html.is-mobile #productionboxBottom table.construction,
+    html.is-mobile #productionboxBottom table.construction tbody {
+        width: 100% !important;
+        min-width: 0 !important;
+        table-layout: fixed;
+    }
+
+    html.is-mobile #productionboxBottom table.construction {
+        height: auto !important;
+        margin: 0;
+    }
+
+    html.is-mobile #productionboxBottom table.construction th {
+        height: 32px;
+        padding: 4px 8px;
+        text-align: left;
+        white-space: normal;
+    }
+
+    html.is-mobile #productionboxBottom table.construction td {
+        height: auto;
+        min-height: 44px;
+        padding: 4px 6px;
+        vertical-align: middle;
+        overflow-wrap: anywhere;
+    }
+
+    html.is-mobile #productionboxBottom table.construction td.first {
+        width: 64px !important;
+    }
+
+    html.is-mobile #productionboxBottom table.construction .queuePic {
+        width: 44px;
+        height: 44px;
+    }
+
+    html.is-mobile #productionboxBottom table.construction .build-faster {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 44px;
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        align-items: center;
+        padding: 4px;
+        text-decoration: none;
+    }
+
+    html.is-mobile #productionboxBottom table.construction .build-faster .build-txt,
+    html.is-mobile #productionboxBottom table.construction .build-faster .dm_cost {
+        position: static;
+        width: auto;
+        text-align: left;
+    }
+
+    html.is-mobile table.construction.active,
+    html.is-mobile table.construction.queue {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-width: 0 !important;
+        table-layout: fixed;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    html.is-mobile table.construction.active td,
+    html.is-mobile table.construction.queue td {
+        height: auto;
+        min-height: 44px;
+        padding: 4px 6px;
+        vertical-align: middle;
+        overflow-wrap: anywhere;
+    }
+
+    html.is-mobile table.construction.active td.first,
+    html.is-mobile table.construction.queue td.first {
+        width: 64px !important;
+    }
+
+    /* Queue tables (building queue, research queue, unit queue) - convert to flex layout on mobile */
+    html.is-mobile .content-box-s .content table.queue {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-start !important;
+        width: 100% !important;
+        margin-top: 8px !important;
+    }
+
+    html.is-mobile .content-box-s .content table.queue tbody {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        width: 100% !important;
+    }
+
+    html.is-mobile .content-box-s .content table.queue tr {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+    }
+
+    html.is-mobile .content-box-s .content table.queue td {
+        display: flex !important;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: 60px !important;
+        max-width: calc(50% - 2px) !important;
+        height: 60px !important;
+        padding: 4px !important;
+        margin: 0 !important;
+        background: rgba(22, 37, 52, 0.6);
+        border: 1px solid rgba(111, 159, 200, 0.2);
+        border-radius: 4px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 2px;
+        box-sizing: border-box;
+    }
+
+    html.is-mobile .content-box-s .queue_link {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        padding: 2px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+    }
+
+    html.is-mobile .content-box-s .queue_link img.queuePic {
+        width: 32px !important;
+        height: 32px !important;
+        max-width: 32px !important;
+        max-height: 32px !important;
+        margin-bottom: 2px !important;
+    }
+
+    html.is-mobile .content-box-s .queue_link span {
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 100% !important;
+    }
+
+    /* Unit queue specific - shows amount */
+    html.is-mobile .content-box-s .content table.queue td br {
+        display: none !important;
+    }
+
+    /* Active construction table - ensure proper mobile layout */
+    html.is-mobile .content-box-s .content table.construction.active {
+        display: table !important;
+        width: 100% !important;
+    }
+
+    html.is-mobile .content-box-s .content table.construction.active tbody {
+        display: table-row-group !important;
+    }
+
+    html.is-mobile .content-box-s .content table.construction.active tr {
+        display: table-row !important;
+    }
+
+    html.is-mobile .content-box-s .content table.construction.active td {
+        display: table-cell !important;
+    }
+
+    html.is-mobile .content-box-s .content table.construction.active td.first {
+        display: table-cell !important;
+        width: 64px !important;
+    }
+
+    html.is-mobile .content-box-s .content table.construction.active td.desc {
+        display: table-cell !important;
+        width: auto !important;
+    }
+
+    /* Build faster button mobile improvements */
+    html.is-mobile .content-box-s .build-faster {
+        width: 100% !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+        border-radius: 4px !important;
+        text-decoration: none !important;
+        box-sizing: border-box !important;
+    }
+
+    html.is-mobile .content-box-s .build-faster-img,
+    html.is-mobile .content-box-s .build-finish-img {
+        width: 32px !important;
+        height: 32px !important;
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+    }
+
+    html.is-mobile .content-box-s .build-txt {
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        flex: 1 !important;
+    }
+
+    html.is-mobile .content-box-s .dm_cost {
+        font-size: 11px !important;
+        color: #848484 !important;
+        white-space: nowrap !important;
+    }
+
+    @media (orientation: landscape) and (max-height: 500px) {
+        html.is-mobile .mobileShell {
+            height: calc(48px + env(safe-area-inset-top));
+        }
+
+        html.is-mobile .mobileBottomNav {
+            height: calc(48px + env(safe-area-inset-bottom));
+        }
+
+        html.is-mobile .ui-dialog {
+            max-height: calc(100vh - 8px);
+        }
+    }
+}
+
+@keyframes mobileLoadingProgress {
+    0% {
+        transform: translateX(-100%);
+    }
+    50% {
+        transform: translateX(25%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
