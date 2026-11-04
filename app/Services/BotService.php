@@ -168,16 +168,13 @@ class BotService
 
                             $planetService->setPlanet($planet);
                             $available = $planetService->getResources();
-                            $spendPercentage = min(100, max(0, (int)$this->settingsService->get('bot_resource_spend_percentage', 50)));
                             $militaryPercentage = min(100, max(0, (int)$this->settingsService->get('bot_attack_defense_percentage', 30)));
                             $researchPercentage = min(100, max(0, (int)$this->settingsService->get('bot_research_percentage', 10)));
                             $miningPercentage = min(100, max(0, (int)$this->settingsService->get('bot_mining_percentage', 10)));
-                            $categoryTotal = $militaryPercentage + $researchPercentage + $miningPercentage;
-                            $militaryShare = $categoryTotal > 0 ? $militaryPercentage / $categoryTotal : 0;
                             $budget = new Resources(
-                                floor($available->metal->get() * ($spendPercentage / 100) * $militaryShare),
-                                floor($available->crystal->get() * ($spendPercentage / 100) * $militaryShare),
-                                floor($available->deuterium->get() * ($spendPercentage / 100) * $militaryShare)
+                                floor($available->metal->get() * ($militaryPercentage / 100)),
+                                floor($available->crystal->get() * ($militaryPercentage / 100)),
+                                floor($available->deuterium->get() * ($militaryPercentage / 100))
                             );
                             if (!$budget->any()) {
                                 return 0;
@@ -219,12 +216,10 @@ class BotService
                                 $built += $amount;
                             }
 
-                            if ($categoryTotal > 0) {
-                                $miningShare = $miningPercentage / $categoryTotal;
-                                $researchShare = $researchPercentage / $categoryTotal;
-                                $miningCostMetal = floor($available->metal->get() * ($spendPercentage / 100) * $miningShare);
-                                $miningCostCrystal = floor($available->crystal->get() * ($spendPercentage / 100) * $miningShare);
-                                $miningCostDeuterium = floor($available->deuterium->get() * ($spendPercentage / 100) * $miningShare);
+                            if ($miningPercentage > 0 || $researchPercentage > 0) {
+                                $miningCostMetal = floor($available->metal->get() * ($miningPercentage / 100));
+                                $miningCostCrystal = floor($available->crystal->get() * ($miningPercentage / 100));
+                                $miningCostDeuterium = floor($available->deuterium->get() * ($miningPercentage / 100));
 
                                 if ($miningPercentage > 0
                                     && $planet->metal >= $miningCostMetal
@@ -239,9 +234,9 @@ class BotService
                                     $built++;
                                 }
 
-                                $researchCostMetal = floor($available->metal->get() * ($spendPercentage / 100) * $researchShare);
-                                $researchCostCrystal = floor($available->crystal->get() * ($spendPercentage / 100) * $researchShare);
-                                $researchCostDeuterium = floor($available->deuterium->get() * ($spendPercentage / 100) * $researchShare);
+                                $researchCostMetal = floor($available->metal->get() * ($researchPercentage / 100));
+                                $researchCostCrystal = floor($available->crystal->get() * ($researchPercentage / 100));
+                                $researchCostDeuterium = floor($available->deuterium->get() * ($researchPercentage / 100));
 
                                 if ($researchPercentage > 0
                                     && $planet->metal >= $researchCostMetal

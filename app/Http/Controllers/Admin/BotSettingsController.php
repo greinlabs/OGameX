@@ -27,7 +27,6 @@ class BotSettingsController extends OGameController
             'bot_attack_interval_days' => (int)$settingsService->get('bot_attack_interval_days', max(1, (int)round($attackSeconds / 86400))),
             'bot_attack_chance' => (int)$settingsService->get('bot_attack_chance', 75),
             'bot_resource_spend_interval_days' => (int)$settingsService->get('bot_resource_spend_interval_days', max(1, (int)round($productionSeconds / 86400))),
-            'bot_resource_spend_percentage' => (int)$settingsService->get('bot_resource_spend_percentage', 50),
             'bot_attack_defense_percentage' => (int)$settingsService->get('bot_attack_defense_percentage', 30),
             'bot_research_percentage' => (int)$settingsService->get('bot_research_percentage', 10),
             'bot_mining_percentage' => (int)$settingsService->get('bot_mining_percentage', 10),
@@ -45,7 +44,6 @@ class BotSettingsController extends OGameController
             'bot_max_count' => ['required', 'integer', 'min:0', 'max:1000'],
             'bot_inactive_days' => ['required', 'integer', 'min:1', 'max:3650'],
             'bot_attack_chance' => ['required', 'integer', 'min:0', 'max:100'],
-            'bot_resource_spend_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'bot_attack_defense_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'bot_research_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'bot_mining_percentage' => ['required', 'integer', 'min:0', 'max:100'],
@@ -68,7 +66,6 @@ class BotSettingsController extends OGameController
         $settingsService->set('bot_attack_chance', (int)request('bot_attack_chance', 75));
         $settingsService->set('bot_resource_spend_interval_days', $productionDays);
         $settingsService->set('bot_production_interval', $productionDays * 86400);
-        $settingsService->set('bot_resource_spend_percentage', (int)request('bot_resource_spend_percentage', 50));
         $settingsService->set('bot_attack_defense_percentage', (int)request('bot_attack_defense_percentage', 30));
         $settingsService->set('bot_research_percentage', (int)request('bot_research_percentage', 10));
         $settingsService->set('bot_mining_percentage', (int)request('bot_mining_percentage', 10));

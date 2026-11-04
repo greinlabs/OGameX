@@ -1,6 +1,16 @@
 @extends('ingame.layouts.main')
 
 @section('content')
+    <style>
+        .bot-settings-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .bot-settings-actions form { display: inline-block; margin: 0; }
+    </style>
+
     @if (session('success'))
         <script>fadeBox('{{ session('success') }}', false);</script>
     @endif
@@ -12,7 +22,7 @@
         <div id="planet" class="shortHeader"><h2>Bot settings</h2></div>
         <div id="buttonz">
             <div class="header"><h2>Bot settings</h2></div>
-            <form action="{{ route('admin.botsettings.update') }}" method="post">
+            <form id="bot-settings-form" action="{{ route('admin.botsettings.update') }}" method="post">
                 @csrf
                 <div class="content">
                     <div class="buddylistContent" style="margin-bottom: 60px;">
@@ -30,7 +40,6 @@
                             <div class="fieldwrapper"><label class="styled textBeefy">Attack round every (days):</label><div class="thefield"><input type="number" min="1" max="3650" class="textInput w130 textCenter textBeefy" name="bot_attack_interval_days" value="{{ $bot_attack_interval_days }}"></div></div>
                             <div class="fieldwrapper"><label class="styled textBeefy">Bot attack chance (%):</label><div class="thefield"><input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_attack_chance" value="{{ $bot_attack_chance }}"></div></div>
                             <div class="fieldwrapper"><label class="styled textBeefy">Bot resource spending cycle (days):</label><div class="thefield"><input type="number" min="1" max="3650" class="textInput w130 textCenter textBeefy" name="bot_resource_spend_interval_days" value="{{ $bot_resource_spend_interval_days }}"></div></div>
-                            <div class="fieldwrapper"><label class="styled textBeefy">Resources to spend per cycle (%):</label><div class="thefield"><input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_resource_spend_percentage" value="{{ $bot_resource_spend_percentage }}"></div></div>
                             <div class="fieldwrapper"><label class="styled textBeefy">Attack and defense allocation (% of stored resources):</label><div class="thefield"><input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_attack_defense_percentage" value="{{ $bot_attack_defense_percentage }}"></div></div>
                             <div class="fieldwrapper"><label class="styled textBeefy">Research allocation (% of stored resources):</label><div class="thefield"><input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_research_percentage" value="{{ $bot_research_percentage }}"></div></div>
                             <div class="fieldwrapper"><label class="styled textBeefy">Mining allocation (% of stored resources):</label><div class="thefield"><input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_mining_percentage" value="{{ $bot_mining_percentage }}"></div></div>
@@ -42,18 +51,13 @@
                             <div class="fieldwrapper"><label class="styled textBeefy">Maximum randomized level:</label><div class="thefield"><input type="number" min="1" max="100" class="textInput w130 textCenter textBeefy" name="bot_level_max" value="{{ $bot_level_max }}"></div></div>
                         </div>
 
-                        <div class="group bborder" style="display: block;">
-                            <div class="fieldwrapper" style="text-align:center;"><input type="submit" class="btn_blue" value="Save bot settings"></div>
-                        </div>
                     </div>
                 </div>
             </form>
-            <div class="content" style="margin-bottom:20px;">
-                <div class="buddylistContent">
-                    <p class="box_highlight textCenter no_buddies">Manual actions</p>
-                    <form method="POST" action="{{ route('admin.botsettings.spawn-bot') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Spawn bot now"></form>
-                    <form method="POST" action="{{ route('admin.botsettings.run-bot-attack-round') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Run attack round now"></form>
-                </div>
+            <div class="content bot-settings-actions" style="margin-bottom:20px;">
+                <form method="POST" action="{{ route('admin.botsettings.spawn-bot') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Spawn bot now"></form>
+                <form method="POST" action="{{ route('admin.botsettings.run-bot-attack-round') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Run attack round now"></form>
+                <button type="submit" form="bot-settings-form" class="btn_blue">Save bot settings</button>
             </div>
         </div>
     </div>

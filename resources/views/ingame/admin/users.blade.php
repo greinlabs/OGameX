@@ -26,7 +26,7 @@
         .user-action-form { display: flex; width: 32px; margin: 0; gap: 4px; align-items: center; }
         .user-action-form.user-action-block { grid-column: 1 / -1; width: 140px; }
         .user-action-form select, .user-action-form input[type="text"] { margin-right: 4px; }
-        .user-action-form select { width: 104px; height: 28px; box-sizing: border-box; }
+        .user-action-form select { width: 100px; height: 28px; box-sizing: border-box; }
         .user-action-form .btn_blue {
             min-width: 0;
             height: 28px;
@@ -38,6 +38,14 @@
         }
         .user-action-form .user-action-icon { width: 32px; font-size: 15px; line-height: 28px; }
         .user-action-form.user-action-block .btn_blue { width: 32px; }
+        .user-action-form.user-action-block {
+            display: grid;
+            grid-template-columns: 100px 32px;
+            gap: 4px;
+            margin: 0;
+            width: 136px;
+        }
+        .user-action-form.user-action-block select { width: 100px; margin: 0; }
         .user-admin-table th:nth-child(1),
         .user-admin-table td:nth-child(1) { width: 5%; }
         .user-admin-table th:nth-child(2),
@@ -128,7 +136,6 @@
                                             @if ($user->is_bot)
                                                 <br><span style="color:#888;">Bot</span>
                                             @endif
-                                            <br><span style="color:#888;">{{ $user->email }}</span>
                                         </td>
                                         <td>
                                             @if ($currentPlanet)
