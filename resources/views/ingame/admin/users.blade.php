@@ -12,7 +12,7 @@
     @endif
 
     <style>
-        .user-admin-table { width: 100%; min-width: 980px; border-collapse: collapse; font-size: 11px; }
+        .user-admin-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 11px; }
         .user-admin-table th, .user-admin-table td { border-bottom: 1px solid #334; padding: 7px 6px; vertical-align: middle; }
         .user-admin-table th { background: #1a2430; text-align: left; }
         .user-admin-table tr:hover { background: rgba(255,255,255,.035); }
@@ -21,13 +21,14 @@
         .user-status-blocked { color: #ff7b7b; }
         .user-status-offline { color: #aaa; }
         .user-status-admin { color: #f4b942; }
-        .user-actions-cell { width: 220px; }
-        .user-actions { display: flex; flex-direction: column; gap: 4px; width: 220px; }
+        .user-actions-cell { width: 176px; }
+        .user-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; width: 176px; }
         .user-action-form { display: flex; width: 100%; margin: 0; gap: 4px; align-items: center; }
+        .user-action-form:not(.user-action-single) { grid-column: 1 / -1; }
         .user-action-form select, .user-action-form input[type="text"] { margin-right: 4px; }
-        .user-action-form select { width: 112px; height: 28px; box-sizing: border-box; }
+        .user-action-form select { width: 92px; height: 28px; box-sizing: border-box; }
         .user-action-form .btn_blue {
-            min-width: 100px;
+            min-width: 0;
             height: 28px;
             box-sizing: border-box;
             margin: 0;
@@ -36,6 +37,18 @@
             text-align: center;
         }
         .user-action-form.user-action-single .btn_blue { width: 100%; }
+        .user-admin-table th:nth-child(1),
+        .user-admin-table td:nth-child(1) { width: 42px; }
+        .user-admin-table th:nth-child(3),
+        .user-admin-table td:nth-child(3) { width: 105px; }
+        .user-admin-table th:nth-child(4),
+        .user-admin-table td:nth-child(4) { width: 76px; }
+        .user-admin-table th:nth-child(5),
+        .user-admin-table td:nth-child(5) { width: 120px; }
+        .user-admin-table th:nth-child(6),
+        .user-admin-table td:nth-child(6) { width: 78px; }
+        .user-admin-table th:nth-child(7),
+        .user-admin-table td:nth-child(7) { width: 90px; }
     </style>
 
     <div id="resourcesettingscomponent" class="maincontent">
@@ -78,7 +91,7 @@
                         Users: <strong>{{ $users->total() }}</strong>
                     </p>
 
-                    <div style="overflow-x: auto;">
+                    <div style="overflow-x: visible;">
                         <table class="user-admin-table">
                             <thead>
                                 <tr>
