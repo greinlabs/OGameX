@@ -310,7 +310,7 @@ class BotService
     }
 
     /**
-     * Add randomized resources to every active bot planet, scaled by the bot's level.
+     * Add randomized resources to every active bot planet, based on the configured bot levels.
      *
      * @return array{bots: int, planets: int, resources_added: array{metal: float, crystal: float, deuterium: float}, errors: array<string>}
      */
@@ -336,31 +336,26 @@ class BotService
                     $player = $this->playerServiceFactory->make($bot->id, true);
                     $minLevel = max(0, (int)$this->settingsService->get('bot_level_min', 3));
                     $maxLevel = min(100, max($minLevel, (int)$this->settingsService->get('bot_level_max', 25)));
-                    $level = random_int($minLevel, $maxLevel);
                     foreach ($player->planets->allPlanets() as $planetService) {
-                        DB::transaction(function () use ($planetService, $level, &$result, &$grantedForBot): void {
+                        DB::transaction(function () use ($planetService, $minLevel, $maxLevel, &$result, &$grantedForBot): void {
                             $planet = Planet::whereKey($planetService->getPlanetId())->lockForUpdate()->first();
                             if ($planet === null || (int)$planet->destroyed !== 0) {
                                 return;
                             }
 
-                            $metal = random_int($level * 5000, $level * 50000);
-                            $crystal = random_int($level * 3000, $level * 30000);
-                            $deuterium = random_int($level * 1000, $level * 15000);
+                            $minimumGrant = $minLevel * 1000;
+                            $maximumGrant = $maxLevel * 1000;
+                            $metal = random_int($minimumGrant, $maximumGrant);
+                            $crystal = random_int($minimumGrant, $maximumGrant);
+                            $deuterium = random_int($minimumGrant, $maximumGrant);
 
                             $oldMetal = (float)$planet->metal;
                             $oldCrystal = (float)$planet->crystal;
                             $oldDeuterium = (float)$planet->deuterium;
 
-                            $planet->metal = (float)$planet->metal_max > 0
-                                ? min((float)$planet->metal_max, $oldMetal + $metal)
-                                : $oldMetal + $metal;
-                            $planet->crystal = (float)$planet->crystal_max > 0
-                                ? min((float)$planet->crystal_max, $oldCrystal + $crystal)
-                                : $oldCrystal + $crystal;
-                            $planet->deuterium = (float)$planet->deuterium_max > 0
-                                ? min((float)$planet->deuterium_max, $oldDeuterium + $deuterium)
-                                : $oldDeuterium + $deuterium;
+                            $planet->metal = $oldMetal + $metal;
+                            $planet->crystal = $oldCrystal + $crystal;
+                            $planet->deuterium = $oldDeuterium + $deuterium;
                             $planet->save();
 
                             $result['resources_added']['metal'] += (float)$planet->metal - $oldMetal;

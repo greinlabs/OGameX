@@ -110,13 +110,16 @@ class BotServiceTest extends IsolatedAccountTestCase
     {
         $settings = resolve(SettingsService::class);
         $settings->set('bot_max_count', 10);
-        $settings->set('bot_level_min', 5);
+        $settings->set('bot_level_min', 2);
         $settings->set('bot_level_max', 5);
         $bot = resolve(BotService::class)->spawnBot();
         $planet = Planet::where('user_id', $bot->id)->firstOrFail();
         $planet->metal = 1000;
         $planet->crystal = 1000;
         $planet->deuterium = 1000;
+        $planet->metal_max = 1000;
+        $planet->crystal_max = 1000;
+        $planet->deuterium_max = 1000;
         $planet->save();
 
         $result = resolve(BotService::class)->grantRandomResourcesToBots();
@@ -125,11 +128,25 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertSame(1, $result['bots']);
         $this->assertGreaterThanOrEqual(1, $result['planets']);
         $this->assertSame([], $result['errors']);
-        $this->assertGreaterThan(1000, $planet->metal);
-        $this->assertGreaterThan(1000, $planet->crystal);
-        $this->assertGreaterThan(1000, $planet->deuterium);
-        $this->assertGreaterThan(0, $result['resources_added']['metal']);
-        $this->assertGreaterThan(0, $result['resources_added']['crystal']);
-        $this->assertGreaterThan(0, $result['resources_added']['deuterium']);
+        $this->assertGreaterThanOrEqual(3000, $planet->metal);
+        $this->assertLessThanOrEqual(6000, $planet->metal);
+        $this->assertGreaterThanOrEqual(3000, $planet->crystal);
+        $this->assertLessThanOrEqual(6000, $planet->crystal);
+        $this->assertGreaterThanOrEqual(3000, $planet->deuterium);
+        $this->assertLessThanOrEqual(6000, $planet->deuterium);
+
+        $afterFirstClick = [
+            'metal' => (float)$planet->metal,
+            'crystal' => (float)$planet->crystal,
+            'deuterium' => (float)$planet->deuterium,
+        ];
+
+        $secondResult = resolve(BotService::class)->grantRandomResourcesToBots();
+        $planet->refresh();
+
+        $this->assertSame([], $secondResult['errors']);
+        $this->assertGreaterThan($afterFirstClick['metal'], $planet->metal);
+        $this->assertGreaterThan($afterFirstClick['crystal'], $planet->crystal);
+        $this->assertGreaterThan($afterFirstClick['deuterium'], $planet->deuterium);
     }
 }

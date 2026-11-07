@@ -276,8 +276,7 @@ Route::middleware(['auth', 'globalgame', 'locale', 'admin'])->group(function () 
         ->name('admin.botsettings.run-resource-spend')
         ->middleware('throttle:5,1');
     Route::post('/admin/bot-settings/grant-random-resources', [BotSettingsController::class, 'grantBotRandomResources'])
-        ->name('admin.botsettings.grant-random-resources')
-        ->middleware('throttle:5,1');
+        ->name('admin.botsettings.grant-random-resources');
 
     Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
     Route::post('/admin/users/masquerade', [UserManagementController::class, 'masquerade'])->name('admin.users.masquerade');
