@@ -26,7 +26,14 @@
         .user-action-form { display: flex; width: 32px; margin: 0; gap: 4px; align-items: center; }
         .user-action-form.user-action-block { grid-column: 1 / -1; width: 140px; }
         .user-action-form select, .user-action-form input[type="text"] { margin-right: 4px; }
-        .user-action-form select { width: 100px; height: 28px; box-sizing: border-box; }
+        .user-action-form select {
+            width: 52px !important;
+            max-width: 52px;
+            height: 28px;
+            box-sizing: border-box;
+            padding: 0 2px;
+            text-align: center;
+        }
         .user-action-form .btn_blue {
             min-width: 0;
             height: 28px;
@@ -40,12 +47,12 @@
         .user-action-form.user-action-block .btn_blue { width: 32px; }
         .user-action-form.user-action-block {
             display: grid;
-            grid-template-columns: 100px 32px;
+            grid-template-columns: 52px 32px;
             gap: 4px;
             margin: 0;
-            width: 136px;
+            width: 88px;
         }
-        .user-action-form.user-action-block select { width: 100px; margin: 0; }
+        .user-action-form.user-action-block select { width: 52px !important; margin: 0; }
         .user-admin-table th:nth-child(1),
         .user-admin-table td:nth-child(1) { width: 5%; }
         .user-admin-table th:nth-child(2),

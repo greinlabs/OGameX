@@ -490,14 +490,6 @@
                     </div>
                 </div>
             </form>
-            <form method="POST" action="{{ route('admin.serversettings.spawn-bot') }}" style="margin-top: 10px; text-align: center;">
-                @csrf
-                <input type="submit" class="btn_blue" value="{{ __('t_ingame.admin.bot_spawn_now') }}">
-            </form>
-            <form method="POST" action="{{ route('admin.serversettings.run-bot-attack-round') }}" style="margin-top: 10px; text-align: center;">
-                @csrf
-                <input type="submit" class="btn_blue" value="{{ __('t_ingame.admin.bot_attack_now') }}">
-            </form>
         </div>
         <script language="javascript">
             initBBCodes();

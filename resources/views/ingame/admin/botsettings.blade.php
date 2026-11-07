@@ -7,8 +7,23 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            flex-wrap: wrap;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .bot-settings-actions form { display: inline-block; margin: 0; }
+        .bot-settings-actions form,
+        .bot-settings-actions > button { display: inline-block; margin: 0; }
+        .bot-settings-actions form:nth-child(1),
+        .bot-settings-actions form:nth-child(2),
+        .bot-settings-actions form:nth-child(3) {
+            flex: 0 1 calc(33.333% - 6px);
+        }
+        .bot-settings-actions form:nth-child(4),
+        .bot-settings-actions > button {
+            flex: 0 1 calc(50% - 4px);
+        }
+        .bot-settings-actions .btn_blue { width: 100%; box-sizing: border-box; }
     </style>
 
     @if (session('success'))
