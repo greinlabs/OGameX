@@ -282,6 +282,104 @@ class BotService
         return $result;
     }
 
+    /**
+     * Force one resource-spending cycle independently of the configured schedule.
+     */
+    public function forceResourceSpend(): array
+    {
+        return $this->produceForBots();
+    }
+
+    /**
+     * Add randomized resources to every active bot planet, scaled by the bot's level.
+     *
+     * @return array{bots: int, planets: int, resources_added: array{metal: float, crystal: float, deuterium: float}, errors: array<string>}
+     */
+    public function grantRandomResourcesToBots(): array
+    {
+        $result = [
+            'bots' => 0,
+            'planets' => 0,
+            'resources_added' => ['metal' => 0, 'crystal' => 0, 'deuterium' => 0],
+            'errors' => [],
+        ];
+        $grantLock = Cache::lock('ogamex-bot-resource-grant', 300);
+        if (!$grantLock->get()) {
+            $result['errors'][] = 'Bot resource grant is already running.';
+            return $result;
+        }
+
+        try {
+            $bots = User::where('is_bot', true)->where('vacation_mode', false)->get();
+            foreach ($bots as $bot) {
+                try {
+                    $grantedForBot = false;
+                    $player = $this->playerServiceFactory->make($bot->id, true);
+                    foreach ($player->planets->allPlanets() as $planetService) {
+                        DB::transaction(function () use ($planetService, &$result, &$grantedForBot): void {
+                            $planet = Planet::whereKey($planetService->getPlanetId())->lockForUpdate()->first();
+                            if ($planet === null || (int)$planet->destroyed !== 0) {
+                                return;
+                            }
+
+                            $level = max(
+                                1,
+                                (int)$planet->metal_mine,
+                                (int)$planet->crystal_mine,
+                                (int)$planet->deuterium_synthesizer,
+                                (int)$planet->solar_plant,
+                                (int)$planet->research_lab,
+                                (int)$planet->shipyard
+                            );
+                            $level = min($level, 100);
+
+                            $metal = random_int($level * 5000, $level * 50000);
+                            $crystal = random_int($level * 3000, $level * 30000);
+                            $deuterium = random_int($level * 1000, $level * 15000);
+
+                            $oldMetal = (float)$planet->metal;
+                            $oldCrystal = (float)$planet->crystal;
+                            $oldDeuterium = (float)$planet->deuterium;
+
+                            $planet->metal = (float)$planet->metal_max > 0
+                                ? min((float)$planet->metal_max, $oldMetal + $metal)
+                                : $oldMetal + $metal;
+                            $planet->crystal = (float)$planet->crystal_max > 0
+                                ? min((float)$planet->crystal_max, $oldCrystal + $crystal)
+                                : $oldCrystal + $crystal;
+                            $planet->deuterium = (float)$planet->deuterium_max > 0
+                                ? min((float)$planet->deuterium_max, $oldDeuterium + $deuterium)
+                                : $oldDeuterium + $deuterium;
+                            $planet->save();
+
+                            $result['resources_added']['metal'] += (float)$planet->metal - $oldMetal;
+                            $result['resources_added']['crystal'] += (float)$planet->crystal - $oldCrystal;
+                            $result['resources_added']['deuterium'] += (float)$planet->deuterium - $oldDeuterium;
+                            $result['planets']++;
+                            $grantedForBot = true;
+                        });
+                    }
+                    if ($grantedForBot) {
+                        $result['bots']++;
+                        User::whereKey($bot->id)->update([
+                            'bot_last_action_at' => now(),
+                            'time' => (string)now()->timestamp,
+                        ]);
+                    }
+                } catch (Throwable $e) {
+                    Log::error('Random bot resource grant failed', ['bot_id' => $bot->id, 'exception' => $e]);
+                    $result['errors'][] = 'Bot resource grant failed.';
+                }
+            }
+        } finally {
+            $grantLock->release();
+        }
+
+        return $result;
+
+        return $result;
+    }
+
     private function getAffordableUnitCount(Resources $budget, Resources $price): int
     {
         $limits = [];

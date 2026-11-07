@@ -99,4 +99,35 @@ class BotSettingsController extends OGameController
             return redirect()->route('admin.botsettings.index')->with('error', __('t_ingame.admin.bot_attack_error'));
         }
     }
+
+    public function runBotResourceSpend(BotService $botService): RedirectResponse
+    {
+        try {
+            $result = $botService->forceResourceSpend();
+            if ($result['errors'] !== []) {
+                return redirect()->route('admin.botsettings.index')->with('error', 'Bot resource spending could not be completed.');
+            }
+            return redirect()->route('admin.botsettings.index')->with('success', sprintf('Bot resource spending forced: %d items/levels produced.', $result['produced']));
+        } catch (Throwable $exception) {
+            Log::error('Manual bot resource spending failed', ['exception' => $exception]);
+            return redirect()->route('admin.botsettings.index')->with('error', 'Bot resource spending could not be completed.');
+        }
+    }
+
+    public function grantBotRandomResources(BotService $botService): RedirectResponse
+    {
+        try {
+            $result = $botService->grantRandomResourcesToBots();
+            if ($result['errors'] !== []) {
+                return redirect()->route('admin.botsettings.index')->with('error', 'Random bot resources could not be granted.');
+            }
+            return redirect()->route('admin.botsettings.index')->with(
+                'success',
+                sprintf('Random resources granted to %d bots across %d planets.', $result['bots'], $result['planets'])
+            );
+        } catch (Throwable $exception) {
+            Log::error('Manual random bot resource grant failed', ['exception' => $exception]);
+            return redirect()->route('admin.botsettings.index')->with('error', 'Random bot resources could not be granted.');
+        }
+    }
 }

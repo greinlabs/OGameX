@@ -57,6 +57,8 @@
             <div class="content bot-settings-actions" style="margin-bottom:20px;">
                 <form method="POST" action="{{ route('admin.botsettings.spawn-bot') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Spawn bot now"></form>
                 <form method="POST" action="{{ route('admin.botsettings.run-bot-attack-round') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Run attack round now"></form>
+                <form method="POST" action="{{ route('admin.botsettings.run-resource-spend') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Force resource spending"></form>
+                <form method="POST" action="{{ route('admin.botsettings.grant-random-resources') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Give random resources to all bots"></form>
                 <button type="submit" form="bot-settings-form" class="btn_blue">Save bot settings</button>
             </div>
         </div>

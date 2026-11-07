@@ -67,4 +67,28 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertGreaterThanOrEqual(50000, $planet->crystal);
         $this->assertGreaterThanOrEqual(50000, $planet->deuterium);
     }
+
+    public function testRandomResourcesCanBeGrantedToAllBotPlanets(): void
+    {
+        $settings = resolve(SettingsService::class);
+        $settings->set('bot_max_count', 10);
+        $settings->set('bot_level_min', 5);
+        $settings->set('bot_level_max', 5);
+        $bot = resolve(BotService::class)->spawnBot();
+        $planet = Planet::where('user_id', $bot->id)->firstOrFail();
+        $planet->metal = 1000;
+        $planet->crystal = 1000;
+        $planet->deuterium = 1000;
+        $planet->save();
+
+        $result = resolve(BotService::class)->grantRandomResourcesToBots();
+        $planet->refresh();
+
+        $this->assertSame(1, $result['bots']);
+        $this->assertGreaterThanOrEqual(1, $result['planets']);
+        $this->assertSame([], $result['errors']);
+        $this->assertGreaterThan(1000, $planet->metal);
+        $this->assertGreaterThan(1000, $planet->crystal);
+        $this->assertGreaterThan(1000, $planet->deuterium);
+    }
 }
