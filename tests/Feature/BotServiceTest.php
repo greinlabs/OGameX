@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use OGame\Models\BuildingQueue;
 use OGame\Models\FleetMission;
 use OGame\Models\Planet;
 use OGame\Models\User;
@@ -51,6 +52,9 @@ class BotServiceTest extends IsolatedAccountTestCase
     {
         $settings = resolve(SettingsService::class);
         $settings->set('bot_max_count', 10);
+        $settings->set('bot_attack_defense_percentage', 50);
+        $settings->set('bot_research_percentage', 0);
+        $settings->set('bot_mining_percentage', 0);
         $bot = resolve(BotService::class)->spawnBot();
         $planet = Planet::where('user_id', $bot->id)->firstOrFail();
         $planet->metal = 100000;
@@ -66,6 +70,40 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertGreaterThanOrEqual(50000, $planet->metal);
         $this->assertGreaterThanOrEqual(50000, $planet->crystal);
         $this->assertGreaterThanOrEqual(50000, $planet->deuterium);
+    }
+
+    public function testMineUpgradeFromProductionSpendingUsesTheBuildingQueue(): void
+    {
+        $settings = resolve(SettingsService::class);
+        $settings->set('bot_max_count', 10);
+        $settings->set('bot_attack_defense_percentage', 0);
+        $settings->set('bot_research_percentage', 0);
+        $settings->set('bot_mining_percentage', 100);
+
+        $bot = resolve(BotService::class)->spawnBot();
+        $planet = Planet::where('user_id', $bot->id)->firstOrFail();
+        $planet->metal = 1000000;
+        $planet->crystal = 1000000;
+        $planet->deuterium = 1000000;
+        $planet->save();
+
+        $beforeLevels = [
+            'metal_mine' => (int)$planet->metal_mine,
+            'crystal_mine' => (int)$planet->crystal_mine,
+            'deuterium_synthesizer' => (int)$planet->deuterium_synthesizer,
+        ];
+
+        $result = resolve(BotService::class)->produceForBots();
+        $planet->refresh();
+
+        $this->assertSame([], $result['errors']);
+        $this->assertGreaterThan(0, $result['produced']);
+        $this->assertSame($beforeLevels['metal_mine'], $planet->metal_mine);
+        $this->assertSame($beforeLevels['crystal_mine'], $planet->crystal_mine);
+        $this->assertSame($beforeLevels['deuterium_synthesizer'], $planet->deuterium_synthesizer);
+        $this->assertGreaterThan(0, BuildingQueue::where('planet_id', $planet->id)
+            ->where('processed', 0)
+            ->count());
     }
 
     public function testRandomResourcesCanBeGrantedToAllBotPlanets(): void
@@ -90,5 +128,8 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertGreaterThan(1000, $planet->metal);
         $this->assertGreaterThan(1000, $planet->crystal);
         $this->assertGreaterThan(1000, $planet->deuterium);
+        $this->assertGreaterThan(0, $result['resources_added']['metal']);
+        $this->assertGreaterThan(0, $result['resources_added']['crystal']);
+        $this->assertGreaterThan(0, $result['resources_added']['deuterium']);
     }
 }

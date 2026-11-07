@@ -160,7 +160,7 @@ class BotService
                     $player = $this->playerServiceFactory->make($bot->id, true);
                     foreach ($player->planets->allPlanets() as $planetService) {
                         $planetId = $planetService->getPlanetId();
-                        $produced = DB::transaction(function () use ($planetService, $planetId, $player): int {
+                        $produced = DB::transaction(function () use ($bot, $planetService, $planetId, $player): int {
                             $planet = Planet::whereKey($planetId)->lockForUpdate()->first();
                             if ($planet === null || (int)$planet->destroyed !== 0) {
                                 return 0;
@@ -176,9 +176,6 @@ class BotService
                                 floor($available->crystal->get() * ($militaryPercentage / 100)),
                                 floor($available->deuterium->get() * ($militaryPercentage / 100))
                             );
-                            if (!$budget->any()) {
-                                return 0;
-                            }
 
                             $objects = [
                                 ...ObjectService::getShipObjects(),
@@ -209,11 +206,17 @@ class BotService
                                 $budget->crystal->set($budget->crystal->get() - $cost->crystal->get());
                                 $budget->deuterium->set($budget->deuterium->get() - $cost->deuterium->get());
 
-                                $planetService->addUnit($object->machine_name, $amount, false);
-                                $planet->metal -= $cost->metal->get();
-                                $planet->crystal -= $cost->crystal->get();
-                                $planet->deuterium -= $cost->deuterium->get();
-                                $built += $amount;
+                                try {
+                                    resolve(UnitQueueService::class)->add($planetService, $object->id, $amount);
+                                    $built += $amount;
+                                } catch (Throwable $e) {
+                                    Log::warning('Bot unit production could not be queued', [
+                                        'bot_id' => $bot->id,
+                                        'planet_id' => $planetId,
+                                        'object' => $object->machine_name,
+                                        'exception' => $e,
+                                    ]);
+                                }
                             }
 
                             if ($miningPercentage > 0 || $researchPercentage > 0) {
@@ -225,13 +228,20 @@ class BotService
                                     && $planet->metal >= $miningCostMetal
                                     && $planet->crystal >= $miningCostCrystal
                                     && $planet->deuterium >= $miningCostDeuterium) {
-                                    $planet->metal -= $miningCostMetal;
-                                    $planet->crystal -= $miningCostCrystal;
-                                    $planet->deuterium -= $miningCostDeuterium;
                                     $mineFields = ['metal_mine', 'crystal_mine', 'deuterium_synthesizer'];
                                     $mineField = $mineFields[random_int(0, 2)];
-                                    $planet->{$mineField} = (int)$planet->{$mineField} + 1;
-                                    $built++;
+                                    try {
+                                        $mine = ObjectService::getObjectByMachineName($mineField);
+                                        resolve(BuildingQueueService::class)->add($planetService, $mine->id);
+                                        $built++;
+                                    } catch (Throwable $e) {
+                                        Log::warning('Bot mine upgrade could not be queued', [
+                                            'bot_id' => $bot->id,
+                                            'planet_id' => $planetId,
+                                            'object' => $mineField,
+                                            'exception' => $e,
+                                        ]);
+                                    }
                                 }
 
                                 $researchCostMetal = floor($available->metal->get() * ($researchPercentage / 100));
@@ -242,16 +252,25 @@ class BotService
                                     && $planet->metal >= $researchCostMetal
                                     && $planet->crystal >= $researchCostCrystal
                                     && $planet->deuterium >= $researchCostDeuterium) {
-                                    $planet->metal -= $researchCostMetal;
-                                    $planet->crystal -= $researchCostCrystal;
-                                    $planet->deuterium -= $researchCostDeuterium;
                                     $researchObjects = ObjectService::getResearchObjects();
                                     if ($researchObjects !== []) {
                                         shuffle($researchObjects);
                                         $research = $researchObjects[0];
-                                        $currentLevel = $player->getResearchLevel($research->machine_name);
-                                        $player->setResearchLevel($research->machine_name, $currentLevel + 1);
-                                        $built++;
+                                        try {
+                                            resolve(ResearchQueueService::class)->add(
+                                                $player,
+                                                $planetService,
+                                                $research->id
+                                            );
+                                            $built++;
+                                        } catch (Throwable $e) {
+                                            Log::warning('Bot research could not be queued', [
+                                                'bot_id' => $bot->id,
+                                                'planet_id' => $planetId,
+                                                'object' => $research->machine_name,
+                                                'exception' => $e,
+                                            ]);
+                                        }
                                     }
                                 }
                             }
@@ -315,23 +334,15 @@ class BotService
                 try {
                     $grantedForBot = false;
                     $player = $this->playerServiceFactory->make($bot->id, true);
+                    $minLevel = max(0, (int)$this->settingsService->get('bot_level_min', 3));
+                    $maxLevel = min(100, max($minLevel, (int)$this->settingsService->get('bot_level_max', 25)));
+                    $level = random_int($minLevel, $maxLevel);
                     foreach ($player->planets->allPlanets() as $planetService) {
-                        DB::transaction(function () use ($planetService, &$result, &$grantedForBot): void {
+                        DB::transaction(function () use ($planetService, $level, &$result, &$grantedForBot): void {
                             $planet = Planet::whereKey($planetService->getPlanetId())->lockForUpdate()->first();
                             if ($planet === null || (int)$planet->destroyed !== 0) {
                                 return;
                             }
-
-                            $level = max(
-                                1,
-                                (int)$planet->metal_mine,
-                                (int)$planet->crystal_mine,
-                                (int)$planet->deuterium_synthesizer,
-                                (int)$planet->solar_plant,
-                                (int)$planet->research_lab,
-                                (int)$planet->shipyard
-                            );
-                            $level = min($level, 100);
 
                             $metal = random_int($level * 5000, $level * 50000);
                             $crystal = random_int($level * 3000, $level * 30000);
@@ -374,8 +385,6 @@ class BotService
         } finally {
             $grantLock->release();
         }
-
-        return $result;
 
         return $result;
     }
