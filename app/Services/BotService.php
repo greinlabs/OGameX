@@ -89,20 +89,22 @@ class BotService
                 $this->settingsService->set('bot_last_attack_at', $now);
             }
 
-            $lastProductionSetting = $this->settingsService->get('bot_last_production_at', '');
-            $lastProduction = $lastProductionSetting === '' ? $now : (int)$lastProductionSetting;
-            if ($lastProductionSetting === '') {
-                $this->settingsService->set('bot_last_production_at', $now);
-            }
             $productionIntervalDays = (int)$this->settingsService->get('bot_resource_spend_interval_days', 0);
             $productionInterval = $productionIntervalDays > 0
                 ? $productionIntervalDays * 86400
                 : (int)$this->settingsService->get('bot_production_interval', 259200);
-            if (($now - $lastProduction) >= max(86400, $productionInterval)) {
+            $productionInterval = max(86400, $productionInterval);
+            $lastProductionSetting = $this->settingsService->get('bot_last_production_at', '');
+            $lastProduction = $lastProductionSetting === ''
+                ? $now - $productionInterval
+                : (int)$lastProductionSetting;
+            if (($now - $lastProduction) >= $productionInterval) {
                 $productionResult = $this->produceForBots();
                 $result['produced'] = $productionResult['produced'];
                 $result['errors'] = [...$result['errors'], ...$productionResult['errors']];
-                $this->settingsService->set('bot_last_production_at', $now);
+                if ($productionResult['errors'] === []) {
+                    $this->settingsService->set('bot_last_production_at', $now);
+                }
             }
         } finally {
             $cycleLock->release();
@@ -310,7 +312,7 @@ class BotService
     }
 
     /**
-     * Add randomized resources to every active bot planet, based on the configured bot levels.
+     * Add randomized resources to every active bot planet, based on the configured grant range.
      *
      * @return array{bots: int, planets: int, resources_added: array{metal: float, crystal: float, deuterium: float}, errors: array<string>}
      */
@@ -334,17 +336,15 @@ class BotService
                 try {
                     $grantedForBot = false;
                     $player = $this->playerServiceFactory->make($bot->id, true);
-                    $minLevel = max(0, (int)$this->settingsService->get('bot_level_min', 3));
-                    $maxLevel = min(100, max($minLevel, (int)$this->settingsService->get('bot_level_max', 25)));
+                    $minimumGrant = max(0, (int)$this->settingsService->get('bot_resource_grant_min', 3000));
+                    $maximumGrant = max($minimumGrant, (int)$this->settingsService->get('bot_resource_grant_max', 25000));
                     foreach ($player->planets->allPlanets() as $planetService) {
-                        DB::transaction(function () use ($planetService, $minLevel, $maxLevel, &$result, &$grantedForBot): void {
+                        DB::transaction(function () use ($planetService, $minimumGrant, $maximumGrant, &$result, &$grantedForBot): void {
                             $planet = Planet::whereKey($planetService->getPlanetId())->lockForUpdate()->first();
                             if ($planet === null || (int)$planet->destroyed !== 0) {
                                 return;
                             }
 
-                            $minimumGrant = $minLevel * 1000;
-                            $maximumGrant = $maxLevel * 1000;
                             $metal = random_int($minimumGrant, $maximumGrant);
                             $crystal = random_int($minimumGrant, $maximumGrant);
                             $deuterium = random_int($minimumGrant, $maximumGrant);

@@ -60,6 +60,12 @@
                             <div class="fieldwrapper"><label class="styled textBeefy">Mining allocation (% of stored resources):</label><div class="thefield"><input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_mining_percentage" value="{{ $bot_mining_percentage }}"></div></div>
                         </div>
 
+                        <p class="box_highlight textCenter no_buddies">Random resource grants</p>
+                        <div class="group bborder" style="display: block;">
+                            <div class="fieldwrapper"><label class="styled textBeefy">Minimum resources granted per resource:</label><div class="thefield"><input type="number" min="0" max="1000000000" class="textInput w130 textCenter textBeefy" name="bot_resource_grant_min" value="{{ $bot_resource_grant_min }}"></div></div>
+                            <div class="fieldwrapper"><label class="styled textBeefy">Maximum resources granted per resource:</label><div class="thefield"><input type="number" min="0" max="1000000000" class="textInput w130 textCenter textBeefy" name="bot_resource_grant_max" value="{{ $bot_resource_grant_max }}"></div></div>
+                        </div>
+
                         <p class="box_highlight textCenter no_buddies">Bot level</p>
                         <div class="group bborder" style="display: block;">
                             <div class="fieldwrapper"><label class="styled textBeefy">Minimum randomized level:</label><div class="thefield"><input type="number" min="0" max="100" class="textInput w130 textCenter textBeefy" name="bot_level_min" value="{{ $bot_level_min }}"></div></div>

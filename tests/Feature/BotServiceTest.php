@@ -48,6 +48,39 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertSame(0, FleetMission::whereIn('user_id', $botIds)->count());
     }
 
+    public function testFirstScheduledProductionRunsImmediatelyAndSpendsResources(): void
+    {
+        $settings = resolve(SettingsService::class);
+        $settings->set('bot_max_count', 10);
+        $settings->set('bot_attack_enabled', 0);
+        $settings->set('bot_resource_spend_interval_days', 1);
+        $settings->set('bot_last_production_at', '');
+        $settings->set('bot_attack_defense_percentage', 50);
+        $settings->set('bot_research_percentage', 0);
+        $settings->set('bot_mining_percentage', 0);
+
+        $bot = resolve(BotService::class)->spawnBot();
+        $planet = Planet::where('user_id', $bot->id)->firstOrFail();
+        $planet->metal = 100000;
+        $planet->crystal = 100000;
+        $planet->deuterium = 100000;
+        $planet->save();
+        $before = [
+            'metal' => (float)$planet->metal,
+            'crystal' => (float)$planet->crystal,
+            'deuterium' => (float)$planet->deuterium,
+        ];
+
+        $result = resolve(BotService::class)->runScheduledCycle();
+        $planet->refresh();
+
+        $this->assertGreaterThan(0, $result['produced']);
+        $this->assertSame([], $result['errors']);
+        $this->assertLessThan($before['metal'], $planet->metal);
+        $this->assertLessThan($before['crystal'], $planet->crystal);
+        $this->assertLessThan($before['deuterium'], $planet->deuterium);
+    }
+
     public function testDailyProductionBuildsUnitsWithoutSpendingMoreThanHalfOfStoredResources(): void
     {
         $settings = resolve(SettingsService::class);
@@ -112,6 +145,8 @@ class BotServiceTest extends IsolatedAccountTestCase
         $settings->set('bot_max_count', 10);
         $settings->set('bot_level_min', 2);
         $settings->set('bot_level_max', 5);
+        $settings->set('bot_resource_grant_min', 3000);
+        $settings->set('bot_resource_grant_max', 6000);
         $bot = resolve(BotService::class)->spawnBot();
         $planet = Planet::where('user_id', $bot->id)->firstOrFail();
         $planet->metal = 1000;
@@ -148,5 +183,32 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertGreaterThan($afterFirstClick['metal'], $planet->metal);
         $this->assertGreaterThan($afterFirstClick['crystal'], $planet->crystal);
         $this->assertGreaterThan($afterFirstClick['deuterium'], $planet->deuterium);
+    }
+
+    public function testResourceGrantRangeIsIndependentFromBotSpawnLevels(): void
+    {
+        $settings = resolve(SettingsService::class);
+        $settings->set('bot_max_count', 10);
+        $settings->set('bot_level_min', 5);
+        $settings->set('bot_level_max', 5);
+        $settings->set('bot_resource_grant_min', 7000);
+        $settings->set('bot_resource_grant_max', 7000);
+
+        $bot = resolve(BotService::class)->spawnBot();
+        $planet = Planet::where('user_id', $bot->id)->firstOrFail();
+        $before = [
+            'metal' => (float)$planet->metal,
+            'crystal' => (float)$planet->crystal,
+            'deuterium' => (float)$planet->deuterium,
+        ];
+
+        $result = resolve(BotService::class)->grantRandomResourcesToBots();
+        $planet->refresh();
+
+        $this->assertSame([], $result['errors']);
+        $this->assertSame(5, (int)$planet->metal_mine);
+        $this->assertSame(7000.0, (float)$planet->metal - $before['metal']);
+        $this->assertSame(7000.0, (float)$planet->crystal - $before['crystal']);
+        $this->assertSame(7000.0, (float)$planet->deuterium - $before['deuterium']);
     }
 }
