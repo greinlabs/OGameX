@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use OGame\Models\Highscore;
 use OGame\Services\ObjectService;
 use Tests\IsolatedAccountTestCase;
 
@@ -48,6 +49,31 @@ class Http200Test extends IsolatedAccountTestCase
                 }
                 $this->fail($customMessage);
             }
+        }
+    }
+
+    public function testMilitaryHighscoreSubfiltersRenderWithoutEnumErrors(): void
+    {
+        Highscore::updateOrCreate(['player_id' => $this->currentUserId], [
+            'general' => 1000,
+            'economy' => 500,
+            'research' => 250,
+            'military' => 125,
+            'general_rank' => 1,
+            'economy_rank' => 1,
+            'research_rank' => 1,
+            'military_rank' => 1,
+        ]);
+
+        foreach ([4, 5, 6, 7] as $type) {
+            $response = $this->post(route('highscore.ajax'), [
+                'category' => 1,
+                'type' => $type,
+                'page' => 1,
+            ]);
+
+            $response->assertOk();
+            $response->assertSee($this->currentUsername);
         }
     }
 

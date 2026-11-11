@@ -58,11 +58,14 @@ class HighscoreService
      */
     public function setHighscoreType(int $type): void
     {
-        // 0 = general score
-        // 1 = economy points
-        // 2 = research points
-        // 3 = military points
-        $this->highscoreType = HighscoreTypeEnum::cases()[$type];
+        $this->highscoreType = match ($type) {
+            0 => HighscoreTypeEnum::general,
+            1 => HighscoreTypeEnum::economy,
+            2 => HighscoreTypeEnum::research,
+            // Military subfilters (built, destroyed, lost, honour) currently share the stored military total.
+            3, 4, 5, 6, 7 => HighscoreTypeEnum::military,
+            default => HighscoreTypeEnum::general,
+        };
     }
 
     /**
