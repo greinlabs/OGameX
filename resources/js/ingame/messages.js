@@ -1,3 +1,15 @@
+// Closes a message detail dialog without a page reload. Removing only the DOM leaves the
+// jQuery UI modal overlay behind, so the dialog is destroyed first.
+function closeMessageDialog($el) {
+    var $dialog = $el.closest('.ui-dialog');
+    var $content = $dialog.find('.ui-dialog-content');
+    if ($content.length && $content.data('ui-dialog')) {
+        $content.dialog('destroy');
+    }
+    $content.remove();
+    $dialog.remove();
+}
+
 ogame.messagecounter = {
     countData: {chat: 0, messages: 0, buddy: 0},
     newChats: Array(),
@@ -521,7 +533,8 @@ ogame.messages = {
                 },
                 success: function (d) {
                     if (d.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        closeMessageDialog($(".overlayDiv .detail_msg"));
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -538,7 +551,9 @@ ogame.messages = {
                 data: {messageId: a, action: 103, ajax: 1},
                 success: function (c) {
                     if (c[a] == true) {
-                        location.reload()
+                        closeMessageDialog($(".detail_msg[data-msg-id=" + a + "]"));
+                        $("li.msg[data-msg-id=" + a + "]").remove();
+                        $(".overlayDiv[data-msg-id=" + a + "]").remove();
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -581,7 +596,8 @@ ogame.messages = {
                 },
                 success: function (d) {
                     if (d.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        closeMessageDialog($(".overlayDiv .detail_msg"));
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
@@ -620,7 +636,8 @@ ogame.messages = {
                 },
                 success: function (c) {
                     if (c.result == true) {
-                        location.reload()
+                        $("#messageContent li.msg").remove();
+                        closeMessageDialog($(".overlayDiv .detail_msg"));
                     } else {
                         fadeBox(loca.LOCA_GALAXY_ERROR_OCCURED, 1)
                     }
