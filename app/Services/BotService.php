@@ -89,11 +89,14 @@ class BotService
                 $this->settingsService->set('bot_last_attack_at', $now);
             }
 
-            $productionIntervalDays = (int)$this->settingsService->get('bot_resource_spend_interval_days', 0);
-            $productionInterval = $productionIntervalDays > 0
-                ? $productionIntervalDays * 86400
-                : (int)$this->settingsService->get('bot_production_interval', 259200);
-            $productionInterval = max(86400, $productionInterval);
+            $productionIntervalHours = (int)$this->settingsService->get('bot_resource_spend_interval_hours', 0);
+            $legacyProductionDays = (int)$this->settingsService->get('bot_resource_spend_interval_days', 0);
+            $productionInterval = $productionIntervalHours > 0
+                ? $productionIntervalHours * 3600
+                : ($legacyProductionDays > 0
+                    ? $legacyProductionDays * 86400
+                    : (int)$this->settingsService->get('bot_production_interval', 259200));
+            $productionInterval = max(3600, $productionInterval);
             $lastProductionSetting = $this->settingsService->get('bot_last_production_at', '');
             $lastProduction = $lastProductionSetting === ''
                 ? $now - $productionInterval
@@ -170,56 +173,57 @@ class BotService
 
                             $planetService->setPlanet($planet);
                             $available = $planetService->getResources();
-                            $militaryPercentage = min(100, max(0, (int)$this->settingsService->get('bot_attack_defense_percentage', 30)));
+                            $legacyMilitaryPercentage = (int)$this->settingsService->get('bot_attack_defense_percentage', 30);
+                            $attackPercentage = min(100, max(0, (int)$this->settingsService->get('bot_attack_percentage', $legacyMilitaryPercentage)));
+                            $defensePercentage = min(100, max(0, (int)$this->settingsService->get('bot_defense_percentage', 0)));
                             $researchPercentage = min(100, max(0, (int)$this->settingsService->get('bot_research_percentage', 10)));
                             $miningPercentage = min(100, max(0, (int)$this->settingsService->get('bot_mining_percentage', 10)));
-                            $budget = new Resources(
-                                floor($available->metal->get() * ($militaryPercentage / 100)),
-                                floor($available->crystal->get() * ($militaryPercentage / 100)),
-                                floor($available->deuterium->get() * ($militaryPercentage / 100))
-                            );
-
-                            $objects = [
-                                ...ObjectService::getShipObjects(),
-                                ...ObjectService::getDefenseObjects(),
-                            ];
-                            $objects = array_values(array_filter(
-                                $objects,
-                                fn (GameObject $object): bool => ObjectService::objectRequirementsMet($object->machine_name, $planetService)
-                                    && ObjectService::objectCharacterClassMet($object->machine_name, $planetService)
-                            ));
-                            shuffle($objects);
-
                             $built = 0;
-                            foreach ($objects as $object) {
-                                $price = $object->price->resources;
-                                $amount = $this->getAffordableUnitCount($budget, $price);
-                                if ($amount < 1) {
-                                    continue;
-                                }
+                            foreach ([
+                                [ObjectService::getShipObjects(), $attackPercentage],
+                                [ObjectService::getDefenseObjects(), $defensePercentage],
+                            ] as [$objects, $percentage]) {
+                                $budget = new Resources(
+                                    floor($available->metal->get() * ($percentage / 100)),
+                                    floor($available->crystal->get() * ($percentage / 100)),
+                                    floor($available->deuterium->get() * ($percentage / 100))
+                                );
+                                $objects = array_values(array_filter(
+                                    $objects,
+                                    fn (GameObject $object): bool => ObjectService::objectRequirementsMet($object->machine_name, $planetService)
+                                        && ObjectService::objectCharacterClassMet($object->machine_name, $planetService)
+                                ));
+                                shuffle($objects);
 
-                                $amount = random_int(max(1, (int)ceil($amount * 0.75)), $amount);
-
-                                try {
-                                    $queuedAmount = resolve(UnitQueueService::class)->add($planetService, $object->id, $amount);
-                                    if ($queuedAmount > 0) {
-                                        $queuedCost = new Resources(
-                                            $price->metal->get() * $queuedAmount,
-                                            $price->crystal->get() * $queuedAmount,
-                                            $price->deuterium->get() * $queuedAmount
-                                        );
-                                        $budget->metal->set($budget->metal->get() - $queuedCost->metal->get());
-                                        $budget->crystal->set($budget->crystal->get() - $queuedCost->crystal->get());
-                                        $budget->deuterium->set($budget->deuterium->get() - $queuedCost->deuterium->get());
-                                        $built += $queuedAmount;
+                                foreach ($objects as $object) {
+                                    $price = $object->price->resources;
+                                    $amount = $this->getAffordableUnitCount($budget, $price);
+                                    if ($amount < 1) {
+                                        continue;
                                     }
-                                } catch (Throwable $e) {
-                                    Log::warning('Bot unit production could not be queued', [
-                                        'bot_id' => $bot->id,
-                                        'planet_id' => $planetId,
-                                        'object' => $object->machine_name,
-                                        'exception' => $e,
-                                    ]);
+
+                                    $amount = random_int(max(1, (int)ceil($amount * 0.75)), $amount);
+                                    try {
+                                        $queuedAmount = resolve(UnitQueueService::class)->add($planetService, $object->id, $amount);
+                                        if ($queuedAmount > 0) {
+                                            $queuedCost = new Resources(
+                                                $price->metal->get() * $queuedAmount,
+                                                $price->crystal->get() * $queuedAmount,
+                                                $price->deuterium->get() * $queuedAmount
+                                            );
+                                            $budget->metal->set($budget->metal->get() - $queuedCost->metal->get());
+                                            $budget->crystal->set($budget->crystal->get() - $queuedCost->crystal->get());
+                                            $budget->deuterium->set($budget->deuterium->get() - $queuedCost->deuterium->get());
+                                            $built += $queuedAmount;
+                                        }
+                                    } catch (Throwable $e) {
+                                        Log::warning('Bot unit production could not be queued', [
+                                            'bot_id' => $bot->id,
+                                            'planet_id' => $planetId,
+                                            'object' => $object->machine_name,
+                                            'exception' => $e,
+                                        ]);
+                                    }
                                 }
                             }
 
@@ -353,18 +357,30 @@ class BotService
                 try {
                     $grantedForBot = false;
                     $player = $this->playerServiceFactory->make($bot->id, true);
-                    $minimumGrant = max(0, (int)$this->settingsService->get('bot_resource_grant_min', 3000));
-                    $maximumGrant = max($minimumGrant, (int)$this->settingsService->get('bot_resource_grant_max', 25000));
+                    $legacyMinimumGrant = (int)$this->settingsService->get('bot_resource_grant_min', 3000);
+                    $legacyMaximumGrant = (int)$this->settingsService->get('bot_resource_grant_max', 25000);
+                    $grantRanges = [];
+                    foreach (['metal', 'crystal', 'deuterium'] as $resource) {
+                        $minimum = max(0, (int)$this->settingsService->get(
+                            'bot_resource_grant_' . $resource . '_min',
+                            $legacyMinimumGrant
+                        ));
+                        $maximum = max($minimum, (int)$this->settingsService->get(
+                            'bot_resource_grant_' . $resource . '_max',
+                            $legacyMaximumGrant
+                        ));
+                        $grantRanges[$resource] = [$minimum, $maximum];
+                    }
                     foreach ($player->planets->allPlanets() as $planetService) {
-                        DB::transaction(function () use ($planetService, $minimumGrant, $maximumGrant, &$result, &$grantedForBot): void {
+                        DB::transaction(function () use ($planetService, $grantRanges, &$result, &$grantedForBot): void {
                             $planet = Planet::whereKey($planetService->getPlanetId())->lockForUpdate()->first();
                             if ($planet === null || (int)$planet->destroyed !== 0) {
                                 return;
                             }
 
-                            $metal = random_int($minimumGrant, $maximumGrant);
-                            $crystal = random_int($minimumGrant, $maximumGrant);
-                            $deuterium = random_int($minimumGrant, $maximumGrant);
+                            $metal = random_int($grantRanges['metal'][0], $grantRanges['metal'][1]);
+                            $crystal = random_int($grantRanges['crystal'][0], $grantRanges['crystal'][1]);
+                            $deuterium = random_int($grantRanges['deuterium'][0], $grantRanges['deuterium'][1]);
 
                             $oldMetal = (float)$planet->metal;
                             $oldCrystal = (float)$planet->crystal;

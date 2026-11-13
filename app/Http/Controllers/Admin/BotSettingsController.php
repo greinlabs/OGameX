@@ -17,6 +17,10 @@ class BotSettingsController extends OGameController
         $spawnSeconds = (int)$settingsService->get('bot_spawn_interval', 604800);
         $attackSeconds = (int)$settingsService->get('bot_attack_interval', 604800);
         $productionSeconds = (int)$settingsService->get('bot_production_interval', 259200);
+        $legacyProductionDays = (int)$settingsService->get('bot_resource_spend_interval_days', 0);
+        $legacyGrantMin = (int)$settingsService->get('bot_resource_grant_min', 3000);
+        $legacyGrantMax = (int)$settingsService->get('bot_resource_grant_max', 25000);
+        $legacyMilitaryPercentage = (int)$settingsService->get('bot_attack_defense_percentage', 30);
 
         return view('ingame.admin.botsettings')->with([
             'bot_spawn_enabled' => (bool)(int)$settingsService->get('bot_spawn_enabled', 0),
@@ -26,10 +30,20 @@ class BotSettingsController extends OGameController
             'bot_attack_enabled' => (bool)(int)$settingsService->get('bot_attack_enabled', 1),
             'bot_attack_interval_days' => (int)$settingsService->get('bot_attack_interval_days', max(1, (int)round($attackSeconds / 86400))),
             'bot_attack_chance' => (int)$settingsService->get('bot_attack_chance', 75),
-            'bot_resource_spend_interval_days' => (int)$settingsService->get('bot_resource_spend_interval_days', max(1, (int)round($productionSeconds / 86400))),
-            'bot_resource_grant_min' => (int)$settingsService->get('bot_resource_grant_min', 3000),
-            'bot_resource_grant_max' => (int)$settingsService->get('bot_resource_grant_max', 25000),
-            'bot_attack_defense_percentage' => (int)$settingsService->get('bot_attack_defense_percentage', 30),
+            'bot_resource_spend_interval_hours' => max(1, (int)$settingsService->get(
+                'bot_resource_spend_interval_hours',
+                max(1, $legacyProductionDays > 0
+                    ? $legacyProductionDays * 24
+                    : (int)round($productionSeconds / 3600))
+            )),
+            'bot_resource_grant_metal_min' => (int)$settingsService->get('bot_resource_grant_metal_min', $legacyGrantMin),
+            'bot_resource_grant_metal_max' => (int)$settingsService->get('bot_resource_grant_metal_max', $legacyGrantMax),
+            'bot_resource_grant_crystal_min' => (int)$settingsService->get('bot_resource_grant_crystal_min', $legacyGrantMin),
+            'bot_resource_grant_crystal_max' => (int)$settingsService->get('bot_resource_grant_crystal_max', $legacyGrantMax),
+            'bot_resource_grant_deuterium_min' => (int)$settingsService->get('bot_resource_grant_deuterium_min', $legacyGrantMin),
+            'bot_resource_grant_deuterium_max' => (int)$settingsService->get('bot_resource_grant_deuterium_max', $legacyGrantMax),
+            'bot_attack_percentage' => (int)$settingsService->get('bot_attack_percentage', $legacyMilitaryPercentage),
+            'bot_defense_percentage' => (int)$settingsService->get('bot_defense_percentage', 0),
             'bot_research_percentage' => (int)$settingsService->get('bot_research_percentage', 10),
             'bot_mining_percentage' => (int)$settingsService->get('bot_mining_percentage', 10),
             'bot_level_min' => (int)$settingsService->get('bot_level_min', 3),
@@ -42,13 +56,18 @@ class BotSettingsController extends OGameController
         $this->validate(request(), [
             'bot_spawn_interval_days' => ['required', 'integer', 'min:1', 'max:3650'],
             'bot_attack_interval_days' => ['required', 'integer', 'min:1', 'max:3650'],
-            'bot_resource_spend_interval_days' => ['required', 'integer', 'min:1', 'max:3650'],
-            'bot_resource_grant_min' => ['required', 'integer', 'min:0', 'max:1000000000'],
-            'bot_resource_grant_max' => ['required', 'integer', 'min:0', 'max:1000000000', 'gte:bot_resource_grant_min'],
+            'bot_resource_spend_interval_hours' => ['required', 'integer', 'min:1', 'max:87600'],
+            'bot_resource_grant_metal_min' => ['required', 'integer', 'min:0', 'max:1000000000'],
+            'bot_resource_grant_metal_max' => ['required', 'integer', 'min:0', 'max:1000000000', 'gte:bot_resource_grant_metal_min'],
+            'bot_resource_grant_crystal_min' => ['required', 'integer', 'min:0', 'max:1000000000'],
+            'bot_resource_grant_crystal_max' => ['required', 'integer', 'min:0', 'max:1000000000', 'gte:bot_resource_grant_crystal_min'],
+            'bot_resource_grant_deuterium_min' => ['required', 'integer', 'min:0', 'max:1000000000'],
+            'bot_resource_grant_deuterium_max' => ['required', 'integer', 'min:0', 'max:1000000000', 'gte:bot_resource_grant_deuterium_min'],
             'bot_max_count' => ['required', 'integer', 'min:0', 'max:1000'],
             'bot_inactive_days' => ['required', 'integer', 'min:1', 'max:3650'],
             'bot_attack_chance' => ['required', 'integer', 'min:0', 'max:100'],
-            'bot_attack_defense_percentage' => ['required', 'integer', 'min:0', 'max:100'],
+            'bot_attack_percentage' => ['required', 'integer', 'min:0', 'max:100'],
+            'bot_defense_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'bot_research_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'bot_mining_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'bot_level_min' => ['required', 'integer', 'min:0', 'max:100'],
@@ -57,7 +76,7 @@ class BotSettingsController extends OGameController
 
         $spawnDays = (int)request('bot_spawn_interval_days', 7);
         $attackDays = (int)request('bot_attack_interval_days', 3);
-        $productionDays = (int)request('bot_resource_spend_interval_days', 3);
+        $productionHours = (int)request('bot_resource_spend_interval_hours', 72);
 
         $settingsService->set('bot_spawn_enabled', request('bot_spawn_enabled', 0));
         $settingsService->set('bot_spawn_interval_days', $spawnDays);
@@ -68,11 +87,20 @@ class BotSettingsController extends OGameController
         $settingsService->set('bot_attack_interval_days', $attackDays);
         $settingsService->set('bot_attack_interval', $attackDays * 86400);
         $settingsService->set('bot_attack_chance', (int)request('bot_attack_chance', 75));
-        $settingsService->set('bot_resource_spend_interval_days', $productionDays);
-        $settingsService->set('bot_production_interval', $productionDays * 86400);
-        $settingsService->set('bot_resource_grant_min', (int)request('bot_resource_grant_min', 3000));
-        $settingsService->set('bot_resource_grant_max', (int)request('bot_resource_grant_max', 25000));
-        $settingsService->set('bot_attack_defense_percentage', (int)request('bot_attack_defense_percentage', 30));
+        $settingsService->set('bot_resource_spend_interval_hours', $productionHours);
+        $settingsService->set('bot_production_interval', $productionHours * 3600);
+        foreach (['metal', 'crystal', 'deuterium'] as $resource) {
+            $settingsService->set(
+                'bot_resource_grant_' . $resource . '_min',
+                (int)request('bot_resource_grant_' . $resource . '_min', 3000)
+            );
+            $settingsService->set(
+                'bot_resource_grant_' . $resource . '_max',
+                (int)request('bot_resource_grant_' . $resource . '_max', 25000)
+            );
+        }
+        $settingsService->set('bot_attack_percentage', (int)request('bot_attack_percentage', 30));
+        $settingsService->set('bot_defense_percentage', (int)request('bot_defense_percentage', 30));
         $settingsService->set('bot_research_percentage', (int)request('bot_research_percentage', 10));
         $settingsService->set('bot_mining_percentage', (int)request('bot_mining_percentage', 10));
         $settingsService->set('bot_level_min', (int)request('bot_level_min', 3));

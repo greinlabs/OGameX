@@ -8,6 +8,7 @@ use OGame\Models\Planet;
 use OGame\Models\UnitQueue;
 use OGame\Models\User;
 use OGame\Services\BotService;
+use OGame\Services\ObjectService;
 use OGame\Services\SettingsService;
 use Tests\IsolatedAccountTestCase;
 
@@ -49,14 +50,15 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertSame(0, FleetMission::whereIn('user_id', $botIds)->count());
     }
 
-    public function testFirstScheduledProductionRunsImmediatelyAndSpendsResources(): void
+    public function testHourlyProductionScheduleRunsWhenOneHourHasElapsed(): void
     {
         $settings = resolve(SettingsService::class);
         $settings->set('bot_max_count', 10);
         $settings->set('bot_attack_enabled', 0);
-        $settings->set('bot_resource_spend_interval_days', 1);
-        $settings->set('bot_last_production_at', '');
-        $settings->set('bot_attack_defense_percentage', 50);
+        $settings->set('bot_resource_spend_interval_hours', 1);
+        $settings->set('bot_last_production_at', now()->subHour()->timestamp);
+        $settings->set('bot_attack_percentage', 50);
+        $settings->set('bot_defense_percentage', 0);
         $settings->set('bot_research_percentage', 0);
         $settings->set('bot_mining_percentage', 0);
 
@@ -82,11 +84,12 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertLessThan($before['deuterium'], $planet->deuterium);
     }
 
-    public function testDailyProductionBuildsUnitsWithoutSpendingMoreThanHalfOfStoredResources(): void
+    public function testProductionUsesSeparateAttackAndDefenseAllocations(): void
     {
         $settings = resolve(SettingsService::class);
         $settings->set('bot_max_count', 10);
-        $settings->set('bot_attack_defense_percentage', 50);
+        $settings->set('bot_attack_percentage', 50);
+        $settings->set('bot_defense_percentage', 0);
         $settings->set('bot_research_percentage', 0);
         $settings->set('bot_mining_percentage', 0);
         $bot = resolve(BotService::class)->spawnBot();
@@ -102,6 +105,14 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertGreaterThan(0, $result['produced']);
         $this->assertSame([], $result['errors']);
         $this->assertGreaterThan(0, UnitQueue::where('planet_id', $planet->id)->where('processed', 0)->count());
+        $defenseObjectIds = array_map(
+            static fn ($object): int => $object->id,
+            ObjectService::getDefenseObjects()
+        );
+        $this->assertSame(0, UnitQueue::where('planet_id', $planet->id)
+            ->whereIn('object_id', $defenseObjectIds)
+            ->where('processed', 0)
+            ->count());
         $this->assertGreaterThanOrEqual(50000, $planet->metal);
         $this->assertGreaterThanOrEqual(50000, $planet->crystal);
         $this->assertGreaterThanOrEqual(50000, $planet->deuterium);
@@ -111,7 +122,8 @@ class BotServiceTest extends IsolatedAccountTestCase
     {
         $settings = resolve(SettingsService::class);
         $settings->set('bot_max_count', 10);
-        $settings->set('bot_attack_defense_percentage', 0);
+        $settings->set('bot_attack_percentage', 0);
+        $settings->set('bot_defense_percentage', 0);
         $settings->set('bot_research_percentage', 0);
         $settings->set('bot_mining_percentage', 100);
 
@@ -147,8 +159,12 @@ class BotServiceTest extends IsolatedAccountTestCase
         $settings->set('bot_max_count', 10);
         $settings->set('bot_level_min', 2);
         $settings->set('bot_level_max', 5);
-        $settings->set('bot_resource_grant_min', 3000);
-        $settings->set('bot_resource_grant_max', 6000);
+        $settings->set('bot_resource_grant_metal_min', 3000);
+        $settings->set('bot_resource_grant_metal_max', 6000);
+        $settings->set('bot_resource_grant_crystal_min', 7000);
+        $settings->set('bot_resource_grant_crystal_max', 8000);
+        $settings->set('bot_resource_grant_deuterium_min', 9000);
+        $settings->set('bot_resource_grant_deuterium_max', 10000);
         $bot = resolve(BotService::class)->spawnBot();
         $planet = Planet::where('user_id', $bot->id)->firstOrFail();
         $planet->metal = 1000;
@@ -165,12 +181,12 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertSame(1, $result['bots']);
         $this->assertGreaterThanOrEqual(1, $result['planets']);
         $this->assertSame([], $result['errors']);
-        $this->assertGreaterThanOrEqual(3000, $planet->metal);
-        $this->assertLessThanOrEqual(6000, $planet->metal);
-        $this->assertGreaterThanOrEqual(3000, $planet->crystal);
-        $this->assertLessThanOrEqual(6000, $planet->crystal);
-        $this->assertGreaterThanOrEqual(3000, $planet->deuterium);
-        $this->assertLessThanOrEqual(6000, $planet->deuterium);
+        $this->assertGreaterThanOrEqual(4000, $planet->metal);
+        $this->assertLessThanOrEqual(7000, $planet->metal);
+        $this->assertGreaterThanOrEqual(8000, $planet->crystal);
+        $this->assertLessThanOrEqual(9000, $planet->crystal);
+        $this->assertGreaterThanOrEqual(10000, $planet->deuterium);
+        $this->assertLessThanOrEqual(11000, $planet->deuterium);
 
         $afterFirstClick = [
             'metal' => (float)$planet->metal,
@@ -193,8 +209,10 @@ class BotServiceTest extends IsolatedAccountTestCase
         $settings->set('bot_max_count', 10);
         $settings->set('bot_level_min', 5);
         $settings->set('bot_level_max', 5);
-        $settings->set('bot_resource_grant_min', 7000);
-        $settings->set('bot_resource_grant_max', 7000);
+        foreach (['metal', 'crystal', 'deuterium'] as $resource) {
+            $settings->set('bot_resource_grant_' . $resource . '_min', 7000);
+            $settings->set('bot_resource_grant_' . $resource . '_max', 7000);
+        }
 
         $bot = resolve(BotService::class)->spawnBot();
         $planet = Planet::where('user_id', $bot->id)->firstOrFail();
