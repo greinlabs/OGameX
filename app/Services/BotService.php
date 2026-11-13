@@ -142,7 +142,7 @@ class BotService
     }
 
     /**
-     * Spend up to half of each bot planet's stored resources on a randomized mix of ships and defenses.
+     * Spend the configured share of each bot planet's stored resources on units, buildings, and research.
      *
      * @return array{produced: int, errors: array<string>}
      */
@@ -199,18 +199,20 @@ class BotService
                                 }
 
                                 $amount = random_int(max(1, (int)ceil($amount * 0.75)), $amount);
-                                $cost = new Resources(
-                                    $price->metal->get() * $amount,
-                                    $price->crystal->get() * $amount,
-                                    $price->deuterium->get() * $amount
-                                );
-                                $budget->metal->set($budget->metal->get() - $cost->metal->get());
-                                $budget->crystal->set($budget->crystal->get() - $cost->crystal->get());
-                                $budget->deuterium->set($budget->deuterium->get() - $cost->deuterium->get());
 
                                 try {
-                                    resolve(UnitQueueService::class)->add($planetService, $object->id, $amount);
-                                    $built += $amount;
+                                    $queuedAmount = resolve(UnitQueueService::class)->add($planetService, $object->id, $amount);
+                                    if ($queuedAmount > 0) {
+                                        $queuedCost = new Resources(
+                                            $price->metal->get() * $queuedAmount,
+                                            $price->crystal->get() * $queuedAmount,
+                                            $price->deuterium->get() * $queuedAmount
+                                        );
+                                        $budget->metal->set($budget->metal->get() - $queuedCost->metal->get());
+                                        $budget->crystal->set($budget->crystal->get() - $queuedCost->crystal->get());
+                                        $budget->deuterium->set($budget->deuterium->get() - $queuedCost->deuterium->get());
+                                        $built += $queuedAmount;
+                                    }
                                 } catch (Throwable $e) {
                                     Log::warning('Bot unit production could not be queued', [
                                         'bot_id' => $bot->id,
@@ -231,18 +233,30 @@ class BotService
                                     && $planet->crystal >= $miningCostCrystal
                                     && $planet->deuterium >= $miningCostDeuterium) {
                                     $mineFields = ['metal_mine', 'crystal_mine', 'deuterium_synthesizer'];
-                                    $mineField = $mineFields[random_int(0, 2)];
-                                    try {
-                                        $mine = ObjectService::getObjectByMachineName($mineField);
-                                        resolve(BuildingQueueService::class)->add($planetService, $mine->id);
-                                        $built++;
-                                    } catch (Throwable $e) {
-                                        Log::warning('Bot mine upgrade could not be queued', [
-                                            'bot_id' => $bot->id,
-                                            'planet_id' => $planetId,
-                                            'object' => $mineField,
-                                            'exception' => $e,
-                                        ]);
+                                    shuffle($mineFields);
+                                    foreach ($mineFields as $mineField) {
+                                        $buildingQueue = resolve(BuildingQueueService::class);
+                                        $queueCountBefore = $buildingQueue->retrieveQueueItems($planetService)
+                                            ->where('object_id', ObjectService::getObjectByMachineName($mineField)->id)
+                                            ->count();
+                                        try {
+                                            $mine = ObjectService::getObjectByMachineName($mineField);
+                                            $buildingQueue->add($planetService, $mine->id);
+                                            $queueCountAfter = $buildingQueue->retrieveQueueItems($planetService)
+                                                ->where('object_id', $mine->id)
+                                                ->count();
+                                            if ($queueCountAfter > $queueCountBefore) {
+                                                $built++;
+                                                break;
+                                            }
+                                        } catch (Throwable $e) {
+                                            Log::warning('Bot mine upgrade could not be queued', [
+                                                'bot_id' => $bot->id,
+                                                'planet_id' => $planetId,
+                                                'object' => $mineField,
+                                                'exception' => $e,
+                                            ]);
+                                        }
                                     }
                                 }
 
@@ -257,21 +271,24 @@ class BotService
                                     $researchObjects = ObjectService::getResearchObjects();
                                     if ($researchObjects !== []) {
                                         shuffle($researchObjects);
-                                        $research = $researchObjects[0];
-                                        try {
-                                            resolve(ResearchQueueService::class)->add(
-                                                $player,
-                                                $planetService,
-                                                $research->id
-                                            );
-                                            $built++;
-                                        } catch (Throwable $e) {
-                                            Log::warning('Bot research could not be queued', [
-                                                'bot_id' => $bot->id,
-                                                'planet_id' => $planetId,
-                                                'object' => $research->machine_name,
-                                                'exception' => $e,
-                                            ]);
+                                        $researchQueue = resolve(ResearchQueueService::class);
+                                        foreach ($researchObjects as $research) {
+                                            $queueCountBefore = $researchQueue->activeResearchQueueItemCount($player, $research->id);
+                                            try {
+                                                $researchQueue->add($player, $planetService, $research->id);
+                                                $queueCountAfter = $researchQueue->activeResearchQueueItemCount($player, $research->id);
+                                                if ($queueCountAfter > $queueCountBefore) {
+                                                    $built++;
+                                                    break;
+                                                }
+                                            } catch (Throwable $e) {
+                                                Log::warning('Bot research could not be queued', [
+                                                    'bot_id' => $bot->id,
+                                                    'planet_id' => $planetId,
+                                                    'object' => $research->machine_name,
+                                                    'exception' => $e,
+                                                ]);
+                                            }
                                         }
                                     }
                                 }

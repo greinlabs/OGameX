@@ -113,6 +113,12 @@ class BotSettingsController extends OGameController
             if ($result['errors'] !== []) {
                 return redirect()->route('admin.botsettings.index')->with('error', 'Bot resource spending could not be completed.');
             }
+            if ($result['produced'] === 0) {
+                return redirect()->route('admin.botsettings.index')->with(
+                    'error',
+                    'No bot construction could be queued. Check that bots are active, have enough resources, a non-zero spending allocation, and available queues and prerequisites.'
+                );
+            }
             return redirect()->route('admin.botsettings.index')->with('success', sprintf('Bot resource spending forced: %d items/levels produced.', $result['produced']));
         } catch (Throwable $exception) {
             Log::error('Manual bot resource spending failed', ['exception' => $exception]);

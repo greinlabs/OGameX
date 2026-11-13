@@ -152,17 +152,17 @@ class UnitQueueService
      * @param int $object_id
      * @param int $requested_build_amount
      *
-     * @return void
+     * @return int The number of units added to the queue, or zero when no units could be queued.
      * @throws Exception
      */
-    public function add(PlanetService $planet, int $object_id, int $requested_build_amount): void
+    public function add(PlanetService $planet, int $object_id, int $requested_build_amount): int
     {
         // @TODO: add checks that current logged in user is owner of planet
         // and is able to add this object to the building queue.
 
         // Only allow positive numbers.
         if ($requested_build_amount < 1) {
-            return;
+            return 0;
         }
 
         $object = ObjectService::getObjectById($object_id);
@@ -179,7 +179,7 @@ class UnitQueueService
         $character_class_met = ObjectService::objectCharacterClassMet($object->machine_name, $planet);
         if (!$character_class_met) {
             // If character class requirements are not met, stop here.
-            return;
+            return 0;
         }
 
         // Sanity check: check if the planet has enough resources to build
@@ -194,7 +194,7 @@ class UnitQueueService
         if ($requested_build_amount < 1) {
             // If the requested amount is less than 1, then we can't build
             // anything. So we stop here.
-            return;
+            return 0;
         }
 
         // Get price per unit
@@ -235,11 +235,13 @@ class UnitQueueService
             $planet->deductResources($total_price);
         } catch (RuntimeException $e) {
             // Insufficient resources (atomic check failed) so we don't create the queue item.
-            return;
+            return 0;
         }
 
         // Save the new queue item which will automatically start it.
         $queue->save();
+
+        return $requested_build_amount;
     }
 
     /**

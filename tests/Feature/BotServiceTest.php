@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use OGame\Models\BuildingQueue;
 use OGame\Models\FleetMission;
 use OGame\Models\Planet;
+use OGame\Models\UnitQueue;
 use OGame\Models\User;
 use OGame\Services\BotService;
 use OGame\Services\SettingsService;
@@ -95,11 +96,12 @@ class BotServiceTest extends IsolatedAccountTestCase
         $planet->deuterium = 100000;
         $planet->save();
 
-        $result = resolve(BotService::class)->produceForBots();
+        $result = resolve(BotService::class)->forceResourceSpend();
         $planet->refresh();
 
         $this->assertGreaterThan(0, $result['produced']);
         $this->assertSame([], $result['errors']);
+        $this->assertGreaterThan(0, UnitQueue::where('planet_id', $planet->id)->where('processed', 0)->count());
         $this->assertGreaterThanOrEqual(50000, $planet->metal);
         $this->assertGreaterThanOrEqual(50000, $planet->crystal);
         $this->assertGreaterThanOrEqual(50000, $planet->deuterium);
