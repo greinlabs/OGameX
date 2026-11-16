@@ -3,9 +3,14 @@
 namespace OGame\Http\Controllers\Admin;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use OGame\Factories\PlayerServiceFactory;
 use OGame\Http\Controllers\OGameController;
+use OGame\Models\Planet;
+use OGame\Models\User;
 use OGame\Services\BotService;
 use OGame\Services\SettingsService;
 use Throwable;
@@ -14,6 +19,13 @@ class BotSettingsController extends OGameController
 {
     public function index(SettingsService $settingsService): View
     {
+        $bots = User::where('is_bot', true)->with('highscore')->orderBy('username')->get();
+        $botLocations = Planet::whereIn('user_id', $bots->modelKeys())
+            ->where('destroyed', 0)
+            ->orderByRaw('CASE WHEN id = user_id THEN 1 ELSE 0 END DESC')
+            ->get(['id', 'user_id', 'galaxy', 'system', 'planet', 'name'])
+            ->groupBy('user_id');
+
         $spawnSeconds = (int)$settingsService->get('bot_spawn_interval', 604800);
         $attackSeconds = (int)$settingsService->get('bot_attack_interval', 604800);
         $productionSeconds = (int)$settingsService->get('bot_production_interval', 259200);
@@ -48,6 +60,8 @@ class BotSettingsController extends OGameController
             'bot_mining_percentage' => (int)$settingsService->get('bot_mining_percentage', 10),
             'bot_level_min' => (int)$settingsService->get('bot_level_min', 3),
             'bot_level_max' => (int)$settingsService->get('bot_level_max', 25),
+            'bots' => $bots,
+            'botLocations' => $botLocations,
         ]);
     }
 
@@ -169,5 +183,21 @@ class BotSettingsController extends OGameController
             Log::error('Manual random bot resource grant failed', ['exception' => $exception]);
             return redirect()->route('admin.botsettings.index')->with('error', 'Random bot resources could not be granted.');
         }
+    }
+
+    public function removeBot(Request $request, PlayerServiceFactory $playerServiceFactory): RedirectResponse
+    {
+        $validated = $request->validate([
+            'user_id' => ['required', 'integer'],
+        ]);
+        $bot = User::where('is_bot', true)->findOrFail((int)$validated['user_id']);
+        $username = $bot->username;
+
+        DB::transaction(function () use ($playerServiceFactory, $bot): void {
+            $playerServiceFactory->make($bot->id, true)->delete();
+        });
+
+        return redirect()->route('admin.botsettings.index')
+            ->with('success', "Bot \"{$username}\" was removed.");
     }
 }

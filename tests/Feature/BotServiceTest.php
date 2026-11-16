@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\DB;
 use OGame\Models\BuildingQueue;
 use OGame\Models\FleetMission;
 use OGame\Models\Planet;
+use OGame\Models\PlanetMove;
 use OGame\Models\UnitQueue;
 use OGame\Models\User;
 use OGame\Services\BotService;
@@ -14,6 +16,61 @@ use Tests\IsolatedAccountTestCase;
 
 class BotServiceTest extends IsolatedAccountTestCase
 {
+    public function testAdminCanForceRemoveBotAndItsPlanetData(): void
+    {
+        $settings = resolve(SettingsService::class);
+        $settings->set('bot_max_count', 10);
+        $bot = resolve(BotService::class)->spawnBot();
+        $planet = Planet::where('user_id', $bot->id)->firstOrFail();
+        $move = PlanetMove::create([
+            'planet_id' => $planet->id,
+            'target_galaxy' => 1,
+            'target_system' => 1,
+            'target_position' => 1,
+            'time_start' => now()->timestamp,
+            'time_arrive' => now()->addDay()->timestamp,
+        ]);
+        DB::table('messages')->insert([
+            'user_id' => $this->currentUserId,
+            'key' => 'bot_removal_test',
+            'subject' => 'Bot action',
+            'action_planet_id' => $planet->id,
+            'sender_user_id' => $bot->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        User::findOrFail($this->currentUserId)->assignRole('admin');
+
+        $this->get(route('admin.botsettings.index'))
+            ->assertOk()
+            ->assertSee($bot->username)
+            ->assertSee('Remove bot');
+
+        $this->post(route('admin.botsettings.remove-bot'), ['user_id' => $bot->id])
+            ->assertRedirect(route('admin.botsettings.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('users', ['id' => $bot->id]);
+        $this->assertDatabaseMissing('planets', ['id' => $planet->id]);
+        $this->assertDatabaseMissing('planet_moves', ['id' => $move->id]);
+        $this->assertDatabaseHas('messages', [
+            'user_id' => $this->currentUserId,
+            'key' => 'bot_removal_test',
+            'action_planet_id' => null,
+            'sender_user_id' => null,
+        ]);
+    }
+
+    public function testAdminCannotRemoveRegularPlayerThroughBotRemovalRoute(): void
+    {
+        User::findOrFail($this->currentUserId)->assignRole('admin');
+
+        $this->post(route('admin.botsettings.remove-bot'), ['user_id' => $this->currentUserId])
+            ->assertNotFound();
+
+        $this->assertDatabaseHas('users', ['id' => $this->currentUserId]);
+    }
+
     public function testManualSpawnUsesConfiguredLevelAndDoesNotLaunchAnAttack(): void
     {
         $settings = resolve(SettingsService::class);

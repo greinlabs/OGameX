@@ -24,6 +24,10 @@
             flex: 0 1 calc(50% - 4px);
         }
         .bot-settings-actions .btn_blue { width: 100%; box-sizing: border-box; }
+        .bot-admin-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 11px; }
+        .bot-admin-table th, .bot-admin-table td { border-bottom: 1px solid #334; padding: 7px 6px; vertical-align: middle; }
+        .bot-admin-table th { background: #1a2430; text-align: left; }
+        .bot-admin-table td:last-child { width: 150px; text-align: center; }
     </style>
 
     @if (session('success'))
@@ -83,6 +87,64 @@
                 <form method="POST" action="{{ route('admin.botsettings.run-resource-spend') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Force resource spending"></form>
                 <form method="POST" action="{{ route('admin.botsettings.grant-random-resources') }}" style="display:inline-block;">@csrf<input type="submit" class="btn_blue" value="Give random resources to all bots"></form>
                 <button type="submit" form="bot-settings-form" class="btn_blue">Save bot settings</button>
+            </div>
+            <div class="content">
+                <p class="box_highlight textCenter no_buddies">Manage bots ({{ $bots->count() }})</p>
+                <div style="overflow-x:auto;">
+                    <table class="bot-admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Bot</th>
+                                <th>Location</th>
+                                <th>Score</th>
+                                <th>Last activity</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($bots as $bot)
+                                @php
+                                    $planetList = $botLocations->get($bot->id, collect());
+                                    $currentPlanet = $planetList->first(fn ($planet) => $planet->id === (int)$bot->planet_current)
+                                        ?? $planetList->first();
+                                    $lastActivity = $bot->bot_last_action_at?->timestamp ?? (int)$bot->time;
+                                @endphp
+                                <tr>
+                                    <td>#{{ $bot->id }}</td>
+                                    <td>{{ $bot->username }}</td>
+                                    <td>
+                                        @if ($currentPlanet)
+                                            {{ $currentPlanet->galaxy }}:{{ $currentPlanet->system }}:{{ $currentPlanet->planet }}
+                                            @if ($planetList->count() > 1)
+                                                <br><span style="color:#888;">+{{ $planetList->count() - 1 }} colony(ies)</span>
+                                            @endif
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>{{ number_format((int)($bot->highscore->general ?? 0)) }}</td>
+                                    <td>
+                                        @if ($lastActivity > 0)
+                                            {{ \Illuminate\Support\Carbon::createFromTimestamp($lastActivity)->format('d.m.Y H:i:s') }}
+                                        @else
+                                            Never
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{{ route('admin.botsettings.remove-bot') }}" onsubmit="return confirm('Remove this bot and all its data?');">
+                                            @csrf
+                                            <input type="hidden" name="user_id" value="{{ $bot->id }}">
+                                            <input type="submit" class="btn_blue" value="Remove bot">
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="6" class="textCenter">No bots found.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

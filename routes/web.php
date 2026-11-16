@@ -1,13 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use OGame\Http\Controllers\Admin\BotSettingsController;
 use OGame\Http\Controllers\Admin\DeveloperShortcutsController;
 use OGame\Http\Controllers\Admin\FleetTimingController;
 use OGame\Http\Controllers\Admin\RulesController as AdminRulesController;
 use OGame\Http\Controllers\Admin\ServerAdministrationController;
-use OGame\Http\Controllers\Admin\BotSettingsController;
-use OGame\Http\Controllers\Admin\UserManagementController;
 use OGame\Http\Controllers\Admin\ServerSettingsController as AdminServerSettingsController;
+use OGame\Http\Controllers\Admin\UserManagementController;
 use OGame\Http\Controllers\AllianceController;
 use OGame\Http\Controllers\AllianceDepotController;
 use OGame\Http\Controllers\BuddiesController;
@@ -248,7 +248,6 @@ Route::middleware(['auth', 'banned', 'globalgame', 'locale', 'firstlogin'])->gro
     Route::get('/overlay/changenick', [ChangeNickController::class, 'overlay'])->name('changenick.overlay');
     Route::post('ajax/changenick/rename', [ChangeNickController::class, 'rename'])->name('changenick.rename');
 
-
     Route::get('/overlay/server-settings', [ServerSettingsController::class, 'overlay'])->name('serversettings.overlay');
 });
 
@@ -277,6 +276,9 @@ Route::middleware(['auth', 'globalgame', 'locale', 'admin'])->group(function () 
         ->middleware('throttle:5,1');
     Route::post('/admin/bot-settings/grant-random-resources', [BotSettingsController::class, 'grantBotRandomResources'])
         ->name('admin.botsettings.grant-random-resources');
+    Route::post('/admin/bot-settings/remove-bot', [BotSettingsController::class, 'removeBot'])
+        ->name('admin.botsettings.remove-bot')
+        ->middleware('throttle:10,1');
 
     Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
     Route::post('/admin/users/masquerade', [UserManagementController::class, 'masquerade'])->name('admin.users.masquerade');

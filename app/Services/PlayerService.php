@@ -13,6 +13,7 @@ use OGame\Models\FleetMission;
 use OGame\Models\Highscore;
 use OGame\Models\Message;
 use OGame\Models\Planet;
+use OGame\Models\PlanetMove;
 use OGame\Models\ResearchQueue;
 use OGame\Models\Resources;
 use OGame\Models\UnitQueue;
@@ -904,6 +905,8 @@ class PlayerService
         // Include destroyed planets still awaiting purge so related rows are cleaned up.
         $planetIds = Planet::where('user_id', $this->getId())->pluck('id');
 
+        PlanetMove::whereIn('planet_id', $planetIds)->delete();
+
         foreach ($planetIds as $planetId) {
             // Delete all queue items.
             ResearchQueue::where('planet_id', $planetId)->delete();
@@ -924,6 +927,8 @@ class PlayerService
 
         // Delete all messages.
         Message::where('user_id', $this->getId())->delete();
+        Message::whereIn('action_planet_id', $planetIds)->update(['action_planet_id' => null]);
+        Message::where('sender_user_id', $this->getId())->update(['sender_user_id' => null]);
 
         // Delete highscore record.
         Highscore::where('player_id', $this->getId())->delete();
