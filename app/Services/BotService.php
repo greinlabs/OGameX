@@ -3,14 +3,14 @@
 namespace OGame\Services;
 
 use Exception;
-use Throwable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use OGame\Factories\PlanetServiceFactory;
 use OGame\Factories\PlayerServiceFactory;
+use OGame\GameMessages\BotActivity;
 use OGame\GameObjects\Models\Abstracts\GameObject;
 use OGame\GameObjects\Models\Units\UnitCollection;
 use OGame\Models\Enums\PlanetType;
@@ -20,9 +20,7 @@ use OGame\Models\Planet;
 use OGame\Models\Planet\Coordinate;
 use OGame\Models\Resources;
 use OGame\Models\User;
-use OGame\Services\PlanetService;
-use OGame\Services\MessageService;
-use OGame\GameMessages\BotActivity;
+use Throwable;
 
 class BotService
 {
@@ -190,7 +188,7 @@ class BotService
                                 );
                                 $objects = array_values(array_filter(
                                     $objects,
-                                    fn (GameObject $object): bool => ObjectService::objectRequirementsMet($object->machine_name, $planetService)
+                                    fn (GameObject $object): bool => ObjectService::objectRequirementsMetRecursively($object->machine_name, $planetService)
                                         && ObjectService::objectCharacterClassMet($object->machine_name, $planetService)
                                 ));
                                 shuffle($objects);
@@ -245,6 +243,9 @@ class BotService
                                             ->count();
                                         try {
                                             $mine = ObjectService::getObjectByMachineName($mineField);
+                                            if (!ObjectService::objectRequirementsMetRecursively($mineField, $planetService)) {
+                                                continue;
+                                            }
                                             $buildingQueue->add($planetService, $mine->id);
                                             $queueCountAfter = $buildingQueue->retrieveQueueItems($planetService)
                                                 ->where('object_id', $mine->id)
@@ -272,7 +273,13 @@ class BotService
                                     && $planet->metal >= $researchCostMetal
                                     && $planet->crystal >= $researchCostCrystal
                                     && $planet->deuterium >= $researchCostDeuterium) {
-                                    $researchObjects = ObjectService::getResearchObjects();
+                                    $researchObjects = array_values(array_filter(
+                                        ObjectService::getResearchObjects(),
+                                        fn (GameObject $research): bool => ObjectService::objectRequirementsMetRecursively(
+                                            $research->machine_name,
+                                            $planetService
+                                        )
+                                    ));
                                     if ($researchObjects !== []) {
                                         shuffle($researchObjects);
                                         $researchQueue = resolve(ResearchQueueService::class);

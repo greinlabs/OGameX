@@ -344,6 +344,24 @@ class ObjectService
         return count(self::filterCompletedRequirements($object->requirements, $planet)) === 0;
     }
 
+    public static function objectRequirementsMetRecursively(string $machine_name, PlanetService $planet): bool
+    {
+        $player = $planet->getPlayer();
+
+        foreach (self::getRecursiveRequirements($machine_name) as $requirementName => $requiredLevel) {
+            $requirement = self::getObjectByMachineName($requirementName);
+            $currentLevel = $requirement->type === GameObjectType::Research
+                ? ($player?->getResearchLevel($requirementName) ?? 0)
+                : $planet->getObjectLevel($requirementName);
+
+            if ($currentLevel < $requiredLevel) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Get unmet requirements and their current/required levels for tooltip hints.
      *

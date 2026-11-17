@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use Illuminate\Support\Facades\DB;
+use OGame\Factories\PlayerServiceFactory;
 use OGame\Models\BuildingQueue;
 use OGame\Models\FleetMission;
 use OGame\Models\Planet;
 use OGame\Models\PlanetMove;
+use OGame\Models\ResearchQueue;
 use OGame\Models\UnitQueue;
 use OGame\Models\User;
 use OGame\Services\BotService;
@@ -151,6 +153,9 @@ class BotServiceTest extends IsolatedAccountTestCase
         $settings->set('bot_mining_percentage', 0);
         $bot = resolve(BotService::class)->spawnBot();
         $planet = Planet::where('user_id', $bot->id)->firstOrFail();
+        $player = resolve(PlayerServiceFactory::class)->make($bot->id, true);
+        $player->setResearchLevel('energy_technology', 1);
+        $player->setResearchLevel('combustion_drive', 1);
         $planet->metal = 100000;
         $planet->crystal = 100000;
         $planet->deuterium = 100000;
@@ -173,6 +178,80 @@ class BotServiceTest extends IsolatedAccountTestCase
         $this->assertGreaterThanOrEqual(50000, $planet->metal);
         $this->assertGreaterThanOrEqual(50000, $planet->crystal);
         $this->assertGreaterThanOrEqual(50000, $planet->deuterium);
+    }
+
+    public function testForcedProductionDoesNotQueueResearchWithLockedPrerequisites(): void
+    {
+        $settings = resolve(SettingsService::class);
+        $settings->set('bot_max_count', 10);
+        $settings->set('bot_level_min', 1);
+        $settings->set('bot_level_max', 1);
+        $settings->set('bot_attack_percentage', 0);
+        $settings->set('bot_defense_percentage', 0);
+        $settings->set('bot_research_percentage', 100);
+        $settings->set('bot_mining_percentage', 0);
+
+        $bot = resolve(BotService::class)->spawnBot();
+        $planet = Planet::where('user_id', $bot->id)->firstOrFail();
+        $planet->research_lab = 7;
+        $planet->metal = 1000000;
+        $planet->crystal = 1000000;
+        $planet->deuterium = 1000000;
+        $planet->save();
+        $player = resolve(PlayerServiceFactory::class)->make($bot->id, true);
+        $player->setResearchLevel('hyperspace_technology', 3);
+        $player->setResearchLevel('hyperspace_drive', 0);
+        $player->setResearchLevel('energy_technology', 0);
+        $player->setResearchLevel('shielding_technology', 0);
+        $planetService = $player->planets->current();
+
+        $this->assertTrue(ObjectService::objectRequirementsMet('hyperspace_drive', $planetService));
+        $this->assertFalse(ObjectService::objectRequirementsMetRecursively('hyperspace_drive', $planetService));
+
+        $result = resolve(BotService::class)->forceResourceSpend();
+
+        $this->assertSame([], $result['errors']);
+        $this->assertSame(0, ResearchQueue::where('planet_id', $planet->id)
+            ->where('object_id', ObjectService::getObjectByMachineName('hyperspace_drive')->id)
+            ->where('processed', 0)
+            ->count());
+    }
+
+    public function testForcedProductionDoesNotBuildUnitsWithAnUnlockedDirectRequirementButLockedPrerequisite(): void
+    {
+        $settings = resolve(SettingsService::class);
+        $settings->set('bot_max_count', 10);
+        $settings->set('bot_level_min', 1);
+        $settings->set('bot_level_max', 1);
+        $settings->set('bot_attack_percentage', 100);
+        $settings->set('bot_defense_percentage', 0);
+        $settings->set('bot_research_percentage', 0);
+        $settings->set('bot_mining_percentage', 0);
+
+        $bot = resolve(BotService::class)->spawnBot();
+        $planet = Planet::where('user_id', $bot->id)->firstOrFail();
+        $planet->shipyard = 7;
+        $planet->research_lab = 7;
+        $planet->metal = 1000000;
+        $planet->crystal = 1000000;
+        $planet->deuterium = 1000000;
+        $planet->save();
+
+        $player = resolve(PlayerServiceFactory::class)->make($bot->id, true);
+        $player->setResearchLevel('hyperspace_drive', 4);
+        $player->setResearchLevel('hyperspace_technology', 0);
+        $planetService = $player->planets->current();
+
+        $this->assertTrue(ObjectService::objectRequirementsMet('battle_ship', $planetService));
+        $this->assertFalse(ObjectService::objectRequirementsMetRecursively('battle_ship', $planetService));
+
+        $result = resolve(BotService::class)->forceResourceSpend();
+
+        $this->assertSame([], $result['errors']);
+        $this->assertSame(0, UnitQueue::where('planet_id', $planet->id)
+            ->where('object_id', ObjectService::getObjectByMachineName('battle_ship')->id)
+            ->where('processed', 0)
+            ->count());
     }
 
     public function testMineUpgradeFromProductionSpendingUsesTheBuildingQueue(): void
