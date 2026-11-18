@@ -1,5 +1,3 @@
-/*@import "ingame/base1.css";*/
-/*@import "ingame/base2.css";*/
 @import "ingame/jquery.ui.css";
 @import "ingame/select2.css";
 @import "ingame/modules/fleets.css";
@@ -11,6 +9,29 @@
 @import "ingame/modules/highscore.css";
 @import "ingame/modules/messages.css";
 
+/*@import "ingame/base1.css";*/
+/*@import "ingame/base2.css";*/
+
+#headerbarcomponent #bar ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+#headerbarcomponent #bar ul li {
+    display: block;
+    margin: 0;
+    white-space: nowrap;
+}
+
+#headerbarcomponent #bar ul li#playerName,
+#headerbarcomponent #bar ul li.OGameClock {
+    float: none;
+}
 
 /* New style overrides that conflict with some existing styles, implement later */
 /*
