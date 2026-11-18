@@ -143,6 +143,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get this user's purchased officers.
+     *
+     * @return HasMany
+     */
+    public function officers(): HasMany
+    {
+        return $this->hasMany(UserOfficer::class);
+    }
+
+    /**
      * Get the dark matter transactions for the user.
      *
      * @return HasMany

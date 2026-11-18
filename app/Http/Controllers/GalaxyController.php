@@ -381,7 +381,7 @@ class GalaxyController extends OGameController
     {
         // Check if the current planet of the player has enough espionage probes and research level
         // to be able to spy on the target planet.
-        $canEspionage = $this->playerService->planets->current()->getObjectAmount('espionage_probe') > 0 && $this->playerService->getResearchLevel('espionage_technology') > 0;
+        $canEspionage = $this->playerService->planets->current()->getObjectAmount('espionage_probe') > 0 && $this->playerService->getEspionageLevel() > 0;
 
         // Check if current planet is a moon with sensor phalanx and target is in range
         // Note: Moons cannot be scanned (OGame rule)

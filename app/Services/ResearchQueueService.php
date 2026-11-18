@@ -204,7 +204,9 @@ class ResearchQueueService
             $list[] = $viewModel;
         }
 
-        return new ResearchQueueListViewModel($list);
+        $maxItemsInQueue = $planet->getPlayer()?->hasCommander() ? 7 : 5;
+
+        return new ResearchQueueListViewModel($list, $maxItemsInQueue);
     }
 
     /**
@@ -256,7 +258,9 @@ class ResearchQueueService
             $list[] = $viewModel;
         }
 
-        return new ResearchQueueListViewModel($list);
+        $maxItemsInQueue = $planet->getPlayer()?->hasCommander() ? 7 : 5;
+
+        return new ResearchQueueListViewModel($list, $maxItemsInQueue);
     }
 
     /**

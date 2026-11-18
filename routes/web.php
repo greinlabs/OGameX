@@ -25,6 +25,7 @@ use OGame\Http\Controllers\LanguageController;
 use OGame\Http\Controllers\MerchantController;
 use OGame\Http\Controllers\MessagesController;
 use OGame\Http\Controllers\NotesController;
+use OGame\Http\Controllers\OfficerController;
 use OGame\Http\Controllers\OptionsController;
 use OGame\Http\Controllers\OverviewController;
 use OGame\Http\Controllers\PhalanxController;
@@ -203,6 +204,8 @@ Route::middleware(['auth', 'banned', 'globalgame', 'locale', 'firstlogin'])->gro
     Route::get('/characterclass', [CharacterClassController::class, 'index'])->name('characterclass.index');
     Route::post('/characterclass/select', [CharacterClassController::class, 'selectClass'])->name('characterclass.select');
     Route::post('/characterclass/deselect', [CharacterClassController::class, 'deselectClass'])->name('characterclass.deselect');
+    Route::get('/officers', [OfficerController::class, 'index'])->name('officers.index');
+    Route::post('/officers/activate', [OfficerController::class, 'activate'])->name('officers.activate');
 
     Route::get('/options', [OptionsController::class, 'index'])->name('options.index');
     Route::post('/options', [OptionsController::class, 'save'])->name('options.save');

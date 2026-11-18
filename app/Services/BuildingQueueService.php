@@ -289,7 +289,9 @@ class BuildingQueueService
         }
 
         // Create BuildingQueueListViewModel
-        return new BuildingQueueListViewModel($list);
+        $maxItemsInQueue = $planet->getPlayer()?->hasCommander() ? 7 : 5;
+
+        return new BuildingQueueListViewModel($list, $maxItemsInQueue);
     }
 
     /**

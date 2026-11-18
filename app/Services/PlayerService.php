@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use OGame\Enums\OfficerType;
 use OGame\GameObjects\Models\Calculations\CalculationType;
 use OGame\Models\BuildingQueue;
 use OGame\Models\FleetMission;
@@ -18,6 +19,7 @@ use OGame\Models\ResearchQueue;
 use OGame\Models\Resources;
 use OGame\Models\UnitQueue;
 use OGame\Models\User;
+use OGame\Models\UserOfficer;
 use OGame\Models\UserTech;
 use RuntimeException;
 use Throwable;
@@ -58,6 +60,11 @@ class PlayerService
      * @var int|null
      */
     private int|null $cachedGeneralScore = null;
+
+    /**
+     * @var array<string, bool>|null
+     */
+    private ?array $cachedActiveOfficers = null;
 
     /**
      * Player constructor.
@@ -103,6 +110,7 @@ class PlayerService
         }
 
         $this->user = $user;
+        $this->cachedActiveOfficers = null;
 
         // Fetch user tech from model
         /** @var UserTech $tech */
@@ -575,7 +583,7 @@ class PlayerService
         $user = $this->getUser();
         $fleet_slots_bonus = $characterClassService->getAdditionalFleetSlots($user);
 
-        return $fleet_slots_from_research + $fleet_slots_bonus;
+        return $fleet_slots_from_research + $fleet_slots_bonus + ($this->hasAdmiral() ? 2 : 0);
     }
 
     /**
@@ -965,32 +973,47 @@ class PlayerService
 
     public function hasCommander(): bool
     {
-        // TODO: add logic
-        return false;
+        return $this->hasOfficer(OfficerType::COMMANDER);
     }
 
     public function hasAdmiral(): bool
     {
-        // TODO: add logic
-        return false;
+        return $this->hasOfficer(OfficerType::ADMIRAL);
     }
 
     public function hasEngineer(): bool
     {
-        // TODO: add logic
-        return false;
+        return $this->hasOfficer(OfficerType::ENGINEER);
     }
 
     public function hasGeologist(): bool
     {
-        // TODO: add logic
-        return false;
+        return $this->hasOfficer(OfficerType::GEOLOGIST);
     }
 
     public function hasTechnocrat(): bool
     {
-        // TODO: add logic
-        return false;
+        return $this->hasOfficer(OfficerType::TECHNOCRAT);
+    }
+
+    public function getEspionageLevel(): int
+    {
+        return $this->getResearchLevel('espionage_technology') + ($this->hasTechnocrat() ? 2 : 0);
+    }
+
+    private function hasOfficer(OfficerType $officer): bool
+    {
+        if ($this->cachedActiveOfficers === null) {
+            $this->cachedActiveOfficers = $this->user->id > 0
+                ? UserOfficer::where('user_id', $this->user->id)
+                    ->where('expires_at', '>', now())
+                    ->pluck('officer')
+                    ->mapWithKeys(static fn (string $type): array => [$type => true])
+                    ->all()
+                : [];
+        }
+
+        return isset($this->cachedActiveOfficers[$officer->value]);
     }
 
     public function hasCommandingStaff(): bool

@@ -174,6 +174,36 @@ return [
         'total_per_week'     => 'Total per week:',
     ],
 
+    'officers' => [
+        'page_title' => 'Officers',
+        'balance' => 'Dark Matter balance: :amount',
+        'price_duration' => 'Each officer costs :cost Dark Matter for :days days. Renewing extends the current term.',
+        'officer' => 'Officer',
+        'effect' => 'Effect',
+        'status' => 'Status',
+        'active_until' => 'Active until :date',
+        'inactive' => 'Inactive',
+        'hire' => 'Hire',
+        'extend' => 'Extend by :days days',
+        'activated' => 'Officer hired or extended successfully.',
+        'insufficient_dark_matter' => 'Not enough Dark Matter to hire this officer.',
+        'commanding_staff' => 'With all five officers active, the Commanding Staff adds +2% to mine and energy production.',
+        'names' => [
+            'commander' => 'Commander',
+            'admiral' => 'Admiral',
+            'engineer' => 'Engineer',
+            'geologist' => 'Geologist',
+            'technocrat' => 'Technocrat',
+        ],
+        'effects' => [
+            'commander' => '+2 building and research queue slots.',
+            'admiral' => '+2 fleet slots and access to the 3:1 tactical retreat setting.',
+            'engineer' => '+10% energy production and 50% fewer defense losses.',
+            'geologist' => '+10% mine production.',
+            'technocrat' => '+2 espionage levels and -10% research time.',
+        ],
+    ],
+
     // -------------------------------------------------------------------------
     // Destroy rockets dialog (facilities page)
     // -------------------------------------------------------------------------

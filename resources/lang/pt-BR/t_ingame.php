@@ -174,6 +174,36 @@ return [
         'total_per_week'     => 'Total por semana:',
     ],
 
+    'officers' => [
+        'page_title' => 'Oficiais',
+        'balance' => 'Saldo de Matéria Escura: :amount',
+        'price_duration' => 'Cada oficial custa :cost de Matéria Escura por :days dias. Recontratar estende o prazo atual.',
+        'officer' => 'Oficial',
+        'effect' => 'Efeito',
+        'status' => 'Status',
+        'active_until' => 'Ativo até :date',
+        'inactive' => 'Inativo',
+        'hire' => 'Contratar',
+        'extend' => 'Estender por :days dias',
+        'activated' => 'Oficial contratado ou estendido com sucesso.',
+        'insufficient_dark_matter' => 'Matéria Escura insuficiente para contratar este oficial.',
+        'commanding_staff' => 'Com todos os cinco oficiais ativos, o Estado-maior concede +2% à produção das minas e de energia.',
+        'names' => [
+            'commander' => 'Comandante',
+            'admiral' => 'Almirante',
+            'engineer' => 'Engenheiro',
+            'geologist' => 'Geólogo',
+            'technocrat' => 'Tecnocrata',
+        ],
+        'effects' => [
+            'commander' => '+2 vagas nas filas de edifícios e pesquisas.',
+            'admiral' => '+2 vagas de frota e acesso à retirada tática 3:1.',
+            'engineer' => '+10% de produção de energia e 50% menos perdas de defesa.',
+            'geologist' => '+10% de produção das minas.',
+            'technocrat' => '+2 níveis de espionagem e -10% no tempo de pesquisa.',
+        ],
+    ],
+
     // -------------------------------------------------------------------------
     // Destroy rockets dialog (facilities page)
     // -------------------------------------------------------------------------

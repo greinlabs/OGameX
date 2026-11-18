@@ -526,6 +526,23 @@
 
                     <li>
                         <span class="menu_icon">
+                            <a href="{{ route('officers.index') }}"
+                               class="tooltipRight js_hideTipOnMobile"
+                               target="_self"
+                               title="{{ __('t_ingame.officers.page_title') }}">
+                                <div class="officer32 commander"></div>
+                            </a>
+                        </span>
+                        <a class="menubutton {{(Request::is('officers*') ? 'selected' : '') }}"
+                           href="{{ route('officers.index') }}"
+                           target="_self"
+                        >
+                            <span class="textlabel">{{ __('t_ingame.officers.page_title') }}</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <span class="menu_icon">
                             @if ($currentPlanet->isMoon() && $currentPlanet->getObjectLevel('jump_gate') > 0)
                                 <a href="{{ route('jumpgate.index') }}" class="overlay tooltipRight js_hideTipOnMobile" target="_self" data-overlay-title="{{ __('t_ingame.layout.menu_jump_gate') }}" title="{{ __('t_ingame.layout.menu_jump_gate') }}">
                                     <div class="menuImage station highlighted ipiHintable" data-ipi-hint="ipiToolbarJumpgate"></div>
@@ -739,7 +756,7 @@
                 var player = {
                     "playerId": {{ $currentPlayer->getId() }},
                     "name": "{{ $currentPlayer->getUsername(false) }}",
-                    "hasCommander": false,
+                    "hasCommander": {{ $currentPlayer->hasCommander() ? 'true' : 'false' }},
                     "hasAPassword": true
                 };
                 var hasAPassword = true;
@@ -1547,7 +1564,7 @@ However, the Space Dock's engineers think that some of the remains can be salvag
                 }, function () {
                     $('#planet').find('h2 a img').toggleClass('hinted');
                 });
-                var player = {hasCommander: false};
+                var player = {hasCommander: {{ $currentPlayer->hasCommander() ? 'true' : 'false' }}};
                 var localizedBBCode = {!! json_encode([
                     'bold'               => __('t_ingame.messages.bbcode_bold'),
                     'italic'             => __('t_ingame.messages.bbcode_italic'),

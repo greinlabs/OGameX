@@ -307,6 +307,7 @@ trait ObjectAjaxTrait
             'ion_technology_level' => $ion_technology_level,
             'ion_technology_bonus' => $ion_technology_bonus,
             'can_downgrade' => $can_downgrade,
+            'has_commander' => $player?->hasCommander() ?? false,
             'is_in_vacation_mode' => $is_in_vacation_mode,
             'is_missile_silo' => $is_missile_silo,
             'current_missiles' => $current_missiles,
