@@ -9,6 +9,16 @@
             {{ session('status') }}
         </div>
     @endif
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            {{ $errors->first() }}
+        </div>
+    @endif
 
     <div id="resourcesettingscomponent" class="maincontent">
         <div id="planet" class="shortHeader">
@@ -199,6 +209,39 @@
                                         <input type="submit" class="btn_blue" name="create_moon" value="{{ __('t_ingame.admin.dev_create_moon') }}">
                                         <input type="submit" class="btn_blue" name="delete_planet" value="{{ __('t_ingame.admin.dev_delete_planet') }}">
                                         <input type="submit" class="btn_blue" name="delete_moon" value="{{ __('t_ingame.admin.dev_delete_moon') }}">
+                                    </div>
+                                </div>
+                            </form>
+
+                            <p class="box_highlight textCenter no_buddies">{{ __('t_ingame.admin.dev_grant_moon') }}</p>
+                            <form action="{{ route('admin.developershortcuts.grant-moon') }}" method="post">
+                                {{ csrf_field() }}
+                                <div class="group bborder" style="display: block;">
+                                    <div class="fieldwrapper">
+                                        <label class="styled textBeefy" for="moon_planet_id">
+                                            {{ __('t_ingame.admin.dev_grant_moon_planet') }}
+                                        </label>
+                                        <div class="thefield">
+                                            @if ($planetsWithoutMoons->isEmpty())
+                                                <p>{{ __('t_ingame.admin.dev_grant_moon_no_planets') }}</p>
+                                            @else
+                                                <select id="moon_planet_id" name="planet_id" class="textInput" required style="width: 100%; max-width: 500px;">
+                                                    <option value="">{{ __('t_ingame.admin.dev_grant_moon_select') }}</option>
+                                                    @foreach ($planetsWithoutMoons as $targetPlanet)
+                                                        <option value="{{ $targetPlanet->id }}" @selected(old('planet_id') == $targetPlanet->id)>
+                                                            {{ $targetPlanet->username }} — {{ $targetPlanet->name }}
+                                                            [{{ $targetPlanet->galaxy }}:{{ $targetPlanet->system }}:{{ $targetPlanet->planet }}]
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="fieldwrapper" style="text-align: center;">
+                                        <p>{{ __('t_ingame.admin.dev_grant_moon_description') }}</p>
+                                        @if ($planetsWithoutMoons->isNotEmpty())
+                                            <input type="submit" class="btn_blue" value="{{ __('t_ingame.admin.dev_grant_moon_button') }}">
+                                        @endif
                                     </div>
                                 </div>
                             </form>

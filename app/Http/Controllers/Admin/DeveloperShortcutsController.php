@@ -5,17 +5,22 @@ namespace OGame\Http\Controllers\Admin;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use OGame\Facades\AppUtil;
 use OGame\Factories\PlanetServiceFactory;
 use OGame\GameConstants\UniverseConstants;
 use OGame\Http\Controllers\OGameController;
+use OGame\Models\Enums\PlanetType;
+use OGame\Models\Planet;
 use OGame\Models\Planet\Coordinate;
 use OGame\Models\Resources;
 use OGame\Models\User;
 use OGame\Services\DarkMatterService;
 use OGame\Services\DebrisFieldService;
 use OGame\Services\ObjectService;
+use OGame\Services\PlanetService;
 use OGame\Services\PlayerService;
 use OGame\Services\SettingsService;
 
@@ -31,12 +36,39 @@ class DeveloperShortcutsController extends OGameController
         // Get all unit objects
         $units = ObjectService::getUnitObjects();
 
+        $planetsWithoutMoons = Planet::query()
+            ->join('users', 'users.id', '=', 'planets.user_id')
+            ->where('planets.planet_type', PlanetType::Planet->value)
+            ->where('planets.destroyed', 0)
+            ->whereNotExists(function ($query) {
+                $query->selectRaw('1')
+                    ->from('planets as moons')
+                    ->whereColumn('moons.galaxy', 'planets.galaxy')
+                    ->whereColumn('moons.system', 'planets.system')
+                    ->whereColumn('moons.planet', 'planets.planet')
+                    ->where('moons.planet_type', PlanetType::Moon->value);
+            })
+            ->orderBy('users.username')
+            ->orderBy('planets.galaxy')
+            ->orderBy('planets.system')
+            ->orderBy('planets.planet')
+            ->get([
+                'planets.id',
+                'planets.user_id',
+                'planets.name',
+                'planets.galaxy',
+                'planets.system',
+                'planets.planet',
+                'users.username',
+            ]);
+
         return view('ingame.admin.developershortcuts')->with([
             'units' => $units,
             'buildings' => [...ObjectService::getBuildingObjects(), ...ObjectService::getStationObjects()],
             'research' => ObjectService::getResearchObjects(),
             'currentPlanet' => $playerService->planets->current(),
             'settings' => $settingsService,
+            'planetsWithoutMoons' => $planetsWithoutMoons,
         ]);
     }
 
@@ -233,6 +265,56 @@ class DeveloperShortcutsController extends OGameController
         }
 
         return redirect()->back()->with('success', 'Resources updated successfully');
+    }
+
+    /**
+     * Creates a moon for a selected player's planet.
+     */
+    public function grantMoon(Request $request, PlanetServiceFactory $planetServiceFactory): RedirectResponse
+    {
+        $validated = $request->validate([
+            'planet_id' => [
+                'required',
+                'integer',
+                Rule::exists('planets', 'id')
+                    ->where('planet_type', PlanetType::Planet->value)
+                    ->where('destroyed', 0),
+            ],
+        ]);
+
+        $planetId = (int)$validated['planet_id'];
+        $moon = DB::transaction(function () use ($planetId, $planetServiceFactory): PlanetService|null {
+            $planetModel = Planet::query()
+                ->whereKey($planetId)
+                ->lockForUpdate()
+                ->first();
+
+            if ($planetModel === null || (int)$planetModel->planet_type !== PlanetType::Planet->value || (int)$planetModel->destroyed !== 0) {
+                return null;
+            }
+
+            $planet = $planetServiceFactory->make($planetId, true);
+            $moonExists = Planet::query()
+                ->where('galaxy', $planetModel->galaxy)
+                ->where('system', $planetModel->system)
+                ->where('planet', $planetModel->planet)
+                ->where('planet_type', PlanetType::Moon->value)
+                ->exists();
+
+            if ($planet === null || $planet->isDestroyed() || $moonExists) {
+                return null;
+            }
+
+            return $planetServiceFactory->createMoonForPlanet($planet, 2_000_000, 20);
+        });
+
+        if ($moon === null) {
+            return redirect()->back()->with('error', __('t_ingame.admin.dev_grant_moon_unavailable'));
+        }
+
+        return redirect()->back()->with('status', __('t_ingame.admin.dev_grant_moon_success', [
+            'coordinates' => $moon->getPlanetCoordinates()->asString(),
+        ]));
     }
 
     /**
