@@ -15,19 +15,26 @@
         }
 
         #adminbar #mmoContent {
-            height: 32px;
+            align-items: center;
+            box-sizing: border-box;
+            display: flex;
+            height: 44px;
+            justify-content: space-between;
             margin: 0 auto;
+            max-width: 100%;
             width: 990px;
             position: relative;
         }
 
         #adminbar #adminLogo {
-            float: left;
-            display: block;
-            height: 32px;
+            flex: 0 0 auto;
+            height: 44px;
             width: auto;
-            padding: 5px 10px;
-            padding-left: 0;
+            padding: 0 10px 0 0;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
             font-size: 14px;
             color: #f48406 !important;
             font-weight: bold;
@@ -40,23 +47,32 @@
 
         #adminbar ul {
             list-style: none;
-            margin-top: 8px;
+            align-items: center;
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 6px;
+            justify-content: flex-end;
+            margin: 0;
             padding: 0;
-            float: right;
+            min-width: 0;
         }
 
         #adminbar ul li {
-            display: inline;
-            margin-right: 10px;
+            display: block;
+            flex: 0 0 auto;
+            margin: 0;
         }
 
         #adminbar ul li a {
+            display: block;
             color: #fff;
             background-color: #333;
-            padding: 3px 10px;
+            padding: 6px 8px;
             text-decoration: none;
             border-radius: 3px;
             font-size: 11px;
+            line-height: 1.2;
+            white-space: nowrap;
         }
 
         #adminbar ul li a:hover, #adminbar ul li a.active  {
