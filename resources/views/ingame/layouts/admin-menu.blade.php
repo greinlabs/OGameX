@@ -4,9 +4,10 @@
         #adminbar {
             background: transparent url('/img/admin/admin-menu-bg.jpg') repeat-x;
             font: normal 11px Tahoma, Arial, Helvetica, sans-serif;
-            height: 32px;
+            height: 44px;
             left: 0;
             padding: 0;
+            position: relative;
             text-align: center;
             top: 0;
             width: 100%;

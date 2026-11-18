@@ -110,7 +110,7 @@
 
     <!-- Removed all custom close button CSS to restore normal jQuery UI behavior -->
 </head>
-<body id="{{ !empty($body_id) ? $body_id : 'ingamepage' }}" class="ogame lang-en default no-touch">
+<body id="{{ !empty($body_id) ? $body_id : 'ingamepage' }}" class="ogame lang-en default no-touch{{ request()->routeIs('officers.*') ? ' officers-page' : '' }}">
 <div id="initial_welcome_dialog" title="Welcome to OGame!" style="display: none;">
     To help your game start get moving quickly, we've assigned you the name Commodore Nebula. You can change this at any
     time by clicking on the username.<br/>

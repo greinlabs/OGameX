@@ -33,6 +33,92 @@
     float: none;
 }
 
+#officerscomponent,
+#officerscomponent #inhalt,
+#officerscomponent .contentRS,
+#officerscomponent .mainRS {
+    box-sizing: border-box;
+    width: 630px;
+    max-width: 100%;
+}
+
+#officerscomponent #planet.shortHeader {
+    width: 100%;
+}
+
+#officerscomponent table.list {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#officerscomponent table.list th,
+#officerscomponent table.list td {
+    box-sizing: border-box;
+    padding: 6px 5px;
+    vertical-align: middle;
+    white-space: normal;
+}
+
+#officerscomponent table.list th:nth-child(1),
+#officerscomponent table.list td:nth-child(1) {
+    width: 95px;
+}
+
+#officerscomponent table.list th:nth-child(2),
+#officerscomponent table.list td:nth-child(2) {
+    width: 235px;
+}
+
+#officerscomponent table.list th:nth-child(3),
+#officerscomponent table.list td:nth-child(3) {
+    width: 160px;
+}
+
+#officerscomponent table.list th:nth-child(4),
+#officerscomponent table.list td:nth-child(4) {
+    width: 140px;
+}
+
+#officerscomponent table.list button {
+    max-width: 100%;
+    white-space: normal;
+}
+
+body.officers-page #right {
+    display: none;
+}
+
+body.officers-page #middle {
+    width: 820px;
+}
+
+body.officers-page #officerscomponent,
+body.officers-page #officerscomponent #inhalt,
+body.officers-page #officerscomponent .contentRS,
+body.officers-page #officerscomponent .mainRS {
+    width: 800px;
+}
+
+body.officers-page #officerscomponent table.list th:nth-child(1),
+body.officers-page #officerscomponent table.list td:nth-child(1) {
+    width: 110px;
+}
+
+body.officers-page #officerscomponent table.list th:nth-child(2),
+body.officers-page #officerscomponent table.list td:nth-child(2) {
+    width: 300px;
+}
+
+body.officers-page #officerscomponent table.list th:nth-child(3),
+body.officers-page #officerscomponent table.list td:nth-child(3) {
+    width: 220px;
+}
+
+body.officers-page #officerscomponent table.list th:nth-child(4),
+body.officers-page #officerscomponent table.list td:nth-child(4) {
+    width: 170px;
+}
+
 /* New style overrides that conflict with some existing styles, implement later */
 /*
 
