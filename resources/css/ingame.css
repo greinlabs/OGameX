@@ -12,27 +12,6 @@
 /*@import "ingame/base1.css";*/
 /*@import "ingame/base2.css";*/
 
-#headerbarcomponent #bar ul {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    gap: 8px;
-    padding: 0 8px;
-    box-sizing: border-box;
-}
-
-#headerbarcomponent #bar ul li {
-    display: block;
-    margin: 0;
-    white-space: nowrap;
-}
-
-#headerbarcomponent #bar ul li#playerName,
-#headerbarcomponent #bar ul li.OGameClock {
-    float: none;
-}
-
 #officerscomponent,
 #officerscomponent #inhalt,
 #officerscomponent .contentRS,

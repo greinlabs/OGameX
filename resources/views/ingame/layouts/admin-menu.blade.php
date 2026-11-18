@@ -49,6 +49,7 @@
             list-style: none;
             align-items: center;
             display: flex;
+            flex: 0 0 auto;
             flex-wrap: nowrap;
             gap: 6px;
             justify-content: flex-end;
